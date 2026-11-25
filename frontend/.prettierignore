@@ -1,0 +1,5 @@
+# Pastas e arquivos que o Prettier não deve formatar
+dist
+coverage
+node_modules
+package-lock.json

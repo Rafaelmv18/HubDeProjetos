@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hub de Projetos — Documento de Requisitos</title>
+<style>
+  :root {
+    --bg: #f7f7f5;
+    --surface: #ffffff;
+    --text: #1f2328;
+    --muted: #5d6470;
+    --border: #e3e3df;
+    --accent: #3b5bdb;
+    --accent-soft: #edf1ff;
+    --mvp: #2b8a3e;   --mvp-bg: #e6f4ea;
+    --v2: #b35c00;    --v2-bg: #fff1e0;
+    --fut: #6b4fbb;   --fut-bg: #f1ecfc;
+    --out: #868e96;   --out-bg: #f1f3f5;
+    --warn-bg: #fff8e1; --warn-border: #f0c14b;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 15px;
+  }
+  .layout { display: flex; min-height: 100vh; }
+
+  nav {
+    width: 260px; flex-shrink: 0;
+    position: sticky; top: 0; height: 100vh; overflow-y: auto;
+    background: var(--surface); border-right: 1px solid var(--border);
+    padding: 28px 20px;
+  }
+  nav .brand { font-weight: 700; font-size: 17px; margin-bottom: 4px; }
+  nav .sub { color: var(--muted); font-size: 12px; margin-bottom: 24px; }
+  nav a {
+    display: block; color: var(--muted); text-decoration: none;
+    padding: 6px 10px; border-radius: 6px; font-size: 14px;
+  }
+  nav a:hover { background: var(--accent-soft); color: var(--accent); }
+  nav .group { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: #9aa0a8; margin: 18px 10px 6px; }
+
+  main { flex: 1; max-width: 1000px; padding: 40px 48px 80px; }
+  header.hero {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 28px 32px; margin-bottom: 32px;
+  }
+  header.hero h1 { margin: 0 0 6px; font-size: 28px; }
+  header.hero p { margin: 0; color: var(--muted); }
+  .meta { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 16px; font-size: 13px; color: var(--muted); }
+  .meta span b { color: var(--text); font-weight: 600; }
+
+  section {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 28px 32px; margin-bottom: 24px;
+    scroll-margin-top: 20px;
+  }
+  h2 { margin: 0 0 16px; font-size: 21px; display: flex; align-items: center; gap: 10px; }
+  h2 .num {
+    background: var(--accent-soft); color: var(--accent);
+    font-size: 13px; font-weight: 700;
+    width: 28px; height: 28px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  h3 { font-size: 16px; margin: 26px 0 10px; }
+  h3:first-of-type { margin-top: 8px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 8px 0; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 600; background: #fafaf8; }
+  td.id { font-family: ui-monospace, Consolas, monospace; font-size: 13px; color: var(--muted); white-space: nowrap; width: 64px; }
+  td.prio { width: 80px; }
+
+  .badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; letter-spacing: .03em; }
+  .b-mvp { background: var(--mvp-bg); color: var(--mvp); }
+  .b-v2  { background: var(--v2-bg);  color: var(--v2); }
+  .b-fut { background: var(--fut-bg); color: var(--fut); }
+  .b-out { background: var(--out-bg); color: var(--out); }
+
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .card { border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; background: #fcfcfb; }
+  .card h4 { margin: 0 0 8px; font-size: 15px; }
+  .card ul { margin: 0; padding-left: 18px; }
+  .card.mvp { border-top: 4px solid var(--mvp); }
+  .card.v2  { border-top: 4px solid var(--v2); }
+  .card.fut { border-top: 4px solid var(--fut); }
+  .card.out { border-top: 4px solid var(--out); }
+
+  .callout { background: var(--warn-bg); border: 1px solid var(--warn-border); border-radius: 10px; padding: 14px 18px; margin: 12px 0; }
+  .note { background: var(--accent-soft); border-radius: 10px; padding: 14px 18px; margin: 12px 0; }
+  .scenario { border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; margin: 14px 0; }
+  .scenario h4 { margin: 0 0 4px; font-size: 15px; }
+  .scenario p { margin: 0 0 8px; color: var(--muted); font-size: 14px; }
+
+  .diagram { display: flex; flex-direction: column; align-items: center; gap: 10px; margin: 12px 0 4px; }
+  .box { border: 2px solid var(--border); border-radius: 10px; padding: 10px 18px; background: #fff; text-align: center; font-weight: 600; font-size: 14px; }
+  .box small { display: block; font-weight: 400; color: var(--muted); font-size: 12px; }
+  .box.user { border-color: #adb5bd; }
+  .box.auth { border-color: var(--accent); background: var(--accent-soft); }
+  .box.ai   { border-color: var(--fut); background: var(--fut-bg); min-width: 320px; }
+  .arrow { color: #adb5bd; font-size: 18px; line-height: 1; }
+  .modules { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; width: 100%; }
+  .modules .box { padding: 12px 8px; }
+  .flow-links { font-size: 13px; color: var(--muted); text-align: center; }
+
+  .tree { font-family: ui-monospace, Consolas, monospace; font-size: 13.5px; background: #fafaf8; border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px; white-space: pre; overflow-x: auto; line-height: 1.7; }
+
+  ol.flow { counter-reset: step; list-style: none; padding: 0; margin: 0; }
+  ol.flow li { counter-increment: step; position: relative; padding: 10px 0 10px 46px; border-bottom: 1px dashed var(--border); }
+  ol.flow li:last-child { border-bottom: none; }
+  ol.flow li::before {
+    content: counter(step); position: absolute; left: 0; top: 8px;
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--accent); color: #fff; font-weight: 700; font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .status { font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 6px; white-space: nowrap; }
+  .s-open { background: var(--warn-bg); color: #8a6100; }
+  .s-done { background: var(--mvp-bg); color: var(--mvp); }
+  .s-rev  { background: var(--fut-bg); color: var(--fut); }
+
+  .epic { margin: 30px 0 10px; padding-bottom: 6px; border-bottom: 2px solid var(--accent-soft); font-size: 17px; display: flex; justify-content: space-between; align-items: baseline; }
+  .epic small { font-size: 12px; color: var(--muted); font-weight: 400; }
+  .story { border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 10px; padding: 14px 18px; margin: 12px 0; background: #fff; }
+  .story .head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
+  .story .title { font-weight: 700; font-size: 15px; }
+  .story .title .sid { font-family: ui-monospace, Consolas, monospace; color: var(--accent); margin-right: 6px; }
+  .story .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .story .rf { font-family: ui-monospace, Consolas, monospace; font-size: 11px; color: var(--muted); background: #f1f1ee; padding: 2px 6px; border-radius: 4px; }
+  .story .size { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: #e7f5ff; color: #1864ab; }
+  .story .narrative { background: #fafaf8; border-radius: 8px; padding: 8px 12px; margin: 6px 0 10px; font-size: 14px; }
+  .story .narrative b { color: var(--accent); }
+  .story ul.ac { list-style: none; padding: 0; margin: 0; font-size: 14px; }
+  .story ul.ac li { padding: 3px 0 3px 24px; position: relative; }
+  .story ul.ac li::before { content: "✓"; position: absolute; left: 4px; color: var(--mvp); font-weight: 700; }
+  .story ul.ac li.pend::before { content: "?"; color: #8a6100; }
+  .phase { display: grid; grid-template-columns: 140px 1fr; gap: 0; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin: 10px 0; }
+  .phase > div { padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .phase > div:nth-last-child(-n+2) { border-bottom: none; }
+  .phase .ph { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+
+  code { font-family: ui-monospace, Consolas, monospace; background: #f1f1ee; padding: 1px 6px; border-radius: 4px; font-size: 13px; }
+
+  @media (max-width: 900px) {
+    nav { display: none; }
+    main { padding: 20px; }
+    .grid-2, .grid-4, .modules { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+
+<nav>
+  <div class="brand">Hub de Projetos</div>
+  <div class="sub">Documento de requisitos · v0.18</div>
+
+  <div class="group">Produto</div>
+  <a href="#visao">1. Visão</a>
+  <a href="#escopo">2. Escopo</a>
+  <a href="#acesso">3. Modelo de acesso</a>
+
+  <div class="group">Requisitos</div>
+  <a href="#rf">4. Funcionais</a>
+  <a href="#rnf">5. Não funcionais</a>
+  <a href="#historias">6. Histórias de usuário</a>
+
+  <div class="group">Desenho</div>
+  <a href="#modulos">7. Módulos</a>
+  <a href="#entidades">8. Entidades</a>
+  <a href="#fluxo">9. Fluxo principal</a>
+
+  <div class="group">Projeto</div>
+  <a href="#decisoes">10. Decisões</a>
+  <a href="#proximos">11. Próximos passos</a>
+  <a href="#historico">12. Histórico</a>
+
+  <div class="group">Outros documentos</div>
+  <a href="wireframes.html">🖼 Wireframes das telas</a>
+  <a href="modelo-de-dados.html">🗄 Modelo de dados</a>
+  <a href="design-system.html">🎨 Design system</a>
+  <a href="arquitetura.html">🏗 Arquitetura</a>
+  <a href="plano.html">✅ Plano de construção</a>
+  <a href="guia.html">📘 Guia do desenvolvedor</a>
+  <a href="../landing/index.html">🌐 Landing page</a>
+</nav>
+
+<main>
+
+<header class="hero">
+  <h1>Hub de Projetos <span style="color:var(--muted);font-weight:400;font-size:18px">(nome provisório)</span></h1>
+  <p>Plataforma para um setor gerir o próprio trabalho: tarefas, arquivos e reuniões num só lugar, com acesso hierárquico e IA conectando tudo.</p>
+  <div class="meta">
+    <span>Tipo: <b>Projeto de portfólio full-stack</b></span>
+    <span>Fase atual: <b>Definição de escopo</b></span>
+    <span>Atualizado em: <b>06/11/2026</b></span>
+  </div>
+</header>
+
+<!-- 1. VISÃO -->
+<section id="visao">
+  <h2><span class="num">1</span> Visão do produto</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h4>🎯 Problema</h4>
+      Equipes espalham o trabalho em várias ferramentas: tarefas num lugar, arquivos no Google Drive, reuniões no Google Meet. O contexto se perde entre elas, e controlar quem pode ver o quê fica difícil.
+    </div>
+    <div class="card">
+      <h4>💡 Solução</h4>
+      Um <b>workspace por setor</b> (no estilo do Jira) que reúne <b>tarefas (kanban)</b>, <b>arquivos</b> e <b>reuniões</b>, respeitando a <b>hierarquia</b> da equipe. Na V2, um <b>assistente de IA</b> ajuda a dividir tarefas, fazer atas e resumir ou criar documentos.
+    </div>
+    <div class="card">
+      <h4>👥 Público-alvo</h4>
+      Um setor de uma empresa (ou um laboratório de pesquisa) organizado em grupos, com líderes e membros. Até ~50 pessoas.
+    </div>
+    <div class="card">
+      <h4>📖 Origem da ideia</h4>
+      Experiência real num projeto de pesquisa em que as reuniões aconteciam no Meet e os documentos ficavam no Drive, sem nada integrado.
+    </div>
+  </div>
+  <div class="note"><b>Referências:</b> Jira, Trello (tarefas) · Google Drive (arquivos) · Google Meet (reuniões).<br><b>Diferencial:</b> integração com <b>acesso hierárquico</b>. A reunião vira ata, a ata vira tarefas, e cada pessoa vê exatamente o que o seu cargo permite.</div>
+</section>
+
+<!-- 2. ESCOPO -->
+<section id="escopo">
+  <h2><span class="num">2</span> Escopo do projeto</h2>
+
+  <h3>2.1 Objetivo do MVP</h3>
+  <div class="note">Um setor consegue <b>criar o seu workspace, organizar as pessoas em grupos com hierarquia, gerir tarefas no kanban, guardar arquivos e fazer reuniões</b>, com cada pessoa vendo apenas o que o seu cargo e o seu grupo permitem.</div>
+
+  <h3>2.2 O que entra em cada fase</h3>
+  <div class="grid-4">
+    <div class="card mvp">
+      <h4><span class="badge b-mvp">MVP</span></h4>
+      <ul>
+        <li>Cadastro, login, perfil</li>
+        <li>Workspace do setor</li>
+        <li>Cargos e hierarquia</li>
+        <li>Grupos (1 nível) com líder</li>
+        <li>Visibilidade em <b>tudo</b>: workspace, grupo, cargo, pessoas</li>
+        <li>Kanban com tarefas por grupo, tarefas privadas e filtro por grupo</li>
+        <li>Superiores editam itens de subordinados, com <b>auditoria</b></li>
+        <li>Arquivos com pasta por grupo</li>
+        <li>Reuniões agendadas + vídeo <b>integrado</b> (serviço pronto)</li>
+        <li>Notificações no sistema</li>
+        <li><b>Colaboração em tempo real:</b> presença, kanban ao vivo e documentos editados em conjunto, com histórico de versões</li>
+      </ul>
+    </div>
+    <div class="card v2">
+      <h4><span class="badge b-v2">V2</span></h4>
+      <ul>
+        <li><b>Assistente de IA</b> em chat</li>
+        <li>Ata da reunião pela IA</li>
+        <li>IA divide tarefas</li>
+        <li>IA resume e cria arquivos</li>
+        <li>Transcrição de reuniões</li>
+        <li>Notificações por e-mail</li>
+        <li>Preview e versões de arquivos enviados</li>
+        <li>Vários workspaces por usuário</li>
+        <li>Login com Google</li>
+      </ul>
+    </div>
+    <div class="card fut">
+      <h4><span class="badge b-fut">FUTURO</span></h4>
+      <ul>
+        <li>Subgrupos (hierarquia em cascata)</li>
+        <li>Cargos personalizados</li>
+        <li>"Perguntar ao workspace"</li>
+        <li>Relatórios automáticos</li>
+        <li>Comentários em trechos de documentos</li>
+        <li>Visualizações de lista e calendário</li>
+      </ul>
+    </div>
+    <div class="card out">
+      <h4><span class="badge b-out">FORA DO ESCOPO</span></h4>
+      <ul>
+        <li>Vídeo-chamada feita do zero</li>
+        <li>App mobile nativo</li>
+        <li>Workspace da empresa inteira (o foco é o setor)</li>
+        <li>Planos pagos e cobrança</li>
+        <li>Chat geral estilo Slack</li>
+        <li>Integração com Drive/Jira externos</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>2.3 Premissas e restrições</h3>
+  <ul>
+    <li><b>Um workspace = um setor</b> (não a empresa toda)</li>
+    <li>Uso principal no <b>desktop</b> (navegador), funcional no celular</li>
+    <li>A vídeo-chamada usa um <b>serviço existente embutido</b> no sistema</li>
+    <li>No MVP, a hierarquia tem <b>um nível de grupos</b> (sem subgrupos)</li>
+    <li>Projeto desenvolvido por uma pessoa, como portfólio: o escopo do MVP precisa caber em algumas semanas ou poucos meses</li>
+  </ul>
+</section>
+
+<!-- 3. ACESSO -->
+<section id="acesso">
+  <h2><span class="num">3</span> Modelo de acesso</h2>
+
+  <h3>3.1 Estrutura</h3>
+<div class="tree">🏢 Workspace "Setor de Pesquisa"           ← criado pelo Proprietário
+ ├── 🌐 Espaço geral                          ← o que é de todos do setor
+ │     ├── 📁 Pastas  · 📋 Quadros  · 🎥 Reuniões
+ ├── 👥 Grupo A  (líder: Fábio)
+ │     ├── 📁 Pasta do Grupo A  · 📋 Quadro do A  · 🎥 Reuniões do A
+ ├── 👥 Grupo B  (líder: João)
+ │     ├── 📁 Pasta do Grupo B  · 📋 Quadro do B  · 🎥 Reuniões do B
+ └── 👥 Grupo C  (líder: Hugo)
+       └── ...</div>
+  <p>Todo item (pasta, arquivo, quadro, tarefa, reunião) <b>vive em um espaço</b>: o espaço geral ou o espaço de um grupo. Se a Ana está nos Grupos A e B e cria um arquivo dentro da pasta do Grupo A, esse arquivo <b>pertence ao Grupo A</b>. Quem cria algo dentro de um espaço (um grupo ou o geral) cria nele. Fora de um espaço, quem está em mais de um grupo escolhe qual; quem está em um só vai direto para ele; quem não está em nenhum cria no espaço geral (D09).</p>
+
+  <h3>3.2 Cargos (hierarquia)</h3>
+  <table>
+    <tr><th>Nível</th><th>Cargo</th><th>Tem autoridade sobre</th><th>Pode</th></tr>
+    <tr><td class="id">4</td><td><b>👑 Proprietário</b><br><small style="color:var(--muted)">criador do workspace</small></td><td>Todo o workspace</td><td>Tudo: cargos, grupos, membros, configurações. Não pode ser restringido.</td></tr>
+    <tr><td class="id">3</td><td><b>Administrador</b></td><td>Todo o workspace (abaixo dele)</td><td>Gerenciar membros e grupos</td></tr>
+    <tr><td class="id">2</td><td><b>Líder de grupo</b></td><td><b>O grupo que lidera</b> e os itens de cargos abaixo no espaço geral</td><td>Gerenciar membros e conteúdo do próprio grupo</td></tr>
+    <tr><td class="id">1</td><td><b>Membro</b></td><td>Ninguém</td><td>Criar e editar tarefas, enviar arquivos, participar de reuniões</td></tr>
+    <tr><td class="id">0</td><td><b>Convidado</b></td><td>Ninguém</td><td>Visualizar (e talvez comentar) o que foi compartilhado com ele</td></tr>
+  </table>
+
+  <h3>3.3 Tipos de visibilidade (valem para tudo: pastas, arquivos, quadros, tarefas e reuniões)</h3>
+  <table>
+    <tr><th>Visibilidade</th><th>Quem vê</th><th>Exemplo de uso</th></tr>
+    <tr><td><b>🌐 Workspace</b></td><td>Todos do setor</td><td>Comunicado geral, calendário do setor</td></tr>
+    <tr><td><b>👥 Grupo</b></td><td>Todos os membros do grupo</td><td>Tarefa atribuída a um grupo de funcionários</td></tr>
+    <tr><td><b>🎖 Cargo</b></td><td>Todos de um cargo (ex.: "Líderes")</td><td>Reunião de líderes, pasta de comunicados entre líderes, tarefas para líderes</td></tr>
+    <tr><td><b>🔒 Privado / pessoas específicas</b></td><td>Quem criou + as pessoas escolhidas</td><td>Arquivo para uma tarefa específica, documento enviado a uma pessoa</td></tr>
+  </table>
+  <div class="note">Em <b>todos</b> os tipos, os <b>superiores na cadeia</b> também enxergam (regra abaixo) e podem <b>editar e excluir</b>. Edições e exclusões feitas por um superior no item de um subordinado ficam registradas na <b>auditoria</b>, e o dono é notificado.</div>
+
+  <h3>3.4 Regra de acesso</h3>
+  <div class="callout">
+    Um usuário vê um item se <b>pelo menos uma</b> condição for verdadeira:<br><br>
+    <b>(a)</b> foi ele quem criou o item<br>
+    <b>(b)</b> ele está incluído na visibilidade do item (workspace, o grupo, o cargo ou a lista de pessoas)<br>
+    <b>(c)</b> ele é <b>superior na cadeia</b>: tem cargo <b>acima</b> do nível guardado no item (o cargo de quem criou, na data da criação) <b>e</b> tem autoridade sobre o espaço onde o item vive. No espaço geral, basta ter o cargo acima (D22, D25)
+  </div>
+
+  <h3>3.5 Os três princípios</h3>
+  <div class="grid-2">
+    <div class="card"><h4>⚖️ Cargos iguais não se veem</h4>O privado de um membro não aparece para outro membro. O privado entre dois líderes não aparece para um terceiro líder.</div>
+    <div class="card"><h4>🧱 Grupos são isolados</h4>O líder do Grupo B não vê o que é privado no Grupo A, mesmo sendo líder. Só quem tem autoridade sobre o A (o líder do A, os administradores e o proprietário) vê.</div>
+    <div class="card"><h4>⬆️ A informação sobe pela hierarquia</h4>Como numa empresa: se o líder do Grupo B precisa de algo do Grupo A, quem repassa é o líder do A, ou o item é <b>compartilhado diretamente</b> com ele.</div>
+    <div class="card"><h4>🔑 Compartilhar é sempre explícito</h4>A única forma de alguém fora da cadeia ver um item privado é ser adicionado a ele pela pessoa que tem acesso. Isso vale também entre administradores.</div>
+    <div class="card"><h4>📜 Poder com rastro</h4>O superior pode ver, editar e excluir o que é de quem está abaixo. Ver não deixa rastro, mas edições e exclusões ficam na auditoria (quem, o quê, quando e como estava antes) e o dono é avisado.</div>
+  </div>
+
+  <h3>3.6 Cenários</h3>
+  <p style="color:var(--muted);font-size:14px">Pessoas: <b>Carlos</b> (proprietário), <b>Diana</b> (administradora), <b>Fábio</b> (líder A), <b>João</b> (líder B), <b>Hugo</b> (líder C), <b>Ana</b>, <b>Gabi</b> e <b>Lia</b> (membros do A), <b>Bruno</b> (membro do B).</p>
+
+  <div class="scenario">
+    <h4>Cenário 1: membro cria um arquivo privado para uma colega</h4>
+    <p>Ana cria um arquivo privado na pasta do Grupo A e compartilha com a Gabi.</p>
+    <table>
+      <tr><th>Pessoa</th><th>Vê?</th><th>Por quê</th></tr>
+      <tr><td>Ana</td><td>✅</td><td>Criadora</td></tr>
+      <tr><td>Gabi</td><td>✅</td><td>Foi autorizada</td></tr>
+      <tr><td>Fábio (líder A)</td><td>✅</td><td>Superior na cadeia do Grupo A</td></tr>
+      <tr><td>Diana / Carlos</td><td>✅</td><td>Superiores com autoridade sobre todo o workspace</td></tr>
+      <tr><td>Lia (membro A)</td><td>❌</td><td>Mesmo cargo, não autorizada</td></tr>
+      <tr><td>João (líder B)</td><td>❌</td><td>Não tem autoridade sobre o Grupo A</td></tr>
+    </table>
+  </div>
+
+  <div class="scenario">
+    <h4>Cenário 2: líder cria um arquivo privado para outro líder</h4>
+    <p>Fábio (líder A) cria um arquivo privado para o João (líder B).</p>
+    <table>
+      <tr><th>Pessoa</th><th>Vê?</th><th>Por quê</th></tr>
+      <tr><td>Fábio / João</td><td>✅</td><td>Criador / autorizado</td></tr>
+      <tr><td>Diana / Carlos</td><td>✅</td><td>Cargo acima de líder</td></tr>
+      <tr><td>Hugo (líder C)</td><td>❌</td><td>Mesmo cargo, não autorizado</td></tr>
+      <tr><td>Ana (membro A)</td><td>❌</td><td>Cargo abaixo e não autorizada</td></tr>
+    </table>
+  </div>
+
+  <div class="scenario">
+    <h4>Cenário 3: reunião de líderes</h4>
+    <p>Diana agenda uma reunião com visibilidade <b>Cargo: Líderes</b>.</p>
+    <table>
+      <tr><th>Pessoa</th><th>Vê?</th><th>Por quê</th></tr>
+      <tr><td>Fábio, João, Hugo</td><td>✅</td><td>São líderes</td></tr>
+      <tr><td>Diana / Carlos</td><td>✅</td><td>Criadora / superior</td></tr>
+      <tr><td>Ana, Bruno…</td><td>❌</td><td>Não são líderes</td></tr>
+    </table>
+  </div>
+
+  <div class="scenario">
+    <h4>Cenário 4: tarefa do grupo no kanban</h4>
+    <p>Fábio cria no quadro do Grupo A a tarefa "Coletar dados", visível ao <b>Grupo A</b>, e atribui à Ana e à Lia.</p>
+    <table>
+      <tr><th>Pessoa</th><th>Vê?</th><th>Por quê</th></tr>
+      <tr><td>Todo o Grupo A</td><td>✅</td><td>Visibilidade do grupo</td></tr>
+      <tr><td>Diana / Carlos</td><td>✅</td><td>Superiores</td></tr>
+      <tr><td>João, Bruno (Grupo B)</td><td>❌</td><td>Grupos isolados</td></tr>
+    </table>
+    <p style="margin-top:8px">A Diana vê os quadros de todos os grupos e usa o <b>filtro por grupo</b> para ver só o Grupo A.</p>
+  </div>
+
+  <div class="scenario">
+    <h4>Cenário 6: superior edita um item privado de subordinado</h4>
+    <p>Fábio (líder A) abre e edita o arquivo privado que a Ana compartilhou com a Gabi (cenário 1).</p>
+    <table>
+      <tr><th>Ação</th><th>Permitido?</th><th>Registro</th></tr>
+      <tr><td>Visualizar</td><td>✅</td><td>Sem registro: os subordinados sabem que os superiores têm acesso</td></tr>
+      <tr><td>Editar</td><td>✅</td><td>Auditoria (quem, quando, versão anterior) + Ana é notificada</td></tr>
+      <tr><td>Excluir</td><td>✅</td><td>Auditoria (quem, quando, cópia do estado anterior) + Ana é notificada</td></tr>
+    </table>
+    <p style="margin-top:8px">A auditoria é consultada pelo proprietário e pelos administradores, e ninguém consegue apagá-la.</p>
+  </div>
+
+  <div class="scenario">
+    <h4>Cenário 7: administradores entre si</h4>
+    <p>Diana (administradora) cria um item privado. Existe outro administrador, o Rui.</p>
+    <table>
+      <tr><th>Pessoa</th><th>Vê?</th><th>Por quê</th></tr>
+      <tr><td>Rui (administrador)</td><td>❌</td><td>Mesmo cargo; só vê se a Diana compartilhar</td></tr>
+      <tr><td>Carlos (proprietário)</td><td>✅</td><td>Cargo acima</td></tr>
+    </table>
+  </div>
+
+  <div class="scenario">
+    <h4>Cenário 5: membro em dois grupos</h4>
+    <p>Ana está nos Grupos A e B e cria um arquivo privado na pasta do <b>Grupo A</b>.</p>
+    <table>
+      <tr><th>Pessoa</th><th>Vê?</th><th>Por quê</th></tr>
+      <tr><td>Fábio (líder A)</td><td>✅</td><td>O arquivo vive no Grupo A</td></tr>
+      <tr><td>João (líder B)</td><td>❌</td><td>Não tem autoridade sobre o Grupo A, só vê se for compartilhado com ele</td></tr>
+    </table>
+  </div>
+
+  <div class="scenario">
+    <h4>Cenário 8: item privado no espaço geral</h4>
+    <p>Ana (membro) cria um arquivo privado no <b>espaço geral</b>.</p>
+    <table>
+      <tr><th>Pessoa</th><th>Vê?</th><th>Por quê</th></tr>
+      <tr><td>Fábio, João, Hugo (líderes)</td><td>✅</td><td>Cargo acima, e no espaço geral não é preciso liderar um grupo (D25)</td></tr>
+      <tr><td>Diana / Carlos</td><td>✅</td><td>Cargo acima</td></tr>
+      <tr><td>Lia (membro)</td><td>❌</td><td>Mesmo cargo, não autorizada</td></tr>
+    </table>
+    <p style="margin-top:8px">Quem tem cargo acima também pode <b>editar e excluir</b>, com registro na auditoria e aviso para a Ana.</p>
+  </div>
+
+  <div class="scenario">
+    <h4>Cenário 9: membro promovida a líder</h4>
+    <p>Ana criou um arquivo privado no Grupo A quando era membro. Depois, ela é promovida a líder.</p>
+    <table>
+      <tr><th>Situação</th><th>Fábio (líder A) vê?</th><th>Por quê</th></tr>
+      <tr><td>Arquivo antigo</td><td>✅</td><td>O item guarda o nível de quando foi criado: membro (D22)</td></tr>
+      <tr><td>Arquivo antigo, depois de Ana subir o nível para líder</td><td>❌</td><td>Mesmo nível. Diana e Carlos continuam vendo</td></tr>
+      <tr><td>Arquivo novo criado por Ana no Grupo A</td><td>❌</td><td>Já nasce com o nível de líder</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- 4. RF -->
+<section id="rf">
+  <h2><span class="num">4</span> Requisitos Funcionais</h2>
+  <div class="legend">
+    <span><span class="badge b-mvp">MVP</span> versão 1</span>
+    <span><span class="badge b-v2">V2</span> segunda fase</span>
+    <span><span class="badge b-fut">FUTURO</span> desejável</span>
+  </div>
+
+  <h3>4.1 Conta e acesso</h3>
+  <table>
+    <tr><th>ID</th><th>Requisito</th><th>Prioridade</th></tr>
+    <tr><td class="id">RF01</td><td>Cadastro, login e logout</td><td class="prio"><span class="badge b-mvp">MVP</span></td></tr>
+    <tr><td class="id">RF02</td><td>Recuperação de senha por e-mail</td><td class="prio"><span class="badge b-mvp">MVP</span></td></tr>
+    <tr><td class="id">RF03</td><td>Editar perfil (nome, foto)</td><td class="prio"><span class="badge b-mvp">MVP</span></td></tr>
+    <tr><td class="id">RF04</td><td>Login com Google</td><td class="prio"><span class="badge b-v2">V2</span></td></tr>
+    <tr><td class="id">RF05</td><td>Convidar usuários para o workspace por e-mail ou link</td><td class="prio"><span class="badge b-mvp">MVP</span></td></tr>
+    <tr><td class="id">RF06</td><td>Atribuir e alterar cargos (proprietário, administrador, líder de grupo, membro, convidado)</td><td class="prio"><span class="badge b-mvp">MVP</span></td></tr>
+  </table>
+
+  <h3>4.2 Workspace, grupos e permissões</h3>
+  <table>
+    <tr><th>ID</th><th>Requisito</th><th>Prioridade</th></tr>
+    <tr><td class="id">RF07</td><td>Criar o workspace do setor; o criador se torna Proprietário automaticamente</td><td class="prio"><span class="badge b-mvp">MVP</span></td></tr>
+    <tr><td class="id">RF08</td><td>Gerenciar membros do workspace (listar, remover, alterar cargo)</td><td class="prio"><span class="badge b-mvp">MVP</span></td></tr>
+    <tr><td class="id">RF38</td><td>Criar, editar e excluir grupos, e adicionar ou remover membros (um membro pode estar em vários grupos)</td><td class="prio"><span class="badge b-mvp">MVP</span></td></tr>
+    <tr><td class="id">RF48</td><td>Definir o líder de cada grupo</td><td class="prio"><span class="badge b-mvp">MVP</span></td></tr>
+    <tr><td class="id">RF51</td><td>Cada grupo tem o seu espaço próprio (pasta raiz, quadro e reuniões do grupo), além do espaço geral do workspace</td><td class="prio"><span class="badge b-mvp">MVP</span></td></tr>
+    <tr><td class="id">RF39</td><td>Definir a visibilidade de <b>qualquer item</b> (pasta, arquivo, quadro, tarefa, reunião): workspace, grupo, cargo ou privado/pessoas específicas</td><td class="prio"><span class="badge b-mvp">MVP</span></td></tr>
+    <tr><td class="id">RF49</td><td>Compartilhar um item privado com pessoas específicas e remover o acesso depois</td><td class="prio"><span class="badge b-mvp">MVP</span></td></tr>
+    <tr><td class="id">RF40</td><td>Acesso hierárquico: superiores com autoridade sobre o espaço do item veem o conteúdo de quem está abaixo deles, inclusive privados; cargos iguais e grupos diferentes não se veem (seção 3.4)</td><td class="prio"><span class="badge b-mvp">MVP</span></td></tr>
+    <tr><td class="id">RF62</td><td>Ao criar um item fora de um espaço, quem está em mais de um grupo escolhe qual. Com um grupo só, o item vai direto para ele; sem grupo, vai para o espaço geral. Dentro de um espaço, o item nasce nele (D09)</td><td class="prio"><span class="badge b-mvp">MVP</span></td></tr>
+    <tr><td class="id">RF63</td><td>O dono de um item pode subir o nível de hierarquia dele até o próprio cargo atual, depois de uma promoção (D22)</td><td class="prio"><span class="badge b-mvp">MVP</span></td></tr>
+    <tr><td class="id">RF56</td><td>Superiores podem <b>editar e excluir</b> os itens de quem está abaixo deles na cadeia (inclusive os privados)</td><td class="prio"><span class="badge b-mvp">MVP</span></td></tr>
+    <tr><td class="id">RF55</td><td><b>Auditoria:</b> registrar toda <b>edição, exclusão ou alteração de visibilidade</b> feita por um superior no item de um subordinado (visualizações não são registradas), com quem, o quê, quando e o estado anterior; consulta pelo proprietário e pelos administradores</td><td class="prio"><span class="badge b-mvp">MVP</span></td></tr>
+    <tr><td class="id">RF41</td><td>Um usuário pode participar de vários workspaces e alternar entre eles</td><td class="prio"><span class="badge b-v2">V2</span></td></tr>
+    <tr><td class="id">RF42</td><td>Transferir a propriedade do workspace</td><td class="prio"><span class="badge b-v2">V2</span></td></tr>
+    <tr><td class="id">RF09</td><td>Página inicial do workspace/grupo (atividades recentes, próximas reuniões, tarefas atrasadas)</td><td class="prio"><span class="badge b-v2">V2</span></td></tr>
+    <tr><td class="id">RF43</td><td>Cargos personalizados</td><td class="prio"><span class="badge b-fut">FUTURO</span></td></tr>
+    <tr><td class="id">RF50</td><td>Subgrupos com hierarquia em cascata (Grupo A → Subgrupo A1)</td><td class="prio"><span class="badge b-fut">FUTURO</span></td></tr>
+  </table>
+
+  <h3>4.3 Tarefas (Kanban)</h3>
+  <table>
+    <tr><th>ID</th><th>Requisito</th><th>Prioridade</th></tr>
+    <tr><td class="id">RF10</td><td>Criar quadros (geral ou de grupo) com colunas personalizáveis</td><td class="prio"><span class="badge b-mvp">MVP</span></td></tr>
+    <tr><td class="id">RF11</td><td>Criar, editar, mover (drag &amp; drop) e excluir cards</td><td class="prio"><span class="badge b-mvp">MVP</span></td></tr>
+    <tr><td class="id">RF12</td><td>Card com título, descrição, responsável(eis), prazo, prioridade e etiquetas</td><td class="prio"><span class="badge b-mvp">MVP</span></td></tr>
+    <tr><td class="id">RF52</td><td>Atribuir uma tarefa a um grupo de funcionários, visível a todo o grupo</td><td class="prio"><span class="badge b-mvp">MVP</span></td></tr>
+    <tr><td class="id">RF53</td><td>Criar tarefa privada para uma pessoa específica (vista só por ela, pelo criador e pelos superiores)</td><td class="prio"><span class="badge b-mvp">MVP</span></td></tr>
+    <tr><td class="id">RF54</td><td><b>Filtro por grupo</b> no quadro para quem enxerga vários grupos (administradores, proprietário): mostrar só as tarefas de um ou mais grupos escolhidos</td><td class="prio"><span class="badge b-mvp">MVP</span></td></tr>
+    <tr><td class="id">RF13</td><td>Comentários nos cards</td><td class="prio"><span class="badge b-mvp">MVP</span></td></tr>
+    <tr><td class="id">RF14</td><td>Checklist (subtarefas) dentro do card</td><td class="prio"><span class="badge b-v2">V2</span></td></tr>
+    <tr><td class="id">RF15</td><td>Anexar arquivos ao card (respeitando a visibilidade do arquivo)</td><td class="prio"><span class="badge b-v2">V2</span></td></tr>
+    <tr><td class="id">RF16</td><td>Filtros (responsável, etiqueta, prazo) e busca</td><td class="prio"><span class="badge b-v2">V2</span></td></tr>
+    <tr><td class="id">RF18</td><td>Visualizações extras: lista e calendário</td><td class="prio"><span class="badge b-fut">FUTURO</span></td></tr>
+  </table>
+
+  <h3>4.4 Arquivos</h3>
+  <table>
+    <tr><th>ID</th><th>Requisito</th><th>Prioridade</th></tr>
+    <tr><td class="id">RF19</td><td>Upload, download e exclusão de arquivos</td><td class="prio"><span class="badge b-mvp">MVP</span></td></tr>
+    <tr><td class="id">RF20</td><td>Organização em pastas, com pasta raiz por grupo e uma pasta geral do workspace</td><td class="prio"><span class="badge b-mvp">MVP</span></td></tr>
+    <tr><td class="id">RF21</td><td>Visibilidade por pasta e por arquivo; subpastas herdam a da pasta-mãe e só podem restringir mais</td><td class="prio"><span class="badge b-mvp">MVP</span></td></tr>
+    <tr><td class="id">RF22</td><td>Pré-visualização (PDF, imagens)</td><td class="prio"><span class="badge b-v2">V2</span></td></tr>
+    <tr><td class="id">RF23</td><td>Histórico de versões do arquivo</td><td class="prio"><span class="badge b-v2">V2</span></td></tr>
+  </table>
+  <div class="note">Existem dois tipos de conteúdo: <b>arquivos enviados</b> (PDF, DOCX, imagens), que são guardados, visualizados e baixados, e <b>documentos nativos</b>, criados dentro do sistema e editáveis em conjunto (seção 4.8). Os dois ficam nas mesmas pastas e seguem as mesmas regras de visibilidade.</div>
+
+  <h3>4.5 Reuniões</h3>
+  <table>
+    <tr><th>ID</th><th>Requisito</th><th>Prioridade</th></tr>
+    <tr><td class="id">RF25</td><td>Agendar reunião (data, pauta, participantes) com visibilidade (ex.: reunião de líderes)</td><td class="prio"><span class="badge b-mvp">MVP</span></td></tr>
+    <tr><td class="id">RF26</td><td>Sala de vídeo dentro do sistema, usando um <b>serviço de vídeo existente integrado</b> (áudio, vídeo, compartilhar tela)</td><td class="prio"><span class="badge b-mvp">MVP</span></td></tr>
+    <tr><td class="id">RF27</td><td>Gravação / transcrição da reunião</td><td class="prio"><span class="badge b-v2">V2</span></td></tr>
+    <tr><td class="id">RF28</td><td>Ata vinculada à reunião (manual ou gerada por IA)</td><td class="prio"><span class="badge b-v2">V2</span></td></tr>
+    <tr><td class="id">RF29</td><td>Chat durante a reunião</td><td class="prio"><span class="badge b-fut">FUTURO</span></td></tr>
+  </table>
+
+  <h3>4.6 Inteligência Artificial: Assistente</h3>
+  <div class="note">A IA é um <b>assistente em formato de chat</b>, disponível em qualquer tela do sistema. Ele <b>propõe</b> e o usuário <b>confirma</b>: nenhuma ação (criar tarefa, salvar arquivo, publicar ata) é executada sem aprovação. O assistente só enxerga o que o próprio usuário pode ver.</div>
+  <table>
+    <tr><th>ID</th><th>Requisito</th><th>Prioridade</th></tr>
+    <tr><td class="id">RF30</td><td><b>Chat do assistente</b> (painel lateral), ciente do contexto: workspace, grupo, quadro ou arquivo abertos</td><td class="prio"><span class="badge b-v2">V2</span></td></tr>
+    <tr><td class="id">RF31</td><td><b>Dividir tarefas:</b> a partir de um objetivo, propor tarefas, prazos e responsáveis; o usuário edita e aprova</td><td class="prio"><span class="badge b-v2">V2</span></td></tr>
+    <tr><td class="id">RF32</td><td><b>Ata durante a reunião:</b> transcrever e montar a ata ao vivo; ao final o usuário revisa e salva</td><td class="prio"><span class="badge b-v2">V2</span></td></tr>
+    <tr><td class="id">RF33</td><td><b>Sugerir tarefas a partir da ata</b>, para aprovação</td><td class="prio"><span class="badge b-v2">V2</span></td></tr>
+    <tr><td class="id">RF34</td><td><b>Resumir arquivos</b> (PDF, DOCX, TXT) e responder perguntas sobre eles</td><td class="prio"><span class="badge b-v2">V2</span></td></tr>
+    <tr><td class="id">RF44</td><td><b>Criar documentos</b> (relatórios, rascunhos) e salvar na pasta escolhida, com a visibilidade escolhida</td><td class="prio"><span class="badge b-v2">V2</span></td></tr>
+    <tr><td class="id">RF45</td><td>Histórico das conversas com o assistente</td><td class="prio"><span class="badge b-v2">V2</span></td></tr>
+    <tr><td class="id">RF46</td><td>"Perguntar ao workspace": respostas com base no que o usuário pode acessar</td><td class="prio"><span class="badge b-fut">FUTURO</span></td></tr>
+    <tr><td class="id">RF47</td><td>Relatório semanal automático do grupo/workspace</td><td class="prio"><span class="badge b-fut">FUTURO</span></td></tr>
+  </table>
+
+  <h3>4.7 Notificações e atividade</h3>
+  <table>
+    <tr><th>ID</th><th>Requisito</th><th>Prioridade</th></tr>
+    <tr><td class="id">RF35</td><td>Notificações no sistema (atribuição, compartilhamento, menção, reunião marcada, item meu editado ou excluído por um superior)</td><td class="prio"><span class="badge b-mvp">MVP</span></td></tr>
+    <tr><td class="id">RF36</td><td>Notificações por e-mail</td><td class="prio"><span class="badge b-v2">V2</span></td></tr>
+    <tr><td class="id">RF37</td><td>Log de atividades (quem fez o quê e quando), respeitando a visibilidade</td><td class="prio"><span class="badge b-v2">V2</span></td></tr>
+  </table>
+
+  <h3>4.8 Colaboração em tempo real</h3>
+  <div class="note">O sistema é <b>colaborativo</b>: quando duas ou mais pessoas estão no mesmo documento ou quadro, cada uma vê quem está ali e as alterações das outras <b>na hora</b>, sem recarregar a página.</div>
+  <table>
+    <tr><th>ID</th><th>Requisito</th><th>Prioridade</th></tr>
+    <tr><td class="id">RF59</td><td><b>Documentos nativos:</b> criar documentos de texto dentro do sistema (títulos, listas, negrito, links, tabelas simples), salvos nas pastas como qualquer arquivo</td><td class="prio"><span class="badge b-mvp">MVP</span></td></tr>
+    <tr><td class="id">RF24</td><td><b>Edição colaborativa:</b> várias pessoas editam o mesmo documento ao mesmo tempo, e cada uma vê as alterações das outras em tempo real</td><td class="prio"><span class="badge b-mvp">MVP</span></td></tr>
+    <tr><td class="id">RF58</td><td><b>Cursores dos colaboradores:</b> ver onde cada pessoa está escrevendo, com o nome e uma cor própria</td><td class="prio"><span class="badge b-mvp">MVP</span></td></tr>
+    <tr><td class="id">RF57</td><td><b>Presença:</b> ver os avatares de quem está visualizando o mesmo documento, quadro ou tarefa naquele momento</td><td class="prio"><span class="badge b-mvp">MVP</span></td></tr>
+    <tr><td class="id">RF17</td><td><b>Kanban em tempo real:</b> tarefas criadas, movidas ou editadas por outra pessoa aparecem na hora para todos que estão no quadro</td><td class="prio"><span class="badge b-mvp">MVP</span></td></tr>
+    <tr><td class="id">RF60</td><td><b>Histórico de versões do documento:</b> dentro do próprio documento, ver a lista de versões (quem editou e quando), comparar o antes e o depois e restaurar uma versão anterior</td><td class="prio"><span class="badge b-mvp">MVP</span></td></tr>
+    <tr><td class="id">RF61</td><td>Comentários em trechos selecionados do documento</td><td class="prio"><span class="badge b-fut">FUTURO</span></td></tr>
+  </table>
+</section>
+
+<!-- 5. RNF -->
+<section id="rnf">
+  <h2><span class="num">5</span> Requisitos Não Funcionais</h2>
+
+  <h3>🔒 Segurança</h3>
+  <table>
+    <tr><td class="id">RNF01</td><td>Senhas armazenadas com hash forte</td></tr>
+    <tr><td class="id">RNF02</td><td>Toda permissão é validada <b>no back-end</b>, nunca só no front</td></tr>
+    <tr><td class="id">RNF03</td><td>Comunicação via HTTPS</td></tr>
+    <tr><td class="id">RNF04</td><td>Arquivos acessíveis apenas por links autenticados ou temporários (nada público)</td></tr>
+    <tr><td class="id">RNF05</td><td>Proteção contra SQL injection, XSS e CSRF; rate limit no login e nas chamadas de IA</td></tr>
+    <tr><td class="id">RNF06</td><td>Dados enviados à IA restritos ao que o usuário pode acessar (LGPD e privacidade)</td></tr>
+    <tr><td class="id">RNF19</td><td>Toda ação proposta pela IA exige confirmação explícita do usuário</td></tr>
+    <tr><td class="id">RNF20</td><td>A regra de acesso (seção 3.4) vale também em buscas, notificações, links, anexos e listagens: nada "vaza" para quem não tem permissão</td></tr>
+    <tr><td class="id">RNF24</td><td>Os registros de auditoria são <b>imutáveis</b> (ninguém edita nem apaga, nem o proprietário) e guardados por um período mínimo configurável</td></tr>
+    <tr><td class="id">RNF21</td><td>A regra de acesso fica implementada em <b>um único lugar</b> do código e é coberta por testes automatizados para cada cenário da seção 3.6</td></tr>
+  </table>
+
+  <h3>⚡ Desempenho</h3>
+  <table>
+    <tr><td class="id">RNF07</td><td>Ações comuns (abrir quadro, mover card) com resposta abaixo de ~500 ms</td></tr>
+    <tr><td class="id">RNF08</td><td>Processos pesados (transcrição, IA) executados em segundo plano, com aviso ao usuário quando terminar</td></tr>
+    <tr><td class="id">RNF09</td><td>Limite de tamanho de upload configurável (ex.: 50 MB)</td></tr>
+    <tr><td class="id">RNF25</td><td>Alterações em tempo real chegam aos outros usuários em menos de ~1 segundo</td></tr>
+    <tr><td class="id">RNF26</td><td>Edições simultâneas no mesmo trecho são <b>mescladas automaticamente</b>, sem perder o que ninguém escreveu</td></tr>
+    <tr><td class="id">RNF27</td><td>Se a conexão cair, o usuário continua editando e as alterações são sincronizadas quando a conexão voltar, com um aviso de "reconectando" na tela</td></tr>
+    <tr><td class="id">RNF28</td><td>As regras de acesso valem também no tempo real: quem perde o acesso a um documento ou quadro é desconectado dele na hora e não recebe mais atualizações</td></tr>
+    <tr><td class="id">RNF29</td><td>Na auditoria, a edição colaborativa de um superior gera <b>um registro por sessão de edição</b>, e não um por tecla digitada</td></tr>
+  </table>
+
+  <h3>🖐 Usabilidade</h3>
+  <table>
+    <tr><td class="id">RNF10</td><td>Interface responsiva (desktop prioritário, funcional em celular)</td></tr>
+    <tr><td class="id">RNF11</td><td>Interface em português, preparada para outros idiomas</td></tr>
+    <tr><td class="id">RNF12</td><td>Acessibilidade básica (contraste, navegação por teclado)</td></tr>
+    <tr><td class="id">RNF22</td><td>A visibilidade de cada item aparece claramente na tela (ícone 🌐 👥 🎖 🔒), para o usuário saber quem pode ver</td></tr>
+  </table>
+
+  <h3>🛠 Confiabilidade e manutenção</h3>
+  <table>
+    <tr><td class="id">RNF13</td><td>Backup do banco de dados e dos arquivos</td></tr>
+    <tr><td class="id">RNF14</td><td>Código no Git, com testes automatizados nas regras principais</td></tr>
+    <tr><td class="id">RNF15</td><td>Ambiente reproduzível: qualquer pessoa sobe o projeto com poucos comandos</td></tr>
+    <tr><td class="id">RNF16</td><td>Logs de erro centralizados</td></tr>
+  </table>
+
+  <h3>📈 Escalabilidade</h3>
+  <table>
+    <tr><td class="id">RNF17</td><td>Arquitetura modular: tarefas, arquivos, reuniões e IA evoluem de forma independente</td></tr>
+    <tr><td class="id">RNF18</td><td>Armazenamento de arquivos e serviço de vídeo desacoplados (para trocar de fornecedor depois)</td></tr>
+    <tr><td class="id">RNF23</td><td>O modelo de dados da hierarquia já prevê subgrupos no futuro, sem precisar ser refeito</td></tr>
+  </table>
+</section>
+
+<!-- 6. HISTÓRIAS -->
+<section id="historias">
+  <h2><span class="num">6</span> Histórias de usuário do MVP</h2>
+  <p>Cada história descreve <b>quem</b> quer <b>o quê</b> e <b>por quê</b>, seguida dos <b>critérios de aceite</b>: as condições que precisam ser verdadeiras para a história ser considerada pronta. Os critérios também viram os <b>testes</b>.</p>
+  <div class="legend">
+    <span><span class="size" style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:#e7f5ff;color:#1864ab">P</span> pequena (até 1 dia)</span>
+    <span><span class="size" style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:#e7f5ff;color:#1864ab">M</span> média (2–3 dias)</span>
+    <span><span class="size" style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:#e7f5ff;color:#1864ab">G</span> grande (1 semana ou mais)</span>
+    <span><b style="color:#8a6100">?</b> critério que depende de uma decisão em aberto</span>
+  </div>
+
+  <h3>6.1 Definição de Pronto (vale para todas as histórias)</h3>
+  <ul>
+    <li>Todos os critérios de aceite atendidos</li>
+    <li>Permissões validadas <b>no back-end</b> (RNF02), com testes automatizados para os casos de acesso</li>
+    <li>Interface com estados de carregando, vazio e erro</li>
+    <li>Mensagens em português e claras para o usuário</li>
+    <li>Código versionado no Git e este documento atualizado, se algo mudou</li>
+  </ul>
+
+  <!-- ÉPICO 1 -->
+  <div class="epic">Épico 1: Conta <small>US01–US04</small></div>
+
+  <div class="story">
+    <div class="head"><div class="title"><span class="sid">US01</span>Criar conta</div><div class="tags"><span class="rf">RF01</span><span class="size">P</span></div></div>
+    <div class="narrative"><b>Como</b> visitante, <b>quero</b> criar uma conta com nome, e-mail e senha, <b>para</b> acessar o sistema.</div>
+    <ul class="ac">
+      <li>O e-mail é único: tentar cadastrar um e-mail já usado mostra um erro claro</li>
+      <li>A senha tem no mínimo 8 caracteres e é salva com hash (RNF01)</li>
+      <li>Após o cadastro, o usuário já está logado e vê a opção de criar um workspace ou aguardar um convite</li>
+    </ul>
+  </div>
+
+  <div class="story">
+    <div class="head"><div class="title"><span class="sid">US02</span>Entrar e sair</div><div class="tags"><span class="rf">RF01</span><span class="size">P</span></div></div>
+    <div class="narrative"><b>Como</b> usuário, <b>quero</b> fazer login e logout, <b>para</b> acessar meu trabalho com segurança.</div>
+    <ul class="ac">
+      <li>Credenciais erradas mostram uma mensagem genérica ("e-mail ou senha inválidos"), sem revelar qual dos dois está errado</li>
+      <li>Após 5 tentativas erradas seguidas, o login fica bloqueado por alguns minutos (RNF05)</li>
+      <li>O logout encerra a sessão; voltar no navegador não reabre páginas protegidas</li>
+    </ul>
+  </div>
+
+  <div class="story">
+    <div class="head"><div class="title"><span class="sid">US03</span>Recuperar senha</div><div class="tags"><span class="rf">RF02</span><span class="size">P</span></div></div>
+    <div class="narrative"><b>Como</b> usuário que esqueceu a senha, <b>quero</b> receber um link por e-mail, <b>para</b> criar uma nova senha.</div>
+    <ul class="ac">
+      <li>A mensagem é a mesma exista ou não o e-mail (não revela quem tem conta)</li>
+      <li>O link expira em 1 hora e só pode ser usado uma vez</li>
+      <li>Após trocar a senha, as outras sessões abertas são encerradas</li>
+    </ul>
+  </div>
+
+  <div class="story">
+    <div class="head"><div class="title"><span class="sid">US04</span>Editar perfil</div><div class="tags"><span class="rf">RF03</span><span class="size">P</span></div></div>
+    <div class="narrative"><b>Como</b> usuário, <b>quero</b> editar meu nome e foto, <b>para</b> ser reconhecido pela equipe.</div>
+    <ul class="ac">
+      <li>A foto aceita JPG ou PNG de até 2 MB; outros formatos mostram erro</li>
+      <li>A alteração aparece imediatamente nos cards, comentários e listas de membros</li>
+    </ul>
+  </div>
+
+  <!-- ÉPICO 2 -->
+  <div class="epic">Épico 2: Workspace e membros <small>US05–US07</small></div>
+
+  <div class="story">
+    <div class="head"><div class="title"><span class="sid">US05</span>Criar o workspace do setor</div><div class="tags"><span class="rf">RF07</span><span class="size">P</span></div></div>
+    <div class="narrative"><b>Como</b> usuário, <b>quero</b> criar o workspace do meu setor, <b>para</b> organizar o trabalho da equipe.</div>
+    <ul class="ac">
+      <li>O nome é obrigatório</li>
+      <li>Quem cria vira <b>Proprietário</b> automaticamente</li>
+      <li>O <b>espaço geral</b> é criado junto, com uma pasta geral e um quadro geral</li>
+    </ul>
+  </div>
+
+  <div class="story">
+    <div class="head"><div class="title"><span class="sid">US06</span>Convidar pessoas</div><div class="tags"><span class="rf">RF05</span><span class="rf">RF06</span><span class="size">M</span></div></div>
+    <div class="narrative"><b>Como</b> proprietário ou administrador, <b>quero</b> convidar pessoas por e-mail ou link já definindo o cargo, <b>para</b> montar a equipe.</div>
+    <ul class="ac">
+      <li>O convite expira em 7 dias e pode ser revogado antes de ser aceito</li>
+      <li>Quem ainda não tem conta cria uma pelo link e já entra no workspace</li>
+      <li>Só é possível convidar com um cargo <b>menor</b> que o seu; por isso, só o proprietário convida administradores (D14)</li>
+    </ul>
+  </div>
+
+  <div class="story">
+    <div class="head"><div class="title"><span class="sid">US07</span>Gerenciar membros</div><div class="tags"><span class="rf">RF08</span><span class="rf">RF06</span><span class="size">M</span></div></div>
+    <div class="narrative"><b>Como</b> proprietário ou administrador, <b>quero</b> ver, alterar o cargo e remover membros, <b>para</b> manter a equipe atualizada.</div>
+    <ul class="ac">
+      <li>A lista mostra nome, cargo e grupos de cada membro</li>
+      <li>Só é possível alterar o cargo de quem está <b>abaixo</b> de você, e nunca para um cargo igual ou acima do seu</li>
+      <li>O proprietário não pode ser removido</li>
+      <li>Um membro removido perde o acesso imediatamente, inclusive em sessões abertas</li>
+      <li>Mudanças de cargo e remoções ficam na auditoria</li>
+      <li>Os itens do membro removido continuam no workspace, sob responsabilidade do líder do grupo, ou dos administradores se estiverem no espaço geral (D15)</li>
+    </ul>
+  </div>
+
+  <!-- ÉPICO 3 -->
+  <div class="epic">Épico 3: Grupos <small>US08–US10</small></div>
+
+  <div class="story">
+    <div class="head"><div class="title"><span class="sid">US08</span>Criar grupo</div><div class="tags"><span class="rf">RF38</span><span class="rf">RF51</span><span class="size">P</span></div></div>
+    <div class="narrative"><b>Como</b> proprietário ou administrador, <b>quero</b> criar grupos, <b>para</b> separar as equipes do setor.</div>
+    <ul class="ac">
+      <li>O nome é único no workspace</li>
+      <li>Ao criar o grupo, o sistema cria automaticamente a <b>pasta raiz</b> e o <b>quadro</b> dele, ambos com visibilidade "Grupo"</li>
+      <li>Excluir um grupo pede confirmação e informa quantos itens ele contém</li>
+    </ul>
+  </div>
+
+  <div class="story">
+    <div class="head"><div class="title"><span class="sid">US09</span>Gerenciar membros do grupo</div><div class="tags"><span class="rf">RF38</span><span class="size">P</span></div></div>
+    <div class="narrative"><b>Como</b> administrador ou líder do grupo, <b>quero</b> adicionar e remover pessoas do grupo, <b>para</b> controlar quem trabalha nele.</div>
+    <ul class="ac">
+      <li>Um membro pode estar em vários grupos</li>
+      <li>O líder só gerencia o <b>próprio</b> grupo</li>
+      <li>Quem sai do grupo perde o acesso aos itens do grupo na hora; os itens continuam no grupo</li>
+    </ul>
+  </div>
+
+  <div class="story">
+    <div class="head"><div class="title"><span class="sid">US10</span>Definir o líder do grupo</div><div class="tags"><span class="rf">RF48</span><span class="size">P</span></div></div>
+    <div class="narrative"><b>Como</b> proprietário ou administrador, <b>quero</b> definir quem lidera cada grupo, <b>para</b> que essa pessoa gerencie a equipe.</div>
+    <ul class="ac">
+      <li>O líder precisa ser membro do grupo</li>
+      <li>Ao virar líder, a pessoa passa a ter autoridade sobre o grupo (seção 3.2)</li>
+      <li>Trocar o líder fica registrado na auditoria</li>
+      <li>Cada grupo tem apenas um líder no MVP (D16)</li>
+    </ul>
+  </div>
+
+  <!-- ÉPICO 4 -->
+  <div class="epic">Épico 4: Visibilidade, acesso e auditoria <small>US11–US15</small></div>
+  <div class="note">Este é o <b>coração do sistema</b>. A regra de acesso (seção 3.4) é implementada uma única vez e usada por todos os módulos (RNF21).</div>
+
+  <div class="story">
+    <div class="head"><div class="title"><span class="sid">US11</span>Escolher a visibilidade de um item</div><div class="tags"><span class="rf">RF39</span><span class="rf">RNF22</span><span class="size">M</span></div></div>
+    <div class="narrative"><b>Como</b> usuário, <b>quero</b> escolher quem vê o item que estou criando, <b>para</b> proteger informações sensíveis.</div>
+    <ul class="ac">
+      <li>Opções: 🌐 Workspace, 👥 Grupo, 🎖 Cargo ou 🔒 Privado/pessoas</li>
+      <li>O padrão é a visibilidade do espaço onde o item está sendo criado</li>
+      <li>O ícone de visibilidade aparece em toda listagem, card e cabeçalho do item</li>
+      <li>Vale para pastas, arquivos, quadros, tarefas e reuniões</li>
+    </ul>
+  </div>
+
+  <div class="story">
+    <div class="head"><div class="title"><span class="sid">US12</span>Compartilhar com pessoas específicas</div><div class="tags"><span class="rf">RF49</span><span class="size">M</span></div></div>
+    <div class="narrative"><b>Como</b> usuário, <b>quero</b> compartilhar um item privado com pessoas específicas, <b>para</b> trabalhar com elas sem expor o item a mais ninguém.</div>
+    <ul class="ac">
+      <li>Busco pessoas do workspace pelo nome e as adiciono</li>
+      <li>A pessoa adicionada recebe uma notificação</li>
+      <li>Posso remover o acesso depois, e a pessoa deixa de ver o item na hora</li>
+      <li>Podem compartilhar: quem criou o item e os superiores na cadeia</li>
+    </ul>
+  </div>
+
+  <div class="story">
+    <div class="head"><div class="title"><span class="sid">US13</span>Superior vê o conteúdo da sua cadeia</div><div class="tags"><span class="rf">RF40</span><span class="rf">RNF20</span><span class="rf">RNF21</span><span class="size">G</span></div></div>
+    <div class="narrative"><b>Como</b> líder de grupo, <b>quero</b> ver tudo o que os membros do meu grupo criam, inclusive os itens privados, <b>para</b> acompanhar o trabalho da equipe.</div>
+    <ul class="ac">
+      <li>Os <b>9 cenários da seção 3.6</b> viram testes automatizados, e todos passam</li>
+      <li>Cargos iguais não veem os privados uns dos outros; grupos diferentes não se veem</li>
+      <li>Um item sem permissão não aparece em listagens, buscas, notificações nem anexos</li>
+      <li>Acessar um item sem permissão pelo link direto mostra "não encontrado", sem revelar que ele existe</li>
+    </ul>
+  </div>
+
+  <div class="story">
+    <div class="head"><div class="title"><span class="sid">US14</span>Superior edita ou exclui item de subordinado</div><div class="tags"><span class="rf">RF56</span><span class="size">M</span></div></div>
+    <div class="narrative"><b>Como</b> líder de grupo, <b>quero</b> editar ou excluir itens dos membros do meu grupo, <b>para</b> corrigir ou organizar o trabalho da equipe.</div>
+    <ul class="ac">
+      <li>As opções de editar e excluir aparecem para o superior com autoridade sobre o item</li>
+      <li>Excluir pede confirmação</li>
+      <li>Cada ação gera um registro de auditoria com o estado anterior do item</li>
+      <li>O dono do item é notificado quando um superior o edita ou exclui (D17)</li>
+    </ul>
+  </div>
+
+  <div class="story">
+    <div class="head"><div class="title"><span class="sid">US15</span>Consultar a auditoria</div><div class="tags"><span class="rf">RF55</span><span class="rf">RNF24</span><span class="size">M</span></div></div>
+    <div class="narrative"><b>Como</b> proprietário ou administrador, <b>quero</b> consultar o histórico de ações dos superiores sobre itens de subordinados, <b>para</b> garantir transparência e uso correto do poder de acesso.</div>
+    <ul class="ac">
+      <li>Cada registro mostra: quem agiu, a ação, o item, o dono do item, data e hora</li>
+      <li>Filtros por pessoa, ação, item e período</li>
+      <li>Não existe nenhuma forma de editar ou apagar um registro, nem para o proprietário</li>
+      <li>Em uma edição ou exclusão, é possível ver como o item estava antes</li>
+      <li>Visualizações não geram registro; só edições, exclusões e alterações de visibilidade (D18)</li>
+    </ul>
+  </div>
+
+  <!-- ÉPICO 5 -->
+  <div class="epic">Épico 5: Tarefas (Kanban) <small>US16–US22</small></div>
+
+  <div class="story">
+    <div class="head"><div class="title"><span class="sid">US16</span>Criar e organizar quadros</div><div class="tags"><span class="rf">RF10</span><span class="size">M</span></div></div>
+    <div class="narrative"><b>Como</b> líder ou administrador, <b>quero</b> criar quadros com colunas personalizadas, <b>para</b> refletir o fluxo de trabalho da equipe.</div>
+    <ul class="ac">
+      <li>O quadro é criado no espaço geral ou no espaço de um grupo</li>
+      <li>Novo quadro já vem com as colunas "A fazer", "Em andamento" e "Concluído"</li>
+      <li>É possível criar, renomear, reordenar e excluir colunas</li>
+      <li>Excluir uma coluna com tarefas pede para qual coluna movê-las</li>
+    </ul>
+  </div>
+
+  <div class="story">
+    <div class="head"><div class="title"><span class="sid">US17</span>Criar e editar tarefas</div><div class="tags"><span class="rf">RF11</span><span class="rf">RF12</span><span class="size">M</span></div></div>
+    <div class="narrative"><b>Como</b> membro, <b>quero</b> criar tarefas com todos os detalhes, <b>para</b> que fique claro o que precisa ser feito.</div>
+    <ul class="ac">
+      <li>O título é obrigatório; descrição, responsáveis, prazo, prioridade e etiquetas são opcionais</li>
+      <li>Só é possível escolher como responsável alguém que <b>pode ver</b> a tarefa</li>
+      <li>Tarefas com prazo vencido aparecem destacadas</li>
+      <li>Excluir pede confirmação</li>
+    </ul>
+  </div>
+
+  <div class="story">
+    <div class="head"><div class="title"><span class="sid">US18</span>Mover tarefas entre colunas</div><div class="tags"><span class="rf">RF11</span><span class="size">M</span></div></div>
+    <div class="narrative"><b>Como</b> membro, <b>quero</b> arrastar tarefas entre colunas, <b>para</b> atualizar o andamento rapidamente.</div>
+    <ul class="ac">
+      <li>Arrastar e soltar funciona entre colunas e dentro da mesma coluna (reordenar)</li>
+      <li>A nova posição continua igual depois de recarregar a página</li>
+      <li>Se a operação falhar no servidor, o card volta para o lugar original e aparece um aviso</li>
+      <li>Convidados não podem mover tarefas</li>
+    </ul>
+  </div>
+
+  <div class="story">
+    <div class="head"><div class="title"><span class="sid">US19</span>Tarefa para um grupo</div><div class="tags"><span class="rf">RF52</span><span class="size">P</span></div></div>
+    <div class="narrative"><b>Como</b> líder, <b>quero</b> criar tarefas no quadro do meu grupo, <b>para</b> que toda a equipe acompanhe.</div>
+    <ul class="ac">
+      <li>A tarefa é visível a todos do grupo e aos superiores</li>
+      <li>Pessoas de outros grupos não a veem (cenário 4)</li>
+    </ul>
+  </div>
+
+  <div class="story">
+    <div class="head"><div class="title"><span class="sid">US20</span>Tarefa privada para uma pessoa</div><div class="tags"><span class="rf">RF53</span><span class="size">P</span></div></div>
+    <div class="narrative"><b>Como</b> líder, <b>quero</b> criar uma tarefa privada para um membro, <b>para</b> passar uma atividade sigilosa.</div>
+    <ul class="ac">
+      <li>Só o responsável, o criador e os superiores na cadeia veem a tarefa</li>
+      <li>A tarefa mostra o ícone 🔒</li>
+      <li>Outro membro do grupo não a encontra em nenhum lugar, nem pela busca</li>
+    </ul>
+  </div>
+
+  <div class="story">
+    <div class="head"><div class="title"><span class="sid">US21</span>Filtrar o quadro por grupo</div><div class="tags"><span class="rf">RF54</span><span class="size">P</span></div></div>
+    <div class="narrative"><b>Como</b> administrador, <b>quero</b> filtrar as tarefas por grupo, <b>para</b> não me perder num quadro com o trabalho de todas as equipes.</div>
+    <ul class="ac">
+      <li>O filtro aparece só para quem enxerga mais de um grupo</li>
+      <li>É possível selecionar um ou vários grupos</li>
+      <li>O sistema lembra o último filtro usado</li>
+    </ul>
+  </div>
+
+  <div class="story">
+    <div class="head"><div class="title"><span class="sid">US22</span>Comentar nas tarefas</div><div class="tags"><span class="rf">RF13</span><span class="size">P</span></div></div>
+    <div class="narrative"><b>Como</b> membro, <b>quero</b> comentar nas tarefas e mencionar colegas, <b>para</b> discutir o trabalho no próprio card.</div>
+    <ul class="ac">
+      <li>Os comentários são visíveis para quem vê a tarefa</li>
+      <li>Cada um edita e exclui apenas os próprios comentários (superiores seguem a RF56)</li>
+      <li>Uma @menção notifica a pessoa, e só é possível mencionar quem pode ver a tarefa</li>
+    </ul>
+  </div>
+
+  <!-- ÉPICO 6 -->
+  <div class="epic">Épico 6: Arquivos <small>US23–US25</small></div>
+
+  <div class="story">
+    <div class="head"><div class="title"><span class="sid">US23</span>Navegar e organizar pastas</div><div class="tags"><span class="rf">RF20</span><span class="size">M</span></div></div>
+    <div class="narrative"><b>Como</b> membro, <b>quero</b> navegar e criar pastas, <b>para</b> manter os arquivos organizados.</div>
+    <ul class="ac">
+      <li>Vejo a pasta geral e as pastas dos grupos que posso ver</li>
+      <li>Uma trilha de navegação mostra onde estou (Geral › Grupo A › Referências)</li>
+      <li>Posso criar, renomear, mover e excluir pastas (excluir pasta com conteúdo pede confirmação)</li>
+    </ul>
+  </div>
+
+  <div class="story">
+    <div class="head"><div class="title"><span class="sid">US24</span>Enviar e baixar arquivos</div><div class="tags"><span class="rf">RF19</span><span class="rf">RNF04</span><span class="rf">RNF09</span><span class="size">M</span></div></div>
+    <div class="narrative"><b>Como</b> membro, <b>quero</b> enviar e baixar arquivos, <b>para</b> compartilhar documentos com a equipe.</div>
+    <ul class="ac">
+      <li>Envio por arrastar e soltar ou por seleção, com barra de progresso</li>
+      <li>Arquivos acima do limite (50 MB) são recusados com uma mensagem clara</li>
+      <li>O download só funciona para quem está logado e tem permissão; o link não funciona fora do sistema</li>
+      <li>A lista mostra nome, tamanho, quem enviou, data e ícone de visibilidade</li>
+    </ul>
+  </div>
+
+  <div class="story">
+    <div class="head"><div class="title"><span class="sid">US25</span>Visibilidade de pastas e arquivos</div><div class="tags"><span class="rf">RF21</span><span class="size">M</span></div></div>
+    <div class="narrative"><b>Como</b> membro, <b>quero</b> restringir uma pasta ou um arquivo, <b>para</b> que só as pessoas certas vejam.</div>
+    <ul class="ac">
+      <li>Pastas e arquivos novos herdam a visibilidade da pasta onde estão</li>
+      <li>É possível restringir mais do que a pasta-mãe, mas nunca abrir mais</li>
+      <li>Ao restringir uma pasta, o conteúdo dela fica no mínimo tão restrito quanto a pasta</li>
+    </ul>
+  </div>
+
+  <!-- ÉPICO 7 -->
+  <div class="epic">Épico 7: Reuniões <small>US26–US27</small></div>
+
+  <div class="story">
+    <div class="head"><div class="title"><span class="sid">US26</span>Agendar reunião</div><div class="tags"><span class="rf">RF25</span><span class="size">M</span></div></div>
+    <div class="narrative"><b>Como</b> líder, <b>quero</b> agendar reuniões com pauta e participantes, <b>para</b> organizar os encontros da equipe.</div>
+    <ul class="ac">
+      <li>Campos: título, data e hora, duração, pauta, participantes e visibilidade (ex.: "Cargo: Líderes")</li>
+      <li>Só é possível convidar quem pode ver a reunião</li>
+      <li>A reunião aparece na lista de "Próximas reuniões" de cada participante</li>
+      <li>Alterar ou cancelar notifica os participantes</li>
+    </ul>
+  </div>
+
+  <div class="story">
+    <div class="head"><div class="title"><span class="sid">US27</span>Entrar na sala de vídeo</div><div class="tags"><span class="rf">RF26</span><span class="rf">RNF18</span><span class="size">G</span></div></div>
+    <div class="narrative"><b>Como</b> participante, <b>quero</b> entrar na reunião sem sair do sistema, <b>para</b> não precisar de outra ferramenta.</div>
+    <ul class="ac">
+      <li>O botão "Entrar" fica disponível alguns minutos antes do horário</li>
+      <li>A sala abre <b>dentro da página</b>, com áudio, vídeo e compartilhamento de tela (serviço integrado)</li>
+      <li>Quem não pode ver a reunião não consegue entrar, nem com o link</li>
+      <li>A integração fica isolada num módulo próprio, para trocar o serviço de vídeo depois</li>
+    </ul>
+  </div>
+
+  <!-- ÉPICO 8 -->
+  <div class="epic">Épico 8: Notificações <small>US28</small></div>
+
+  <div class="story">
+    <div class="head"><div class="title"><span class="sid">US28</span>Receber notificações no sistema</div><div class="tags"><span class="rf">RF35</span><span class="size">M</span></div></div>
+    <div class="narrative"><b>Como</b> usuário, <b>quero</b> ser avisado do que me envolve, <b>para</b> não perder nada importante.</div>
+    <ul class="ac">
+      <li>Um sino mostra a quantidade de notificações não lidas</li>
+      <li>Eventos: fui atribuído a uma tarefa, compartilharam algo comigo, fui mencionado, reunião marcada, alterada ou cancelada, um superior editou ou excluiu um item meu</li>
+      <li>Posso marcar uma ou todas como lidas; clicar leva ao item</li>
+      <li>Se eu perder o acesso a um item, a notificação dele some ou deixa de abrir o item</li>
+    </ul>
+  </div>
+
+  <!-- ÉPICO 9 -->
+  <div class="epic">Épico 9: Colaboração em tempo real <small>US29–US33</small></div>
+
+  <div class="story">
+    <div class="head"><div class="title"><span class="sid">US29</span>Criar documento nativo</div><div class="tags"><span class="rf">RF59</span><span class="size">M</span></div></div>
+    <div class="narrative"><b>Como</b> membro, <b>quero</b> criar um documento de texto dentro do sistema, <b>para</b> escrever com a equipe sem depender do Google Docs.</div>
+    <ul class="ac">
+      <li>Botão "Novo documento" dentro de qualquer pasta que eu possa editar</li>
+      <li>Formatação básica: títulos, negrito, itálico, listas, links e tabelas simples</li>
+      <li>O documento aparece na pasta com um ícone próprio e segue as regras de visibilidade como qualquer item</li>
+      <li>O conteúdo é salvo automaticamente, sem botão "Salvar"</li>
+    </ul>
+  </div>
+
+  <div class="story">
+    <div class="head"><div class="title"><span class="sid">US30</span>Editar um documento junto com outras pessoas</div><div class="tags"><span class="rf">RF24</span><span class="rf">RF58</span><span class="rf">RNF25</span><span class="rf">RNF26</span><span class="rf">RNF27</span><span class="size">G</span></div></div>
+    <div class="narrative"><b>Como</b> membro, <b>quero</b> editar um documento ao mesmo tempo que meus colegas e ver o que eles escrevem na hora, <b>para</b> produzir em conjunto, como numa reunião de escrita.</div>
+    <ul class="ac">
+      <li>Duas pessoas no mesmo documento veem as alterações uma da outra em menos de ~1 segundo</li>
+      <li>Cada pessoa aparece com um <b>cursor colorido e o nome</b> onde está escrevendo</li>
+      <li>Se duas pessoas editarem o mesmo trecho ao mesmo tempo, nenhuma das alterações se perde</li>
+      <li>Se a internet cair, continuo editando; ao reconectar, tudo é sincronizado, e um aviso mostra o estado da conexão</li>
+      <li>Quem tem permissão só de leitura vê as alterações ao vivo, mas não consegue editar</li>
+      <li>Se um superior editar o documento de um subordinado, a sessão gera <b>um</b> registro de auditoria e o dono é notificado (RNF29, D17)</li>
+    </ul>
+  </div>
+
+  <div class="story">
+    <div class="head"><div class="title"><span class="sid">US31</span>Ver quem está presente</div><div class="tags"><span class="rf">RF57</span><span class="rf">RNF28</span><span class="size">M</span></div></div>
+    <div class="narrative"><b>Como</b> usuário, <b>quero</b> ver quem mais está no mesmo documento, quadro ou tarefa, <b>para</b> saber com quem estou colaborando naquele momento.</div>
+    <ul class="ac">
+      <li>Os avatares de quem está presente aparecem no topo da tela</li>
+      <li>Quando alguém entra ou sai, os avatares se atualizam na hora</li>
+      <li>Só aparecem pessoas que têm permissão de ver o item</li>
+      <li>Se alguém perder o acesso enquanto está no item, é desconectado e deixa de aparecer</li>
+    </ul>
+  </div>
+
+  <div class="story">
+    <div class="head"><div class="title"><span class="sid">US32</span>Kanban em tempo real</div><div class="tags"><span class="rf">RF17</span><span class="size">M</span></div></div>
+    <div class="narrative"><b>Como</b> membro, <b>quero</b> que o quadro se atualize sozinho quando alguém mexe nele, <b>para</b> sempre ver a situação real sem recarregar a página.</div>
+    <ul class="ac">
+      <li>Tarefas criadas, editadas, movidas ou excluídas por outra pessoa aparecem na hora</li>
+      <li>Cada pessoa só recebe atualizações de tarefas que pode ver; uma tarefa privada não "pisca" na tela de quem não tem acesso</li>
+      <li>Se duas pessoas moverem a mesma tarefa ao mesmo tempo, vale o último movimento, e as duas telas terminam iguais</li>
+    </ul>
+  </div>
+
+  <div class="story">
+    <div class="head"><div class="title"><span class="sid">US33</span>Ver e restaurar versões do documento</div><div class="tags"><span class="rf">RF60</span><span class="size">M</span></div></div>
+    <div class="narrative"><b>Como</b> membro, <b>quero</b> ver as versões anteriores de um documento dentro dele, <b>para</b> entender o que mudou e voltar atrás se algo der errado.</div>
+    <ul class="ac">
+      <li>Um botão "🕘 Versões" no documento abre um painel com a lista de versões: quem editou, quando e o tamanho da mudança</li>
+      <li>Uma nova versão é gerada automaticamente ao fim de cada sessão de edição, sem uma versão por tecla</li>
+      <li>Ao escolher uma versão, vejo a comparação <b>antes ↔ depois</b>, com trechos adicionados e removidos destacados</li>
+      <li>Quem pode ver o documento pode ver as versões; só quem pode editar consegue <b>restaurar</b></li>
+      <li>Restaurar cria uma <b>nova versão</b> (nada é apagado), e todos que estão no documento veem a mudança na hora</li>
+      <li>Versões feitas por um superior em documento de subordinado aparecem marcadas e são as mesmas que constam na auditoria</li>
+      <li>É possível dar um nome a uma versão importante (ex.: "Enviado ao orientador")</li>
+    </ul>
+  </div>
+
+  <h3>6.2 Ordem sugerida de construção</h3>
+  <p style="color:var(--muted);font-size:14px">Cada etapa entrega algo que já funciona de ponta a ponta. O motor de acesso nasce junto com o kanban, que é o primeiro tipo de item, e depois é reaproveitado pelos outros módulos.</p>
+  <div class="phase">
+    <div class="ph">Etapa 1</div><div><b>Fundação:</b> conta e login (US01–US04)</div>
+    <div class="ph">Etapa 2</div><div><b>Estrutura:</b> workspace, membros, grupos e líderes (US05–US10)</div>
+    <div class="ph">Etapa 3</div><div><b>Kanban + motor de acesso:</b> quadros, tarefas, visibilidade e regra hierárquica (US11, US13, US16–US22)</div>
+    <div class="ph">Etapa 4</div><div><b>Arquivos + compartilhamento</b> (US12, US23–US25)</div>
+    <div class="ph">Etapa 5</div><div><b>Poder do superior + auditoria</b> (US14, US15)</div>
+    <div class="ph">Etapa 6</div><div><b>Reuniões e vídeo</b> (US26, US27)</div>
+    <div class="ph">Etapa 7</div><div><b>Notificações</b> (US28)</div>
+    <div class="ph">Etapa 8</div><div><b>Colaboração em tempo real:</b> presença, kanban ao vivo, documentos nativos, edição conjunta e versões (US29–US33), e depois o polimento final</div>
+  </div>
+  <div class="note"><b>Resumo do MVP:</b> 9 épicos · 33 histórias · 12 pequenas, 18 médias e 3 grandes.</div>
+  <div class="callout"><b>Dica:</b> a Etapa 8 é a mais desafiadora tecnicamente. Ela fica por último porque depende de todo o resto (acesso, pastas, quadros). Se o prazo apertar, ela pode ir para a V2 sem quebrar nada (D19).</div>
+</section>
+
+<!-- 7. MÓDULOS -->
+<section id="modulos">
+  <h2><span class="num">7</span> Desenho do sistema: módulos</h2>
+  <div class="diagram">
+    <div class="box user">Usuário (navegador)</div>
+    <div class="arrow">▼</div>
+    <div class="box auth">Autenticação &amp; Regra de Acesso<small>cargo · grupo · visibilidade · cadeia hierárquica, aplicada em toda ação</small></div>
+    <div class="arrow">▼</div>
+    <div class="modules">
+      <div class="box">Workspace<small>cargos &amp; grupos</small></div>
+      <div class="box">Tarefas<small>Kanban</small></div>
+      <div class="box">Arquivos<small>Drive</small></div>
+      <div class="box">Reuniões<small>vídeo integrado</small></div>
+      <div class="box">Notificações<small>&amp; Atividade</small></div>
+    </div>
+    <div class="box" style="width:100%;border-style:dashed">Camada de Tempo Real<small>presença · kanban ao vivo · edição colaborativa de documentos (respeitando a regra de acesso)</small></div>
+    <div class="arrow">▲ ▼</div>
+    <div class="box ai">Assistente de IA <span class="badge b-v2">V2</span><small>dividir tarefas · ata · resumir e criar arquivos</small></div>
+    <div class="flow-links">Reunião → <b>transcrição</b> → IA → <b>ata</b> → <b>tarefas sugeridas</b> → Kanban &nbsp;·&nbsp; Arquivos ↔ IA → <b>resumo / novo documento</b></div>
+  </div>
+</section>
+
+<!-- 7. ENTIDADES -->
+<section id="entidades">
+  <h2><span class="num">8</span> Entidades principais <span style="font-size:13px;color:var(--muted);font-weight:400">(rascunho)</span></h2>
+  <div class="grid-2">
+    <div class="card"><h4>👤 Acesso e hierarquia</h4><ul>
+      <li>Usuário</li>
+      <li>Workspace (o setor)</li>
+      <li>Membro do workspace (usuário + cargo)</li>
+      <li>Grupo (+ líder)</li>
+      <li>Membro do grupo</li>
+      <li>Convite</li>
+    </ul></div>
+    <div class="card"><h4>🔐 Visibilidade (comum a todos os itens)</h4><ul>
+      <li><b>Espaço</b> do item: geral ou grupo X</li>
+      <li><b>Tipo de visibilidade:</b> workspace / grupo / cargo / privado</li>
+      <li><b>Criador</b> do item</li>
+      <li><b>Compartilhamento:</b> item ↔ pessoa autorizada</li>
+    </ul></div>
+    <div class="card"><h4>📋 Tarefas</h4><ul><li>Quadro → Coluna → Tarefa</li><li>Responsáveis (pessoas)</li><li>Comentário · Etiqueta · Checklist</li></ul></div>
+    <div class="card"><h4>📁 Arquivos e 🎥 Reuniões</h4><ul><li>Pasta → Arquivo enviado (+ Versão)</li><li>Pasta → <b>Documento nativo</b> (conteúdo colaborativo) → <b>Versões</b> (autor, data, nome opcional)</li><li>Presença (temporária: quem está em qual item agora)</li><li>Reunião (+ participantes, sala de vídeo)</li><li>Transcrição · Ata <span class="badge b-v2">V2</span></li><li>Notificação · Atividade</li><li><b>Registro de auditoria</b> (ator, ação, item, dono do item, data, estado anterior)</li><li>Conversa com o assistente <span class="badge b-v2">V2</span></li></ul></div>
+  </div>
+</section>
+
+<!-- 8. FLUXO -->
+<section id="fluxo">
+  <h2><span class="num">9</span> Fluxo principal (história da demo)</h2>
+  <ol class="flow">
+    <li>Carlos cria o workspace <b>"Setor de Pesquisa"</b>, cria os Grupos A e B, define Fábio e João como líderes e convida os membros</li>
+    <li>Fábio cria no quadro do Grupo A a tarefa <b>"Coletar dados"</b> para a Ana e a Lia; o Grupo B não a vê</li>
+    <li>Ana sobe um arquivo <b>privado</b> para a Gabi; o Fábio vê (é superior), a Lia não</li>
+    <li>Diana agenda uma <b>reunião de líderes</b>, que só os líderes e os superiores veem, e a reunião acontece <b>dentro do sistema</b></li>
+    <li>Fábio compartilha um arquivo diretamente com o João: a informação passa entre grupos <b>pela hierarquia</b></li>
+    <li>Ana e Lia escrevem juntas o relatório do Grupo A num <b>documento nativo</b>, vendo o cursor uma da outra em tempo real; o Fábio entra e o avatar dele aparece no topo</li>
+    <li><span class="badge b-v2">V2</span> O assistente monta a <b>ata ao vivo</b> e sugere tarefas; o líder aprova e elas viram cards</li>
+  </ol>
+</section>
+
+<!-- 9. DECISÕES -->
+<section id="decisoes">
+  <h2><span class="num">10</span> Decisões e pontos de atenção</h2>
+  <table>
+    <tr><th>#</th><th>Tema</th><th>Observação</th><th>Status</th></tr>
+    <tr><td class="id">D01</td><td><b>Vídeo-chamada</b></td><td>Integrar um serviço de vídeo existente, sem fazer do zero. Serviço escolhido: <b>LiveKit</b>, que roda no Docker sem contratar nada. Falta confirmar na configuração se ele funciona bem localmente.</td><td><span class="status s-done">Decidido</span></td></tr>
+    <tr><td class="id">D02</td><td><b>IA no MVP?</b></td><td>A IA fica para a <b>V2</b>, como assistente em chat com confirmação do usuário.</td><td><span class="status s-done">Decidido</span></td></tr>
+    <tr><td class="id">D03</td><td><b>Workspace no MVP?</b></td><td>Sim. O criador vira Proprietário e convida as pessoas.</td><td><span class="status s-done">Decidido</span></td></tr>
+    <tr><td class="id">D04</td><td><b>Ordem do trabalho</b></td><td>Primeiro escopo, requisitos e desenho; tecnologia depois.</td><td><span class="status s-done">Decidido</span></td></tr>
+    <tr><td class="id">D05</td><td><b>Tecnologias</b></td><td><b>Laravel</b> (back-end), <b>React + TypeScript + Vite</b> (front-end), <b>PostgreSQL</b> (banco), <b>Laravel Reverb</b> (tempo real), <b>TipTap + Yjs + Hocuspocus</b> (edição em conjunto), <b>TanStack Query</b> (dados na tela), <b>React Router</b> (endereços das telas), <b>dnd-kit</b> (arrastar cards), <b>CSS com os tokens do design system</b> (estilo), <b>Pest e Vitest</b> (testes). O Hocuspocus roda em Node.js, então é um pequeno serviço fora do PHP e precisa consultar o Laravel para respeitar as permissões (RNF28).</td><td><span class="status s-done">Decidido</span></td></tr>
+    <tr><td class="id">D06</td><td><b>O que é um workspace</b></td><td>Um workspace = <b>um setor</b> da empresa (estilo Jira), não a empresa toda. Dentro dele, o trabalho se organiza por grupos e quadros.</td><td><span class="status s-done">Decidido</span></td></tr>
+    <tr><td class="id">D07</td><td><b>Alcance da visibilidade</b></td><td>Vale para <b>tudo</b>: pastas, arquivos, quadros, tarefas e reuniões. Inclui visibilidade por <b>cargo</b> (reunião, pasta e tarefas só de líderes).</td><td><span class="status s-done">Decidido</span></td></tr>
+    <tr><td class="id">D08</td><td><b>Hierarquia</b></td><td>Superiores com autoridade sobre o espaço veem o conteúdo de quem está abaixo. Cargos iguais não veem os privados uns dos outros. Grupos são isolados, e a informação entre grupos passa pela hierarquia ou por compartilhamento direto.</td><td><span class="status s-done">Decidido</span></td></tr>
+    <tr><td class="id">D09</td><td><b>Membro em vários grupos</b></td><td>O item vive no grupo onde foi criado (pasta do Grupo A → pertence ao A), e só o líder <b>desse</b> grupo vê pela hierarquia. Dentro de um espaço, o item nasce nele. Fora de um espaço, quem está em mais de um grupo escolhe qual, e quem está em um só vai direto para ele (RF62).</td><td><span class="status s-done">Decidido</span></td></tr>
+    <tr><td class="id">D10</td><td><b>Subgrupos</b></td><td>Ficam para o futuro; o MVP tem um nível de grupos. O modelo de dados já deve prevê-los (RNF23).</td><td><span class="status s-done">Decidido</span></td></tr>
+    <tr><td class="id">D11</td><td><b>Tarefa de grupo: quem vê?</b></td><td>Somente <b>o grupo</b> (e os superiores). Quem enxerga vários grupos (administradores, proprietário) tem um <b>filtro por grupo</b> no quadro, para não poluir a visão (RF54).</td><td><span class="status s-done">Decidido</span></td></tr>
+    <tr><td class="id">D12</td><td><b>Administradores entre si</b></td><td>Cargos iguais não veem os privados uns dos outros, e isso vale também para administradores. Só veem se o item for <b>compartilhado</b> entre eles; o proprietário vê tudo.</td><td><span class="status s-done">Decidido</span></td></tr>
+    <tr><td class="id">D13</td><td><b>Superior editando item de subordinado</b></td><td>Sim: o superior pode <b>ver, editar e excluir</b> os itens de quem está abaixo (RF56). Toda ação desse tipo fica registrada numa <b>auditoria</b> (RF55, RNF24).</td><td><span class="status s-done">Decidido</span></td></tr>
+    <tr><td class="id">D14</td><td><b>Gerenciar pessoas</b></td><td>Cada um só pode gerenciar (convidar, alterar cargo, remover) quem tem cargo <b>menor</b> que o seu, e só atribuir cargos menores que o seu. Na prática, só o proprietário nomeia ou rebaixa administradores.</td><td><span class="status s-done">Decidido</span></td></tr>
+    <tr><td class="id">D15</td><td><b>Itens de quem sai</b></td><td>Os itens do membro removido <b>continuam</b> no workspace, sob responsabilidade do líder do grupo (ou dos administradores, se estiverem no espaço geral).</td><td><span class="status s-done">Decidido</span></td></tr>
+    <tr><td class="id">D16</td><td><b>Líderes por grupo</b></td><td><b>Um</b> líder por grupo no MVP.</td><td><span class="status s-done">Decidido</span></td></tr>
+    <tr><td class="id">D17</td><td><b>Avisar o dono</b></td><td>O dono do item é <b>notificado</b> quando um superior o edita ou exclui.</td><td><span class="status s-done">Decidido</span></td></tr>
+    <tr><td class="id">D18</td><td><b>Auditar visualizações</b></td><td>A auditoria registra só <b>edições e exclusões</b>. Visualizações não geram registro, porque os subordinados já sabem que os superiores têm acesso.</td><td><span class="status s-done">Decidido</span></td></tr>
+    <tr><td class="id">D19</td><td><b>Colaboração em tempo real</b></td><td>O sistema é colaborativo: presença (quem está vendo) e edição simultânea de <b>documentos nativos</b>, além do kanban em tempo real. Ficou no <b>MVP</b>, como última etapa de construção (Etapa 8). Isso aumenta o MVP em cerca de 2 a 3 semanas; se o prazo apertar, essa etapa vai para a V2.</td><td><span class="status s-done">Decidido</span></td></tr>
+    <tr><td class="id">D21</td><td><b>Versões do documento</b></td><td>O histórico de versões fica <b>dentro do documento</b> (não só na auditoria) e entra no <b>MVP</b>: ver, comparar e restaurar. A auditoria e o histórico usam as mesmas versões, então os dados não ficam duplicados. As versões de arquivos enviados (PDF, DOCX) continuam na V2.</td><td><span class="status s-done">Decidido</span></td></tr>
+    <tr><td class="id">D20</td><td><b>Documento nativo × arquivo enviado</b></td><td>Só os <b>documentos criados no sistema</b> são editáveis em conjunto. Arquivos enviados (PDF, DOCX, imagens) são apenas guardados, visualizados e baixados.</td><td><span class="status s-done">Decidido</span></td></tr>
+    <tr><td class="id">D27</td><td><b>Design system</b></td><td>Criado antes do código, em <a href="design-system.html">design-system.html</a>, para padronizar cores, fontes, ícones e componentes. A identidade parte da "Roda" do acesso hierárquico, e a fonte da interface é a Plus Jakarta Sans, a mesma da landing page. Aprovado pelo usuário; o símbolo segue provisório, como o nome do projeto.</td><td><span class="status s-done">Decidido</span></td></tr>
+    <tr><td class="id">D28</td><td><b>Landing page</b></td><td>Página estática e separada do app, em <a href="../landing/index.html">landing/index.html</a>, com linguagem de venda para <b>quem usaria o sistema</b>, e não técnica. Stack e passo a passo de instalação ficam no README do GitHub. Será publicada depois, em outra máquina. A sugestão é o GitHub Pages.</td><td><span class="status s-done">Decidido</span></td></tr>
+    <tr><td class="id">D29</td><td><b>Ambiente de teste</b></td><td>O sistema roda localmente com <b>Docker Compose</b>, com banco local e dados de exemplo, e o passo a passo fica no README do GitHub. O Docker é o único jeito de rodar documentado. Os arquivos ficam em um volume local, e o Mailpit captura os e-mails.</td><td><span class="status s-done">Decidido</span></td></tr>
+  </table>
+</section>
+
+<!-- 10. PRÓXIMOS -->
+<section id="proximos">
+  <h2><span class="num">11</span> Próximos passos</h2>
+  <ol>
+    <li><s>Validar a D09 (membro em vários grupos)</s> ✅</li>
+    <li><s>Escrever as histórias de usuário do MVP</s> ✅ (seção 6)</li>
+    <li><s>Desenhar os wireframes das telas principais</s> ✅ <a href="wireframes.html">abrir wireframes</a> (14 telas navegáveis)</li>
+    <li><s>Detalhar o modelo de dados</s> ✅ <a href="modelo-de-dados.html">abrir modelo de dados</a> (com as propostas D22–D26 para validar)</li>
+    <li><s>Criar o design system</s> ✅ <a href="design-system.html">abrir design system</a> (D27)</li>
+    <li><s>Criar a landing page</s> ✅ <a href="../landing/index.html">abrir landing page</a> (falta publicar, D28)</li>
+    <li><s>Escolher a stack e o serviço de vídeo</s> ✅ (D05, D01, D29)</li>
+    <li><s>Validar as propostas D22–D26 do modelo de dados</s> ✅</li>
+    <li><s>Definir a arquitetura técnica</s> ✅ <a href="arquitetura.html">abrir arquitetura</a> (D30–D43 decididas)</li>
+    <li>Configurar o ambiente (Docker, README) e começar a codar, seguindo o <a href="plano.html">plano de construção</a>. O repositório Git fica para depois</li>
+  </ol>
+</section>
+
+<!-- 11. HISTÓRICO -->
+<section id="historico">
+  <h2><span class="num">12</span> Histórico do documento</h2>
+  <table>
+    <tr><th>Versão</th><th>Data</th><th>Alteração</th></tr>
+    <tr><td class="id">v0.24</td><td>11/11/2026</td><td>Arquitetura: cada módulo do back-end guarda as próprias rotas em <code>Modulos/&lt;Modulo&gt;/rotas.php</code>, e o <code>routes/api.php</code> vira só um índice (D42)</td></tr>
+    <tr><td class="id">v0.25</td><td>11/11/2026</td><td>Arquitetura: as rotas do front-end usam o React Router, com um endereço por tela (<code>/entrar</code>, <code>/criar-conta</code>) e o botão voltar do navegador funcionando (D43)</td></tr>
+    <tr><td class="id">v0.23</td><td>11/11/2026</td><td>Arquitetura: o model <code>User</code> fica em <code>Modulos/Conta/Models</code>, e não em <code>app/Models</code>, seguindo a D36 sem exceção (D41)</td></tr>
+    <tr><td class="id">v0.22</td><td>10/11/2026</td><td>Arquitetura: testes de ponta a ponta (Playwright) na pasta <code>e2e/</code>, na raiz, rodando no serviço <code>e2e</code> do Docker (D40)</td></tr>
+    <tr><td class="id">v0.21</td><td>10/11/2026</td><td>D39 revisada: lint do front-end com oxlint + Prettier, e não ESLint + Prettier, porque a <code>typescript-eslint</code> ainda não suporta o TypeScript 7 usado no projeto</td></tr>
+    <tr><td class="id">v0.20</td><td>10/11/2026</td><td>Arquitetura: fontes do design system com Fontsource, sem Google Fonts (D38), e lint e formatação do front-end com ESLint + Prettier, removendo o oxlint do template do Vite (D39)</td></tr>
+    <tr><td class="id">v0.19</td><td>09/11/2026</td><td>Arquitetura v0.2: D30–D35 aprovadas; back-end em MVC com Services (D36) e front-end organizado por módulo (D37)</td></tr>
+    <tr><td class="id">v0.18</td><td>06/11/2026</td><td>Fonte da interface trocada para Plus Jakarta Sans no design system e na landing page (D27)</td></tr>
+    <tr><td class="id">v0.17</td><td>06/11/2026</td><td>Arquitetura técnica criada em <code>docs/arquitetura.html</code>; as propostas D30–D35 ficam registradas lá</td></tr>
+    <tr><td class="id">v0.16</td><td>06/11/2026</td><td>D09 ajustada: a escolha do grupo só aparece para quem está em mais de um. No espaço geral, cargos superiores também editam e excluem (D25)</td></tr>
+    <tr><td class="id">v0.15</td><td>06/11/2026</td><td>D09 fechada; D22–D25 fechadas no modelo de dados; regra de acesso 3.4 atualizada; RF62, RF63 e cenários 8 e 9</td></tr>
+    <tr><td class="id">v0.14</td><td>06/11/2026</td><td>Landing page refeita com animações, menu em pílula, troca de tema com sol e lua, depoimentos fictícios identificados como tal e sem preço (D28)</td></tr>
+    <tr><td class="id">v0.13</td><td>06/11/2026</td><td>Landing page reescrita para quem usaria o sistema, com linguagem de venda (D28)</td></tr>
+    <tr><td class="id">v0.12</td><td>06/11/2026</td><td>Stack e vídeo decididos (D05, D01); D27 fechada; landing page criada em <code>landing/index.html</code> (D28); ambiente local com Docker e passo a passo no GitHub (D29)</td></tr>
+    <tr><td class="id">v0.11</td><td>06/11/2026</td><td>Design system criado em <code>docs/design-system.html</code> (tokens de cor nos temas claro e escuro, tipografia, ícones e componentes); proposta D27</td></tr>
+    <tr><td class="id">v0.10</td><td>04/11/2026</td><td>Modelo de dados criado em <code>docs/modelo-de-dados.html</code>; as decisões de modelagem D22–D26 ficam registradas lá</td></tr>
+    <tr><td class="id">v0.9</td><td>04/11/2026</td><td>Histórico de versões dentro do documento entra no MVP (RF60, US33, D21); wireframe da tela de versões</td></tr>
+    <tr><td class="id">v0.8</td><td>04/11/2026</td><td>D19 confirmada (tempo real no MVP). Wireframes criados em <code>docs/wireframes.html</code> (13 telas navegáveis com anotações ligadas às histórias)</td></tr>
+    <tr><td class="id">v0.7</td><td>04/11/2026</td><td>D14–D18 fechadas (gerenciar só cargos menores; itens de quem sai ficam com o líder; um líder por grupo; dono notificado; auditoria só de edições e exclusões). Colaboração em tempo real: nova seção 4.8 (RF57–RF61), RNF25–RNF29, Épico 9 (US29–US32), Etapa 8, camada de tempo real no diagrama; D19 e D20</td></tr>
+    <tr><td class="id">v0.6</td><td>04/11/2026</td><td>Nova seção 6 com as 28 histórias de usuário do MVP em 8 épicos, critérios de aceite, Definição de Pronto e ordem sugerida de construção; propostas D14–D17 e dúvida D18</td></tr>
+    <tr><td class="id">v0.5</td><td>04/11/2026</td><td>D11, D12 e D13 fechadas: tarefa de grupo visível só ao grupo, com filtro por grupo para superiores (RF54); administradores não veem os privados uns dos outros; superiores podem editar e excluir itens de subordinados, com auditoria imutável (RF55, RF56, RNF24); cenários 6 e 7</td></tr>
+    <tr><td class="id">v0.4</td><td>04/11/2026</td><td>Nova seção de Escopo (MVP / V2 / Futuro / Fora); workspace = setor; visibilidade vale para tudo, com os tipos Cargo e Pessoas específicas; regra da cadeia hierárquica (cargos iguais e grupos diferentes isolados); 5 cenários; vídeo integrado; D01, D06, D07 e D10 fechadas; novas D11–D13</td></tr>
+    <tr><td class="id">v0.3</td><td>04/11/2026</td><td>Acesso passa a ser hierárquico; D08 fechada; dúvidas D09 e D10</td></tr>
+    <tr><td class="id">v0.2</td><td>04/11/2026</td><td>Modelo de acesso (workspace, cargos, grupos, visibilidade); IA como assistente em chat (V2); D02 e D03 fechadas</td></tr>
+    <tr><td class="id">v0.1</td><td>04/11/2026</td><td>Visão, atores, requisitos funcionais e não funcionais, desenho de módulos, entidades e fluxo principal</td></tr>
+  </table>
+</section>
+
+</main>
+</div>
+</body>
+</html>

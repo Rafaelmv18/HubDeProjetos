@@ -1,0 +1,107 @@
+/* Botão (docs/design-system.html, seção "Ações") */
+.hub-botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  height: var(--control-md);
+  padding: 0 var(--space-4);
+  font: inherit;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  transition:
+    background var(--motion-fast),
+    border-color var(--motion-fast);
+}
+.hub-botao:hover {
+  background: var(--surface-hover);
+}
+/* O anel de foco global arredonda pouco; aqui ele acompanha o botão */
+.hub-botao:focus-visible {
+  border-radius: var(--radius-md);
+}
+
+/* Primário: a ação mais importante da área */
+.hub-botao--primario {
+  color: var(--on-primary);
+  background: var(--primary);
+  border-color: var(--primary);
+}
+.hub-botao--primario:hover {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+/* Fantasma: ação secundária, sem caixa em volta */
+.hub-botao--fantasma {
+  background: transparent;
+  border-color: transparent;
+}
+
+/* Perigo: só para ações que apagam algo */
+.hub-botao--perigo {
+  color: var(--on-danger);
+  background: var(--danger);
+  border-color: var(--danger);
+}
+.hub-botao--perigo:hover {
+  background: var(--danger);
+  filter: brightness(0.92);
+}
+
+.hub-botao--largura-total {
+  width: 100%;
+}
+
+/* Desabilitado (inclusive enquanto carrega): apagado e sem reação ao mouse */
+.hub-botao:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.hub-botao:disabled:hover {
+  background: var(--surface);
+  filter: none;
+}
+.hub-botao--primario:disabled:hover {
+  background: var(--primary);
+}
+.hub-botao--perigo:disabled:hover {
+  background: var(--danger);
+}
+.hub-botao--fantasma:disabled:hover {
+  background: transparent;
+}
+/* Carregando não fica apagado: a pessoa precisa ler "Entrando…" */
+.hub-botao[aria-busy='true'] {
+  opacity: 1;
+  cursor: progress;
+}
+
+/* O giro de "aguarde" */
+.hub-botao__giro {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  animation: hub-botao-gira 900ms linear infinite;
+}
+
+@keyframes hub-botao-gira {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Com movimento reduzido, o giro fica parado (o texto já diz o que acontece) */
+@media (prefers-reduced-motion: reduce) {
+  .hub-botao {
+    transition: none;
+  }
+  .hub-botao__giro {
+    animation: none;
+  }
+}

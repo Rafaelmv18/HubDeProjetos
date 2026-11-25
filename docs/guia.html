@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hub de Projetos — Guia do desenvolvedor</title>
+<style>
+  :root {
+    --bg: #f7f7f5;
+    --surface: #ffffff;
+    --text: #1f2328;
+    --muted: #5d6470;
+    --border: #e3e3df;
+    --accent: #3b5bdb;
+    --accent-soft: #edf1ff;
+    --ok: #2b8a3e;
+    --ok-bg: #e6f4ea;
+    --warn-bg: #fff8e1;
+    --warn-border: #f0c14b;
+    --warn-text: #8a6100;
+    --danger: #c92a2a;
+    --danger-bg: #fff0f0;
+    --code-bg: #f1f1ee;
+    --term-bg: #1f2328;
+    --term-text: #e9ecef;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; font-size: 15px; }
+  .layout { display: flex; min-height: 100vh; }
+  nav { width: 260px; flex-shrink: 0; position: sticky; top: 0; height: 100vh; overflow-y: auto; background: var(--surface); border-right: 1px solid var(--border); padding: 28px 20px; }
+  nav .brand { font-weight: 700; font-size: 17px; margin-bottom: 4px; }
+  nav .sub { color: var(--muted); font-size: 12px; margin-bottom: 24px; }
+  nav a { display: block; color: var(--muted); text-decoration: none; padding: 6px 10px; border-radius: 6px; font-size: 14px; }
+  nav a:hover { background: var(--accent-soft); color: var(--accent); }
+  nav .group { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: #767c85; margin: 18px 10px 6px; }
+  main { flex: 1; min-width: 0; max-width: 1000px; padding: 40px 48px 80px; }
+  header.hero { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 28px 32px; margin-bottom: 24px; }
+  header.hero h1 { margin: 0 0 6px; font-size: 28px; }
+  header.hero p { margin: 0; color: var(--muted); }
+  section { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 28px 32px; margin-bottom: 24px; scroll-margin-top: 20px; }
+  h2 { margin: 0 0 12px; font-size: 21px; display: flex; align-items: center; gap: 10px; }
+  h2 .num { background: var(--accent-soft); color: var(--accent); font-size: 13px; font-weight: 700; width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  h3 { font-size: 16px; margin: 26px 0 8px; }
+  p { margin: 8px 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 8px 0; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 600; background: #fafaf8; }
+  code { font-family: ui-monospace, Consolas, monospace; background: var(--code-bg); padding: 1px 6px; border-radius: 4px; font-size: 13px; }
+  .note { background: var(--accent-soft); border-radius: 10px; padding: 14px 18px; margin: 12px 0; }
+  .callout { background: var(--warn-bg); border: 1px solid var(--warn-border); border-radius: 10px; padding: 14px 18px; margin: 12px 0; }
+  .danger { background: var(--danger-bg); border: 1px solid #ffc9c9; border-radius: 10px; padding: 14px 18px; margin: 12px 0; }
+  .soon { color: var(--muted); font-size: 13px; font-style: italic; }
+
+  /* Comandos */
+  .cmd { margin: 14px 0; }
+  .cmd .what { font-weight: 600; margin-bottom: 4px; }
+  .cmd .why { color: var(--muted); font-size: 14px; margin-top: 4px; }
+  .term { position: relative; background: var(--term-bg); color: var(--term-text); border-radius: 10px; padding: 12px 92px 12px 16px; font-family: ui-monospace, Consolas, monospace; font-size: 13.5px; line-height: 1.6; overflow-x: auto; white-space: pre; }
+  .term .c { color: #8b949e; }
+  .term button { position: absolute; top: 8px; right: 8px; font: inherit; font-family: -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 12px; padding: 3px 10px; border-radius: 6px; border: 1px solid #495057; background: #343a40; color: #e9ecef; cursor: pointer; }
+  .term button:hover { background: #495057; }
+  .term button.ok { background: var(--ok); border-color: var(--ok); color: #fff; }
+
+  /* Tabela de referência rápida */
+  .quick td:first-child { width: 42%; }
+  .quick code { white-space: nowrap; }
+
+  .faq { border: 1px solid var(--border); border-radius: 10px; margin: 10px 0; background: #fcfcfb; }
+  .faq summary { cursor: pointer; padding: 12px 16px; font-weight: 600; }
+  .faq summary code { font-weight: 400; }
+  .faq > div { padding: 0 16px 12px; }
+
+  @media (max-width: 900px) {
+    nav { display: none; }
+    main { padding: 16px; }
+    section, header.hero { padding: 20px; }
+    .quick code { white-space: normal; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+
+<nav>
+  <div class="brand">Hub de Projetos</div>
+  <div class="sub">Guia do desenvolvedor</div>
+  <div class="group">Começar</div>
+  <a href="#rapido">Referência rápida</a>
+  <a href="#antes">1. Antes de começar</a>
+  <a href="#primeira">2. Primeira vez</a>
+  <div class="group">Usar</div>
+  <a href="#dia">3. Dia a dia</a>
+  <a href="#backend">4. Back-end</a>
+  <a href="#migrations">&nbsp;&nbsp;↳ Migrations</a>
+  <a href="#qualidade">5. Qualidade e TDD</a>
+  <a href="#banco">6. Banco de dados</a>
+  <a href="#enderecos">7. Endereços e portas</a>
+  <div class="group">Ajuda</div>
+  <a href="#problemas">8. Problemas comuns</a>
+  <div class="group">Outros documentos</div>
+  <a href="requisitos.html">📄 Requisitos</a>
+  <a href="wireframes.html">🖼 Wireframes</a>
+  <a href="modelo-de-dados.html">🗄 Modelo de dados</a>
+  <a href="design-system.html">🎨 Design system</a>
+  <a href="arquitetura.html">🏗 Arquitetura</a>
+  <a href="plano.html">✅ Plano de construção</a>
+  <a href="../landing/index.html">🌐 Landing page</a>
+</nav>
+
+<main>
+
+<header class="hero">
+  <h1>Guia do desenvolvedor</h1>
+  <p>Como rodar, testar e mexer no Hub de Projetos, com cada comando explicado. Todos os comandos são para o <b>PowerShell</b> e rodam na pasta do projeto, <code>C:\TesteClaude</code>. Este guia cresce a cada etapa do plano: o que ainda não existe não aparece aqui.</p>
+</header>
+
+<!-- REFERÊNCIA RÁPIDA -->
+<section id="rapido">
+  <h2><span class="num">⚡</span> Referência rápida</h2>
+  <table class="quick">
+    <tr><th>Quero...</th><th>Comando</th></tr>
+    <tr><td>Subir o projeto</td><td><code>docker compose up -d</code></td></tr>
+    <tr><td>Abrir o sistema</td><td><a href="http://localhost:5173"><code>http://localhost:5173</code></a></td></tr>
+    <tr><td>Ver se está rodando</td><td><code>docker compose ps</code></td></tr>
+    <tr><td>Ver o log da API ao vivo</td><td><code>docker compose logs -f api</code></td></tr>
+    <tr><td>Conferir tudo de uma vez</td><td><code>.\check.ps1</code></td></tr>
+    <tr><td>Rodar os testes de ponta a ponta</td><td><code>docker compose run --rm e2e</code></td></tr>
+    <tr><td>Rodar os testes</td><td><code>docker compose exec api vendor/bin/pest</code></td></tr>
+    <tr><td>Procurar erros no código</td><td><code>docker compose exec api composer analyse</code></td></tr>
+    <tr><td>Arrumar a formatação</td><td><code>docker compose exec api vendor/bin/pint</code></td></tr>
+    <tr><td>Rodar os testes do front-end</td><td><code>docker compose exec web npm run test</code></td></tr>
+    <tr><td>Procurar erros no código do front-end</td><td><code>docker compose exec web npm run lint</code></td></tr>
+    <tr><td>Conferir a formatação do front-end</td><td><code>docker compose exec web npm run format:check</code></td></tr>
+    <tr><td>Arrumar a formatação do front-end</td><td><code>docker compose exec web npm run format</code></td></tr>
+    <tr><td>Conferir os tipos e montar o front-end</td><td><code>docker compose exec web npm run build</code></td></tr>
+    <tr><td>Rodar um comando do Laravel</td><td><code>docker compose exec api php artisan &lt;comando&gt;</code></td></tr>
+    <tr><td>Desfazer a última migration</td><td><code>docker compose exec api php artisan migrate:rollback --step=1</code></td></tr>
+    <tr><td>Entrar no banco</td><td><code>docker compose exec db psql -U hub -d hub</code></td></tr>
+    <tr><td>Desligar tudo</td><td><code>docker compose down</code></td></tr>
+  </table>
+</section>
+
+<!-- 1 -->
+<section id="antes">
+  <h2><span class="num">1</span> Antes de começar</h2>
+  <h3>O que precisa estar instalado</h3>
+  <table>
+    <tr><th>Programa</th><th>Para quê</th><th>Como conferir</th></tr>
+    <tr><td><b>Docker Desktop</b></td><td>Roda o banco, a API, o front-end e todo o resto</td><td><code>docker --version</code></td></tr>
+    <tr><td>Git <span class="soon">(opcional por enquanto)</span></td><td>Versionar o código, quando o repositório for criado</td><td><code>git --version</code></td></tr>
+  </table>
+  <p>O Docker Desktop precisa estar <b>aberto</b>, com o aviso "Engine running", sempre que você for usar o projeto.</p>
+
+  <h3>A regra mais importante: as ferramentas do projeto rodam no Docker</h3>
+  <p>O PHP, o Composer, o Node.js, o npm e o PostgreSQL <b>não são instalados na sua máquina</b>. Eles rodam dentro dos <b>contêineres</b> do Docker. Isso garante que o projeto roda igual em qualquer computador.</p>
+  <p>Por isso, os comandos que você vê em tutoriais <b>não funcionam direto no terminal do Windows</b>. Eles ganham um prefixo que diz "rode isto dentro do contêiner":</p>
+  <table>
+    <tr><th>Em tutoriais você vê</th><th>Neste projeto você usa</th></tr>
+    <tr><td><code>php artisan serve</code></td><td>Nada: já roda sozinho no serviço <code>api</code></td></tr>
+    <tr><td><code>php artisan migrate</code></td><td><code>docker compose exec api php artisan migrate</code></td></tr>
+    <tr><td><code>composer install</code></td><td><code>docker compose exec api composer install</code></td></tr>
+    <tr><td><code>vendor/bin/pest</code></td><td><code>docker compose exec api vendor/bin/pest</code></td></tr>
+    <tr><td><code>npm run dev</code></td><td>Nada: já roda sozinho no serviço <code>web</code></td></tr>
+    <tr><td><code>npm install &lt;pacote&gt;</code></td><td><code>docker compose exec web npm install &lt;pacote&gt;</code></td></tr>
+    <tr><td><code>npm run lint</code></td><td><code>docker compose exec web npm run lint</code></td></tr>
+  </table>
+  <div class="callout"><b>Mesmo que você tenha o Node instalado no Windows</b>, não rode <code>npm run dev</code> nem <code>npm install</code> nele. O <code>frontend/node_modules/</code> foi instalado pelo Linux do contêiner, e algumas peças do Vite são feitas só para Linux. No Windows, ele dá erro, e um <code>npm install</code> feito por ele bagunça as dependências do contêiner.</div>
+  <div class="note"><b>Lendo o prefixo:</b> <code>docker compose exec</code> = "execute dentro de um serviço" · <code>api</code> = o serviço do Laravel (o nome vem do <code>docker-compose.yml</code>) · o resto é o comando normal.</div>
+</section>
+
+<!-- 2 -->
+<section id="primeira">
+  <h2><span class="num">2</span> Primeira vez</h2>
+  <p>Do zero até ver a API respondendo. Só é preciso fazer isto uma vez por computador.</p>
+
+  <div class="cmd">
+    <div class="what">1. Entrar na pasta do projeto</div>
+    <div class="term">cd C:\TesteClaude</div>
+  </div>
+
+  <div class="cmd">
+    <div class="what">2. Criar o arquivo de configuração</div>
+    <div class="term">cp .env.example .env</div>
+    <div class="why">O <code>.env</code> guarda o nome do banco, o usuário e a senha. O <code>.env.example</code> é o modelo, sem segredos reais.</div>
+  </div>
+
+  <div class="cmd">
+    <div class="what">3. Subir o projeto e esperar</div>
+    <div class="term">docker compose up -d</div>
+    <div class="why">Na primeira vez, o Docker baixa as imagens e monta a da API. Depois, a API instala sozinha as dependências, cria o <code>backend/.env</code>, gera a chave e cria as tabelas, e o front-end instala as dependências dele. O comando <b>só devolve o terminal quando tudo estiver pronto</b>.</div>
+    <div class="callout"><b>Tenha paciência na primeira vez:</b> o comando fica parado por <b>cerca de 8 minutos</b>, porque a instalação das dependências da API é lenta no Windows. Parece travado, mas não está. Das próximas vezes, tudo sobe em cerca de 30 segundos.</div>
+  </div>
+
+  <div class="cmd">
+    <div class="what">Opcional: acompanhar o progresso em outro terminal</div>
+    <div class="term">docker compose logs -f api</div>
+    <div class="why">Abra um segundo PowerShell na mesma pasta e rode este comando para ver a instalação andando (<code>127/129</code>...). Quando aparecer <code>[api] Pronto.</code> e depois <code>Server running</code>, a API está pronta. Aperte <b>Ctrl+C</b> para sair do log, e a API continua rodando.</div>
+  </div>
+
+  <div class="cmd" id="ver">
+    <div class="what">4. Ver funcionando</div>
+    <p>Abra no navegador:</p>
+    <table>
+      <tr><th>Endereço</th><th>O que aparece</th></tr>
+      <tr><td><a href="http://localhost:5173">http://localhost:5173</a></td><td>O front-end (React): a raiz abre a tela de entrar (<code>/entrar</code>)</td></tr>
+      <tr><td><a href="http://localhost:5173/saude">http://localhost:5173/saude</a></td><td>A página de saúde, que mostra "banco: ok" quando o navegador, o front-end, a API e o banco estão conversando</td></tr>
+      <tr><td><a href="http://localhost:5173/api/saude">http://localhost:5173/api/saude</a></td><td><code>{"status":"ok","banco":"ok"}</code>, a resposta do Laravel</td></tr>
+    </table>
+    <div class="why">Tudo passa pelo mesmo endereço: o Vite mostra a página e repassa o que começa com <code>/api</code> para o Laravel (o "proxy", decisão D30).</div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section id="dia">
+  <h2><span class="num">3</span> Dia a dia</h2>
+
+  <div class="cmd">
+    <div class="what">Subir o projeto</div>
+    <div class="term">docker compose up -d</div>
+    <div class="why">Liga o banco, a API e o front-end, nessa ordem: cada um espera o anterior ficar pronto. Por isso o comando leva cerca de 30 segundos para terminar. Quando ele devolver o terminal, já pode abrir <a href="http://localhost:5173">localhost:5173</a>.</div>
+  </div>
+
+  <div class="cmd">
+    <div class="what">Ver o que está rodando</div>
+    <div class="term">docker compose ps</div>
+    <div class="why">Mostra cada serviço e o estado dele. O banco e a API devem aparecer como <code>(healthy)</code>.</div>
+  </div>
+
+  <div class="cmd">
+    <div class="what">Acompanhar o log</div>
+    <div class="term">docker compose logs -f api   <span class="c"># só a API</span>
+docker compose logs -f web   <span class="c"># só o front-end (Vite)</span>
+docker compose logs -f db    <span class="c"># só o banco</span>
+docker compose logs -f       <span class="c"># todos juntos</span></div>
+    <div class="why">O <code>-f</code> segue o log ao vivo. <b>Ctrl+C</b> sai do log sem desligar nada.</div>
+  </div>
+
+  <div class="cmd">
+    <div class="what">Desligar</div>
+    <div class="term">docker compose down</div>
+    <div class="why">Desliga e remove os contêineres. <b>Os dados do banco continuam salvos</b> no volume e voltam quando você subir de novo.</div>
+  </div>
+
+  <div class="cmd">
+    <div class="what">Pausar e retomar um serviço</div>
+    <div class="term">docker compose stop db
+docker compose start db</div>
+    <div class="why">Útil para testar o que acontece quando o banco cai: com ele parado, <code>/api/saude</code> responde <code>"fora do ar"</code>.</div>
+  </div>
+
+  <div class="cmd">
+    <div class="what">Reiniciar um serviço</div>
+    <div class="term">docker compose restart api
+docker compose restart web</div>
+    <div class="why">A API: quando você mudar o <code>backend/.env</code> ou algo parecer travado. O front-end: quando você mudar o <code>frontend/vite.config.ts</code>.</div>
+  </div>
+
+  <div class="cmd">
+    <div class="what">Reconstruir a imagem da API</div>
+    <div class="term">docker compose up -d --build</div>
+    <div class="why">Só é preciso quando o <code>backend/Dockerfile</code> ou o <code>backend/docker/entrypoint.sh</code> mudarem. Mudanças no código PHP aparecem na hora, sem reconstruir.</div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section id="backend">
+  <h2><span class="num">4</span> Back-end (Laravel)</h2>
+
+  <div class="cmd">
+    <div class="what">Ver todas as rotas da API</div>
+    <div class="term">docker compose exec api php artisan route:list --path=api</div>
+  </div>
+
+  <h3 id="migrations">Migrations: aplicar e voltar</h3>
+  <p>Toda migration tem dois métodos, no padrão do Laravel: <b><code>up</code></b> aplica a mudança e <b><code>down</code></b> desfaz exatamente o que o <code>up</code> fez. Escreva sempre o <code>down</code> de verdade, porque é ele que permite voltar atrás.</p>
+
+  <div class="cmd">
+    <div class="what">Criar uma migration</div>
+    <div class="term">docker compose exec api php artisan make:migration create_grupos_table</div>
+    <div class="why">Use nomes descritivos: <code>create_grupos_table</code>, <code>add_prazo_to_tarefas_table</code>. O Laravel coloca a data e a hora no começo do nome, e é essa data que define a ordem.</div>
+  </div>
+
+  <div class="cmd">
+    <div class="what">Ver o SQL antes de aplicar</div>
+    <div class="term">docker compose exec api php artisan migrate --pretend</div>
+    <div class="why">Mostra o SQL que seria executado, sem executar nada.</div>
+  </div>
+
+  <div class="cmd">
+    <div class="what">Aplicar</div>
+    <div class="term">docker compose exec api php artisan migrate</div>
+    <div class="why">A API já roda o <code>migrate</code> sozinha toda vez que sobe. O comando manual serve para quando você cria uma migration com o projeto ligado.</div>
+  </div>
+
+  <div class="cmd">
+    <div class="what">Ver a lista: o que já rodou e em qual lote</div>
+    <div class="term">docker compose exec api php artisan migrate:status</div>
+  </div>
+  <p>Exemplo de como a lista fica:</p>
+  <div class="term">Migration name ................................ Batch / Status
+0001_01_01_000000_create_users_table ............. [1] Ran
+0001_01_01_000001_create_cache_table ............. [1] Ran
+0001_01_01_000002_create_jobs_table .............. [1] Ran
+2026_11_20_100000_create_grupos_table ............ [2] Ran
+2026_11_21_090000_add_lider_to_grupos_table ...... [3] Ran
+2026_11_21_093000_create_convites_table .......... [3] Ran</div>
+  <p><b>Batch (lote)</b> é o número da vez em que o <code>migrate</code> rodou. Tudo o que foi aplicado na mesma execução fica no mesmo lote.</p>
+
+  <h3>Voltar: escolher quanto desfazer</h3>
+  <p>No Laravel, você não diz "volte até a migration X". Você diz <b>quantas</b> desfazer, a partir da última:</p>
+  <table>
+    <tr><th>Comando</th><th>O que desfaz no exemplo acima</th></tr>
+    <tr><td><code>migrate:rollback</code></td><td>O <b>último lote inteiro</b>: <code>convites</code> e <code>lider</code> (lote 3)</td></tr>
+    <tr><td><code>migrate:rollback --step=1</code></td><td>Só a última: <code>convites</code></td></tr>
+    <tr><td><code>migrate:rollback --step=3</code></td><td>As 3 últimas: <code>convites</code>, <code>lider</code> e <code>grupos</code></td></tr>
+    <tr><td><code>migrate:reset</code></td><td><b>Tudo</b>, até o banco ficar sem tabelas</td></tr>
+  </table>
+  <div class="note"><b>Para voltar até uma migration específica:</b> conte quantas linhas existem <b>abaixo</b> dela no <code>migrate:status</code> e use esse número no <code>--step</code>. Para deixar o banco como estava logo depois de <code>create_grupos_table</code>, há 2 linhas abaixo dela, então o comando é <code>--step=2</code>.</div>
+
+  <div class="cmd">
+    <div class="what">Conferir antes de desfazer</div>
+    <div class="term">docker compose exec api php artisan migrate:rollback --step=2 --pretend</div>
+    <div class="why">Mostra o SQL dos <code>down</code> que rodariam, sem executar. Depois, rode o mesmo comando sem o <code>--pretend</code>.</div>
+  </div>
+
+  <div class="callout"><b>Sempre do fim para o começo.</b> Existe o <code>--batch=N</code>, que desfaz um lote do meio, mas evite: desfazer a tabela <code>grupos</code> deixaria a migration seguinte (<code>add_lider_to_grupos_table</code>) marcada como aplicada em uma tabela que não existe mais. Volte sempre a partir da última, como uma pilha de pratos.</div>
+  <div class="danger"><b>⚠️ Voltar desfaz a estrutura, mas não recupera dados.</b> Um <code>down</code> que remove uma tabela ou coluna apaga também o que estava nela.</div>
+  <div class="note"><b>Neste projeto:</b> a API roda <code>migrate</code> toda vez que sobe. Cada migration nova aplicada assim entra em um lote próprio, e na maior parte das vezes <code>migrate:rollback</code> e <code>--step=1</code> desfazem a mesma coisa.</div>
+
+  <div class="cmd">
+    <div class="what">Testar código PHP na hora (Tinker)</div>
+    <div class="term">docker compose exec api php artisan tinker</div>
+    <div class="why">Um terminal interativo do Laravel. Bom para experimentar consultas, como <code>DB::select('select now()')</code>. Para sair, digite <code>exit</code>.</div>
+  </div>
+
+  <div class="cmd">
+    <div class="what">Mandar um e-mail de teste</div>
+    <div class="term">Mail::raw('Olá', fn ($m) => $m->to('ana@exemplo.com')->subject('Teste'));</div>
+    <div class="why">Digite esta linha dentro do Tinker (comando acima) para enviar um e-mail simples pelo Laravel. Ele não sai da máquina: chega na caixa de entrada do Mailpit, que você lê em <a href="http://localhost:8025">localhost:8025</a>.</div>
+  </div>
+
+  <div class="cmd">
+    <div class="what">Entrar no contêiner da API</div>
+    <div class="term">docker compose exec api sh</div>
+    <div class="why">Abre um terminal dentro do contêiner. Lá dentro, os comandos vão sem prefixo (<code>php artisan ...</code>). Para sair, digite <code>exit</code>.</div>
+  </div>
+
+  <div class="cmd">
+    <div class="what">Dependências (Composer)</div>
+    <div class="term">docker compose exec api composer install    <span class="c"># instala o que está no composer.lock</span></div>
+    <div class="callout">Para <b>adicionar</b> um pacote novo (<code>composer require</code>), combine antes. A regra do projeto é não instalar nada sem conversar.</div>
+  </div>
+
+  <h3>Onde fica cada coisa</h3>
+  <table>
+    <tr><th>Pasta</th><th>O que guarda</th></tr>
+    <tr><td><code>backend/app/Modulos/</code></td><td>Um módulo por assunto (Sistema, depois Conta, Kanban...), cada um com Models, Controllers, Requests, Resources e Services (D36). O <code>User</code> fica em <code>Modulos/Conta/Models</code> (D41)</td></tr>
+    <tr><td><code>backend/app/Modulos/&lt;Modulo&gt;/rotas.php</code></td><td>As rotas de cada módulo, junto do código que as atende (D42)</td></tr>
+    <tr><td><code>backend/routes/api.php</code></td><td>Só um índice: carrega o <code>rotas.php</code> de cada módulo. Por isso todas as rotas começam com <code>/api</code></td></tr>
+    <tr><td><code>backend/config/sanctum.php</code></td><td>A configuração do login por cookie (Sanctum). O cookie de CSRF sai em <code>/api/sanctum/csrf-cookie</code>, dentro do <code>/api</code> para o proxy do Vite alcançar</td></tr>
+    <tr><td><code>backend/database/migrations/</code></td><td>A criação e as alterações das tabelas</td></tr>
+    <tr><td><code>backend/tests/Feature/</code></td><td>Os testes de rotas e do sistema, na mesma divisão dos módulos</td></tr>
+  </table>
+
+  <h3>E no front-end</h3>
+  <table>
+    <tr><th>Pasta</th><th>O que guarda</th></tr>
+    <tr><td><code>frontend/src/modulos/</code></td><td>Um módulo por assunto, com os mesmos nomes do back-end, cada um com <code>components/</code>, <code>hooks/</code>, <code>services/</code> e <code>types.ts</code> (D37)</td></tr>
+    <tr><td><code>frontend/src/App.tsx</code></td><td>A tabela de rotas do front-end, com o endereço de cada tela (D43, React Router)</td></tr>
+    <tr><td><code>frontend/src/compartilhado/</code></td><td>O que mais de um módulo usa e conhece o negócio (<code>LayoutEntrada</code>, que tem a opção <code>comAbas</code> para mostrar "Entrar | Criar conta", Avatar, useAuth...)</td></tr>
+    <tr><td><code>frontend/src/design-system/</code></td><td>Os tokens e os componentes genéricos de interface (<code>Marca</code>, <code>Orbitas</code> (anéis e equipe em órbita das telas de entrada), e as peças de formulário e navegação: <code>Botao</code>, <code>Campo</code>, <code>Abas</code> e <code>Aviso</code>)</td></tr>
+    <tr><td><code>frontend/src/lib/</code></td><td>O cliente HTTP (<code>api.ts</code>: <code>api.get</code>, <code>api.post</code>... e o <code>ErroApi</code>; já cuida do cookie e do CSRF) e, mais adiante, as conexões ao vivo</td></tr>
+  </table>
+  <p>Cada pasta tem um <code>README.md</code> explicando o que vai nela. Um módulo nunca importa de dentro de outro: o que é comum vai para <code>compartilhado/</code>.</p>
+</section>
+
+<!-- 5 -->
+<section id="qualidade">
+  <h2><span class="num">5</span> Qualidade e TDD</h2>
+
+  <div class="cmd">
+    <div class="what">Rodar os testes</div>
+    <div class="term">docker compose exec api vendor/bin/pest                          <span class="c"># todos</span>
+docker compose exec api vendor/bin/pest tests/Feature/Sistema     <span class="c"># só uma pasta</span>
+docker compose exec api vendor/bin/pest --filter="fora do ar"     <span class="c"># só os que têm esse texto no nome</span>
+docker compose exec api composer test                            <span class="c"># atalho: limpa o cache de configuração e roda todos</span></div>
+    <div class="why">Os testes rodam no banco <code>hub_testes</code>, separado do banco de desenvolvimento. Rodar os testes nunca apaga os seus dados.</div>
+  </div>
+
+  <div class="cmd">
+    <div class="what">Procurar erros sem executar (Larastan)</div>
+    <div class="term">docker compose exec api composer analyse</div>
+    <div class="why">Precisa terminar com <code>[OK] No errors</code>. O rigor está no nível 6, configurado em <code>backend/phpstan.neon</code>. O <code>composer analyse</code> é um apelido, definido nos <code>scripts</code> do <code>backend/composer.json</code>, para <code>vendor/bin/phpstan analyse --memory-limit=512M</code>. A opção de memória existe porque, sem o cache (por exemplo, depois de mudar uma dependência), a análise completa não cabe nos 128M padrão do PHP e o Larastan para no meio.</div>
+  </div>
+
+  <div class="cmd">
+    <div class="what">Padrão de código (Pint)</div>
+    <div class="term">docker compose exec api vendor/bin/pint --test   <span class="c"># só verifica, sem mudar nada</span>
+docker compose exec api vendor/bin/pint          <span class="c"># corrige a formatação</span></div>
+  </div>
+
+  <div class="cmd">
+    <div class="what">Rodar os testes do front-end (Vitest)</div>
+    <div class="term">docker compose exec web npm run test         <span class="c"># roda todos uma vez e termina</span>
+docker compose exec web npm run test:watch   <span class="c"># fica aberto e roda de novo a cada arquivo salvo (Ctrl+C para sair)</span></div>
+    <div class="why">O Vitest roda os testes, e a Testing Library testa os componentes como o usuário os usa: achar um botão, clicar e ver o resultado. Os arquivos de teste terminam em <code>.test.ts</code> ou <code>.test.tsx</code>. Enquanto não houver nenhum, o comando termina com "No test files found", e isso é esperado. A preparação que roda antes dos testes fica em <code>frontend/src/test/setup.ts</code>.</div>
+  </div>
+
+  <div class="cmd">
+    <div class="what">Procurar erros no front-end (oxlint)</div>
+    <div class="term">docker compose exec web npm run lint</div>
+    <div class="why">Aponta erros e más práticas no código do front-end, como o uso errado de hooks do React. Precisa terminar com 0 erros e 0 avisos. As regras ficam em <code>frontend/.oxlintrc.json</code>.</div>
+  </div>
+
+  <div class="cmd">
+    <div class="what">Padrão de código do front-end (Prettier)</div>
+    <div class="term">docker compose exec web npm run format:check   <span class="c"># só verifica, sem mudar nada</span>
+docker compose exec web npm run format         <span class="c"># corrige a formatação</span></div>
+    <div class="why">O Prettier só cuida da formatação (aspas, espaços, quebras de linha). Quem procura erros é o oxlint. É a mesma divisão do back-end: o Larastan procura erros e o Pint formata.</div>
+  </div>
+
+  <div class="cmd">
+    <div class="what">Conferir os tipos e montar a versão final (build)</div>
+    <div class="term">docker compose exec web npm run build</div>
+    <div class="why">Roda o <code>tsc</code>, que confere os tipos do TypeScript, e depois o <code>vite build</code>, que monta a versão final do front-end. Isso cria a pasta <code>frontend/dist</code>. Se der erro de tipo, o build para.</div>
+  </div>
+
+  <div class="cmd">
+    <div class="what">Conferir os tipos do front-end sem montar nada</div>
+    <div class="term">docker compose exec web npm run typecheck</div>
+    <div class="why">Roda só o <code>tsc</code>. É a parte de conferir tipos do <code>build</code>, sem criar a pasta <code>frontend/dist</code>.</div>
+  </div>
+
+  <div class="cmd">
+    <div class="what">Relatório de cobertura dos testes</div>
+    <div class="term">docker compose exec api composer coverage        <span class="c"># back-end (Pest + PCOV)</span>
+docker compose exec web npm run test:coverage    <span class="c"># front-end (Vitest)</span></div>
+    <div class="why">A cobertura mostra quanto do código os testes realmente executam, arquivo por arquivo, e quais linhas nenhum teste tocou. No back-end quem mede é o PCOV, uma extensão do PHP instalada pelo <code>backend/Dockerfile</code>. No front-end, o relatório também sai em HTML, na pasta <code>frontend/coverage/</code> (abra o <code>index.html</code> dela no navegador). A meta do projeto é 80% no geral e 100% na regra de acesso; o mínimo ainda não é obrigatório, e a cobertura fica fora do <code>check</code> por enquanto.</div>
+  </div>
+
+  <div class="cmd">
+    <div class="what">Testes de ponta a ponta (Playwright)</div>
+    <div class="term">docker compose run --rm e2e</div>
+    <div class="why">Um navegador de verdade (o Chromium) abre o sistema e confere o que aparece, com o front-end, a API e o banco no ar. Aqui nada é fingido. O serviço <code>e2e</code> não sobe com o <code>docker compose up -d</code>: o <code>run</code> liga, roda os testes e desliga, e o <code>--rm</code> apaga o contêiner no fim. Precisa terminar com todos os testes em <code>passed</code>. Os testes ficam em <code>e2e/tests/</code>. Na primeira vez, o Docker baixa a imagem do Playwright, que é grande. Se um teste falhar, a gravação do que aconteceu fica em <code>e2e/test-results/</code>.</div>
+  </div>
+
+  <div class="cmd">
+    <div class="what">Conferir tudo de uma vez (check)</div>
+    <div class="term">.\check.ps1</div>
+    <div class="why">Roda na raiz do projeto, no PowerShell, com o Docker no ar. Ele executa em sequência a formatação (Pint e Prettier), a análise (Larastan, oxlint e TypeScript) e os testes (Pest e Vitest) dos dois lados, e mostra um resumo com <code>OK</code> ou <code>FALHOU</code> em cada etapa. Ele <b>só confere</b>: não conserta nenhum arquivo. Mesmo que uma etapa falhe, as outras rodam, para você ver todos os problemas de uma vez. É o comando para rodar antes de dar uma tarefa como pronta. Os testes de ponta a ponta (Playwright) ficam de fora, porque são mais lentos.</div>
+  </div>
+
+  <h3>O ciclo do TDD na prática</h3>
+  <table>
+    <tr><th>Passo</th><th>O que fazer</th></tr>
+    <tr><td>🔴 1</td><td>Crie o teste em <code>backend/tests/Feature/&lt;Modulo&gt;/</code> a partir de um critério de aceite. Rode o Pest e <b>veja falhar pelo motivo certo</b> (por exemplo, 404 porque a rota ainda não existe).</td></tr>
+    <tr><td>🟢 2</td><td>Escreva o mínimo de código para passar. Rode o Pest de novo.</td></tr>
+    <tr><td>🔵 3</td><td>Melhore o código com os testes verdes. No fim, rode o Pest, o Larastan e o Pint.</td></tr>
+  </table>
+  <p>Modelo de teste, seguindo o padrão do projeto (funções do Pest em vez de <code>$this</code>):</p>
+  <div class="term">&lt;?php
+
+use function Pest\Laravel\getJson;
+
+it('responde que a API e o banco estão funcionando', function () {
+    getJson('/api/saude')
+        ->assertOk()
+        ->assertExactJson(['status' => 'ok', 'banco' => 'ok']);
+});</div>
+  <div class="note"><b>Por que <code>getJson()</code> e não <code>$this->getJson()</code>?</b> Os dois funcionam, mas o Larastan só entende a função. Com <code>$this</code>, ele aponta um erro falso e deixa de conferir o teste.</div>
+</section>
+
+<!-- 6 -->
+<section id="banco">
+  <h2><span class="num">6</span> Banco de dados (PostgreSQL)</h2>
+
+  <div class="cmd">
+    <div class="what">Entrar no banco pelo terminal</div>
+    <div class="term">docker compose exec db psql -U hub -d hub</div>
+    <div class="why">Dentro do <code>psql</code>: <code>\l</code> lista os bancos, <code>\dt</code> lista as tabelas, <code>\d users</code> mostra uma tabela, e <code>\q</code> sai. Comandos SQL terminam com <code>;</code>.</div>
+  </div>
+
+  <div class="cmd">
+    <div class="what">Rodar uma consulta direto, sem entrar</div>
+    <div class="term">docker compose exec db psql -U hub -d hub -c "select * from migrations;"</div>
+  </div>
+
+  <h3>Conectar com um programa (DBeaver, pgAdmin...)</h3>
+  <table>
+    <tr><th>Campo</th><th>Valor</th></tr>
+    <tr><td>Host</td><td><code>localhost</code></td></tr>
+    <tr><td>Porta</td><td><code>5432</code></td></tr>
+    <tr><td>Banco</td><td><code>hub</code> (desenvolvimento) ou <code>hub_testes</code> (testes)</td></tr>
+    <tr><td>Usuário / senha</td><td><code>hub</code> / <code>hub_local_123</code> (valores do <code>.env</code>, só para uso local)</td></tr>
+  </table>
+
+  <h3>Zerar o banco</h3>
+  <div class="danger"><b>⚠️ Apaga todos os dados</b> do banco, sem volta. Use só quando quiser começar do zero.</div>
+  <div class="term">docker compose down -v
+docker compose up -d</div>
+  <div class="why">O <code>-v</code> apaga também o volume, onde os dados ficam. Ao subir de novo, o banco é recriado vazio, o <code>hub_testes</code> volta sozinho e a API recria as tabelas.</div>
+</section>
+
+<!-- 7 -->
+<section id="enderecos">
+  <h2><span class="num">7</span> Endereços e portas</h2>
+  <table>
+    <tr><th>Serviço</th><th>No seu computador</th><th>Entre os contêineres</th><th>Observação</th></tr>
+    <tr><td>Banco (<code>db</code>)</td><td><code>localhost:5432</code></td><td><code>db:5432</code></td><td>Aberto para os programas de banco</td></tr>
+    <tr><td>Front-end (<code>web</code>)</td><td><a href="http://localhost:5173"><code>localhost:5173</code></a></td><td><code>web:5173</code></td><td><b>O endereço que você usa.</b> O que começa com <code>/api</code> é repassado ao Laravel</td></tr>
+    <tr><td>Caixa de e-mails (<code>mailpit</code>)</td><td><a href="http://localhost:8025"><code>localhost:8025</code></a></td><td><code>mailpit:1025</code> (SMTP)</td><td>Mostra os e-mails que o Laravel envia em desenvolvimento; nenhum sai da máquina. Ficam só na memória: somem quando o contêiner reinicia</td></tr>
+    <tr><td>API (<code>api</code>)</td><td>—</td><td><code>api:8000</code></td><td>Fechada para fora, de propósito (D30). Acesse pelo Vite: <a href="http://localhost:5173/api/saude"><code>localhost:5173/api/saude</code></a></td></tr>
+  </table>
+  <div class="note"><b>Por que "entre os contêineres" é diferente?</b> Dentro do Docker, cada serviço se chama pelo nome. Por isso, o Laravel conecta em <code>db</code> e não em <code>localhost</code>. Dentro de um contêiner, <code>localhost</code> é o próprio contêiner.</div>
+</section>
+
+<!-- 8 -->
+<section id="problemas">
+  <h2><span class="num">8</span> Problemas comuns</h2>
+
+  <details class="faq"><summary><code>php artisan serve</code> não funciona, ou "php não é reconhecido"</summary><div>
+    <p>Esperado: não há PHP no Windows (veja a <a href="#antes">seção 1</a>). A API <b>já está rodando</b> dentro do contêiner quando você dá <code>docker compose up -d</code>. Para outros comandos, use o prefixo <code>docker compose exec api</code>.</p>
+  </div></details>
+
+  <details class="faq"><summary><code>npm run dev</code> não funciona, ou "npm não é reconhecido"</summary><div>
+    <p>Esperado pelo mesmo motivo: o Node.js do projeto existe só no Docker (veja a <a href="#antes">seção 1</a>). O front-end já roda sozinho no serviço <code>web</code> quando você dá <code>docker compose up -d</code>. Para outros comandos do npm, use <code>docker compose exec web npm ...</code>. Se você tiver o Node no Windows e o erro mencionar <code>binding</code>, <code>native</code> ou <code>linux</code>, é porque as dependências são do Linux do contêiner: rode pelo Docker.</p>
+  </div></details>
+
+  <details class="faq"><summary>"failed to connect to the docker API" ou "dockerDesktopLinuxEngine"</summary><div>
+    <p>O Docker Desktop está fechado. Abra o programa, espere aparecer "Engine running" e rode o comando de novo.</p>
+  </div></details>
+
+  <details class="faq"><summary>"Connection refused" ao chamar <code>localhost</code> de dentro do contêiner</summary><div>
+    <p>Dentro do contêiner, <code>localhost</code> aponta para o IPv6 (<code>::1</code>), e o servidor do Laravel só escuta no IPv4. Use <code>127.0.0.1</code>:</p>
+    <div class="term">docker compose exec api wget -qO- http://127.0.0.1:8000/api/saude</div>
+  </div></details>
+
+  <details class="faq"><summary><code>http proxy error</code> ou <code>ECONNREFUSED</code> no log do <code>web</code></summary><div>
+    <p>O Vite não conseguiu falar com a API. Normalmente isso não acontece, porque o <code>web</code> só sobe depois que a API responde. Se aparecer, a API caiu ou está reiniciando: confira com <code>docker compose ps</code> (ela deve estar <code>(healthy)</code>) e veja o motivo em <code>docker compose logs api --tail 50</code>.</p>
+  </div></details>
+
+  <details class="faq"><summary>Script <code>.sh</code> falha com "not found" ou um erro com <code>\r</code></summary><div>
+    <p>O arquivo foi salvo com a quebra de linha do Windows (CRLF), e o Linux do contêiner só entende LF. No VS Code, clique em <code>CRLF</code> no canto inferior direito, troque para <code>LF</code> e salve. Depois rode <code>docker compose up -d --build</code>.</p>
+  </div></details>
+
+  <details class="faq"><summary>"port is already allocated" (porta já em uso)</summary><div>
+    <p>Outro programa está usando a porta (por exemplo, um PostgreSQL instalado no Windows na 5432). Para descobrir qual:</p>
+    <div class="term">Get-NetTCPConnection -LocalPort 5432 -State Listen</div>
+    <p>Feche o programa ou combine a troca da porta no <code>docker-compose.yml</code>.</p>
+  </div></details>
+
+  <details class="faq"><summary>Mudei o <code>.env</code> e nada mudou</summary><div>
+    <p><b><code>.env</code> da raiz</b> (dados do banco): rode <code>docker compose up -d</code>, que recria o que mudou. <b><code>backend/.env</code></b> (configurações do Laravel): rode <code>docker compose restart api</code>.</p>
+  </div></details>
+
+  <details class="faq"><summary>A API não sobe, ou fica reiniciando</summary><div>
+    <p>Veja o motivo no log:</p>
+    <div class="term">docker compose logs api --tail 50</div>
+    <p>Causas comuns: o banco ainda não ficou pronto (espere e confira com <code>docker compose ps</code>) ou um erro em uma migration nova.</p>
+  </div></details>
+</section>
+
+</main>
+</div>
+
+<script>
+  // Botão "Copiar" em cada bloco de comando (copia sem os comentários)
+  document.querySelectorAll('.term').forEach(function (box) {
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = 'Copiar';
+    box.appendChild(btn);
+    btn.addEventListener('click', function () {
+      var clone = box.cloneNode(true);
+      clone.querySelectorAll('button, .c').forEach(function (n) { n.remove(); });
+      var text = clone.textContent.split('\n').map(function (l) { return l.replace(/\s+$/, ''); }).join('\n').trim();
+      function done() { btn.textContent = 'Copiado ✓'; btn.classList.add('ok'); setTimeout(function () { btn.textContent = 'Copiar'; btn.classList.remove('ok'); }, 1500); }
+      function fallback() {
+        var ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); done(); } catch (e) {} ta.remove();
+      }
+      if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(done, fallback); else fallback();
+    });
+  });
+</script>
+</body>
+</html>

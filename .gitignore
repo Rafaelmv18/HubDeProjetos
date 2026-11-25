@@ -1,0 +1,5 @@
+# Variáveis de ambiente locais (podem conter senhas e chaves)
+.env
+
+# Contexto pessoal para sessões do Claude (não vai para o GitHub)
+memoria.md

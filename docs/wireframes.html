@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hub de Projetos — Wireframes</title>
+<style>
+  :root {
+    --bg: #e9e7e3;
+    --paper: #ffffff;
+    --ink: #2b2b2b;
+    --muted: #7a7a7a;
+    --line: #bdbdbd;
+    --soft: #f3f3f1;
+    --soft2: #e6e6e3;
+    --pin: #ffd43b;
+    --accent: #3b5bdb;
+    --v2: #b35c00;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif; background: var(--bg); color: var(--ink); font-size: 14px; }
+  a { color: inherit; }
+
+  /* ---------- Barra de navegação dos wireframes ---------- */
+  .wf-top { position: sticky; top: 0; z-index: 50; background: #2b2b2b; color: #fff; padding: 10px 20px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+  .wf-top .t { font-weight: 700; white-space: nowrap; }
+  .wf-top .t small { font-weight: 400; color: #aaa; margin-left: 6px; }
+  .wf-tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+  .wf-tabs button { background: #444; color: #ddd; border: 0; border-radius: 6px; padding: 5px 10px; font-size: 12px; cursor: pointer; }
+  .wf-tabs button:hover { background: #555; }
+  .wf-tabs button.on { background: var(--pin); color: #222; font-weight: 700; }
+  .wf-top a.back { margin-left: auto; color: #aaa; font-size: 12px; text-decoration: none; white-space: nowrap; }
+  .wf-top a.back:hover { color: #fff; }
+
+  /* ---------- Layout de cada tela ---------- */
+  .screen { display: none; padding: 24px; gap: 24px; align-items: flex-start; }
+  .screen.on { display: flex; }
+  .stage { flex: 1; min-width: 0; }
+  .stage h2 { margin: 0 0 4px; font-size: 20px; }
+  .stage .desc { margin: 0 0 14px; color: var(--muted); }
+
+  .browser { background: var(--paper); border: 2px solid #9a9a9a; border-radius: 10px; overflow: hidden; box-shadow: 0 6px 20px rgba(0,0,0,.08); }
+  .browser .bar { background: var(--soft2); padding: 7px 12px; display: flex; gap: 6px; align-items: center; border-bottom: 1px solid var(--line); }
+  .browser .bar i { width: 10px; height: 10px; border-radius: 50%; background: #c8c8c8; display: inline-block; }
+  .browser .bar .url { margin-left: 10px; background: #fff; border: 1px solid var(--line); border-radius: 5px; padding: 2px 10px; font-size: 12px; color: var(--muted); flex: 1; max-width: 420px; }
+
+  /* Anotações */
+  .notes { width: 300px; flex-shrink: 0; background: var(--paper); border-radius: 10px; padding: 16px 18px; position: sticky; top: 70px; border: 1px solid var(--line); }
+  .notes h3 { margin: 0 0 10px; font-size: 14px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+  .notes ol { list-style: none; padding: 0; margin: 0; }
+  .notes li { display: flex; gap: 10px; margin-bottom: 12px; line-height: 1.45; font-size: 13px; }
+  .notes li .pin { flex-shrink: 0; }
+  .notes .ref { font-family: ui-monospace, Consolas, monospace; font-size: 11px; color: var(--accent); }
+  .pin { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: var(--pin); color: #222; font-size: 11px; font-weight: 800; border: 1.5px solid #222; vertical-align: middle; }
+  .pin.float { position: absolute; z-index: 5; }
+
+  /* ---------- Shell do aplicativo ---------- */
+  .app { display: grid; grid-template-columns: 200px 1fr; grid-template-rows: 48px 1fr; min-height: 560px; }
+  .app .side { grid-row: 1 / 3; border-right: 1px solid var(--line); background: var(--soft); padding: 12px 10px; font-size: 13px; }
+  .app .topbar { border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 12px; padding: 0 16px; }
+  .app .content { padding: 16px 18px; position: relative; min-width: 0; }
+  .side .ws { font-weight: 700; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; background: #fff; margin-bottom: 14px; display: flex; justify-content: space-between; }
+  .side .lbl { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 14px 8px 4px; }
+  .side .it { padding: 5px 8px; border-radius: 5px; cursor: pointer; display: flex; justify-content: space-between; }
+  .side .it:hover { background: var(--soft2); }
+  .side .it.on { background: #fff; border: 1px solid var(--line); font-weight: 600; }
+  .side .it small { color: var(--muted); }
+  .topbar .search { flex: 1; max-width: 360px; border: 1px solid var(--line); border-radius: 6px; padding: 5px 10px; color: var(--muted); font-size: 13px; }
+  .topbar .sp { flex: 1; }
+  .topbar .bell { position: relative; cursor: pointer; font-size: 16px; }
+  .topbar .bell b { position: absolute; top: -6px; right: -9px; background: #555; color: #fff; font-size: 10px; border-radius: 999px; padding: 0 5px; }
+  .topbar .ai { border: 1px dashed var(--v2); color: var(--v2); border-radius: 6px; padding: 3px 8px; font-size: 12px; cursor: pointer; }
+
+  /* ---------- Componentes de wireframe ---------- */
+  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .between { justify-content: space-between; }
+  .col { display: flex; flex-direction: column; gap: 10px; }
+  .btn { display: inline-block; border: 1.5px solid var(--ink); border-radius: 6px; padding: 5px 12px; font-size: 13px; background: #fff; cursor: pointer; white-space: nowrap; }
+  .btn.pri { background: var(--ink); color: #fff; }
+  .btn.ghost { border-color: var(--line); color: var(--muted); }
+  .btn.sm { padding: 2px 8px; font-size: 12px; }
+  .btn.dis { opacity: .4; cursor: not-allowed; }
+  .input { border: 1.5px solid var(--line); border-radius: 6px; padding: 7px 10px; color: var(--muted); background: #fff; font-size: 13px; }
+  .input.ta { min-height: 70px; }
+  .field label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+  .chip { display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--line); border-radius: 999px; padding: 1px 9px; font-size: 12px; background: #fff; white-space: nowrap; }
+  .chip.dark { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .av { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; background: var(--soft2); border: 1.5px solid #fff; outline: 1px solid var(--line); font-size: 10px; font-weight: 700; }
+  .av.sm { width: 20px; height: 20px; font-size: 9px; }
+  .av.lg { width: 34px; height: 34px; font-size: 12px; }
+  .avs { display: inline-flex; }
+  .avs .av + .av { margin-left: -6px; }
+  .box { border: 1.5px solid var(--line); border-radius: 8px; padding: 12px; background: #fff; }
+  .box.soft { background: var(--soft); }
+  .box.dash { border-style: dashed; }
+  .ph { background: repeating-linear-gradient(45deg, var(--soft) 0 8px, var(--soft2) 8px 16px); border: 1px solid var(--line); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 12px; }
+  .line { height: 8px; background: var(--soft2); border-radius: 4px; margin: 7px 0; }
+  .muted { color: var(--muted); }
+  .small { font-size: 12px; }
+  .crumb { color: var(--muted); font-size: 13px; }
+  .crumb b { color: var(--ink); }
+  h4 { margin: 0; font-size: 16px; }
+  .banner { border: 1.5px dashed #8a6100; background: #fff8e1; color: #6b4b00; border-radius: 8px; padding: 8px 12px; font-size: 13px; }
+  .v2tag { display: inline-block; font-size: 10px; font-weight: 800; color: var(--v2); border: 1px solid var(--v2); border-radius: 999px; padding: 0 6px; margin-left: 4px; vertical-align: middle; }
+  .disabled-area { opacity: .45; }
+  table.wt { width: 100%; border-collapse: collapse; font-size: 13px; }
+  table.wt th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); border-bottom: 1.5px solid var(--line); padding: 7px 8px; }
+  table.wt td { border-bottom: 1px solid var(--soft2); padding: 8px; vertical-align: middle; }
+  table.wt tr.click { cursor: pointer; }
+  table.wt tr.click:hover td { background: var(--soft); }
+  .tabs { display: flex; gap: 0; border-bottom: 1.5px solid var(--line); margin-bottom: 12px; }
+  .tabs span { padding: 6px 14px; font-size: 13px; color: var(--muted); cursor: pointer; }
+  .tabs span.on { color: var(--ink); font-weight: 700; border-bottom: 2.5px solid var(--ink); margin-bottom: -1.5px; }
+
+  /* Kanban */
+  .board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 12px; }
+  .colk { background: var(--soft); border: 1px solid var(--line); border-radius: 8px; padding: 10px; min-height: 340px; }
+  .colk .hd { display: flex; justify-content: space-between; font-weight: 700; font-size: 13px; margin-bottom: 8px; }
+  .card { background: #fff; border: 1.5px solid var(--line); border-radius: 7px; padding: 9px 10px; margin-bottom: 8px; cursor: pointer; position: relative; }
+  .card:hover { border-color: var(--ink); }
+  .card .tt { font-weight: 600; font-size: 13px; margin-bottom: 6px; }
+  .card .ft { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--muted); }
+  .card.late .due { color: #000; font-weight: 700; text-decoration: underline; }
+  .card.moving { border-style: dashed; border-color: #555; transform: rotate(-2deg); box-shadow: 0 6px 14px rgba(0,0,0,.12); }
+  .card .who-moving { position: absolute; top: -9px; right: 8px; background: #555; color: #fff; font-size: 10px; border-radius: 4px; padding: 0 5px; }
+  .addc { color: var(--muted); font-size: 12px; padding: 4px; }
+
+  /* Modal */
+  .overlay { position: relative; background: rgba(0,0,0,.18); padding: 26px; min-height: 560px; display: flex; justify-content: center; align-items: flex-start; }
+  .modal { background: #fff; border: 2px solid var(--ink); border-radius: 10px; width: 100%; max-width: 780px; padding: 18px 20px; position: relative; }
+  .modal.narrow { max-width: 520px; }
+  .opt { border: 1.5px solid var(--line); border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; display: flex; gap: 10px; align-items: flex-start; }
+  .opt.on { border-color: var(--ink); background: var(--soft); }
+  .opt .radio { width: 16px; height: 16px; border: 2px solid var(--ink); border-radius: 50%; margin-top: 2px; flex-shrink: 0; }
+  .opt.on .radio { background: radial-gradient(var(--ink) 40%, #fff 45%); }
+  .opt.dis { opacity: .45; }
+
+  /* Documento */
+  .doc-page { background: #fff; border: 1px solid var(--line); border-radius: 6px; padding: 30px 46px; max-width: 680px; margin: 12px auto 0; position: relative; min-height: 380px; line-height: 1.7; }
+  .doc-page h1 { font-size: 22px; margin: 0 0 12px; }
+  .doc-page p { margin: 0 0 10px; }
+  .cursor { display: inline-block; width: 2px; height: 18px; background: #333; vertical-align: text-bottom; position: relative; }
+  .cursor span { position: absolute; top: -16px; left: 0; background: #333; color: #fff; font-size: 10px; padding: 0 4px; border-radius: 3px 3px 3px 0; white-space: nowrap; }
+  .cursor.c2 { background: #888; }
+  .cursor.c2 span { background: #888; }
+  .sel { background: #e1e1de; outline: 1px dashed #888; }
+  .toolbar { display: flex; gap: 4px; border: 1px solid var(--line); border-radius: 6px; padding: 4px; background: var(--soft); width: fit-content; margin: 0 auto; }
+  .toolbar span { padding: 2px 8px; border-radius: 4px; font-size: 13px; background: #fff; border: 1px solid var(--soft2); }
+
+  /* Vídeo */
+  .video-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .video-grid .ph { height: 160px; flex-direction: column; gap: 6px; }
+  .controls { display: flex; gap: 8px; justify-content: center; margin-top: 10px; }
+  .controls span { border: 1.5px solid var(--ink); border-radius: 999px; width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; font-size: 16px; background: #fff; }
+  .controls span.end { background: var(--ink); color: #fff; width: auto; padding: 0 16px; font-size: 13px; }
+
+  /* Notificações */
+  .notif { display: flex; gap: 10px; padding: 10px 12px; border-bottom: 1px solid var(--soft2); align-items: flex-start; cursor: pointer; }
+  .notif:hover { background: var(--soft); }
+  .notif.unread { background: #fafaf6; }
+  .notif.unread .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ink); margin-top: 6px; flex-shrink: 0; }
+  .notif .dot { width: 8px; flex-shrink: 0; }
+
+  /* Assistente */
+  .ai-panel { border-left: 2px dashed var(--v2); background: #fffaf3; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+  .msg { border-radius: 8px; padding: 8px 10px; font-size: 13px; max-width: 92%; }
+  .msg.me { background: var(--soft2); align-self: flex-end; }
+  .msg.bot { background: #fff; border: 1px solid #f0d8b8; }
+
+  @media (max-width: 1100px) {
+    .screen.on { flex-direction: column; }
+    .notes { width: 100%; position: static; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wf-top">
+  <div class="t">Hub de Projetos · Wireframes <small>v0.3 · rascunho de estrutura, sem design final</small></div>
+  <div class="wf-tabs" id="tabs"></div>
+  <a class="back" href="requisitos.html">← Documento de requisitos</a>
+  <a class="back" href="design-system.html" style="margin-left:0">Design system</a>
+  <a class="back" href="arquitetura.html" style="margin-left:0">Arquitetura</a>
+  <a class="back" href="plano.html" style="margin-left:0">Plano</a>
+  <a class="back" href="guia.html" style="margin-left:0">Guia</a>
+  <a class="back" href="../landing/index.html" style="margin-left:0">Landing page</a>
+</div>
+
+<!-- =========================================================
+     1. LOGIN
+     ========================================================= -->
+<section class="screen" id="login" data-title="1. Login">
+  <div class="stage">
+    <h2>1. Entrar / Criar conta</h2>
+    <p class="desc">Primeira tela do sistema. Clique em "Entrar" para seguir para a criação do workspace.</p>
+    <div class="browser">
+      <div class="bar"><i></i><i></i><i></i><span class="url">hubdeprojetos.app/entrar</span></div>
+      <div style="display:flex;min-height:520px">
+        <div class="ph" style="flex:1;border-radius:0;border:0;border-right:1px solid var(--line);flex-direction:column;gap:8px">
+          <b style="font-size:18px;color:var(--ink)">Hub de Projetos</b>
+          <span>Tarefas, arquivos e reuniões do seu setor num só lugar</span>
+          <span>[ ilustração ]</span>
+        </div>
+        <div style="flex:1;display:flex;align-items:center;justify-content:center;position:relative">
+          <div class="col" style="width:300px">
+            <div class="tabs"><span class="on">Entrar</span><span>Criar conta</span></div>
+            <span class="pin float" style="left:calc(50% - 175px);top:118px">1</span>
+            <div class="field"><label>E-mail</label><div class="input">voce@empresa.com</div></div>
+            <div class="field"><label>Senha</label><div class="input">••••••••</div></div>
+            <div class="row between small"><span><input type="checkbox"> Manter conectado</span><a href="#" class="muted">Esqueci minha senha</a> <span class="pin">2</span></div>
+            <div class="btn pri" style="text-align:center" data-go="onboarding">Entrar</div>
+            <div class="small muted" style="text-align:center">ou</div>
+            <div class="btn dis" style="text-align:center">Entrar com Google <span class="v2tag">V2</span></div>
+            <div class="banner small">E-mail ou senha inválidos. <span class="pin">3</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <h3>Anotações</h3>
+    <ol>
+      <li><span class="pin">1</span><div>Abas para alternar entre <b>Entrar</b> e <b>Criar conta</b> (nome, e-mail, senha). <span class="ref">US01 · US02</span></div></li>
+      <li><span class="pin">2</span><div>Recuperação de senha: envia um link por e-mail que vale 1 hora. <span class="ref">US03</span></div></li>
+      <li><span class="pin">3</span><div>A mensagem de erro é genérica, para não revelar se o e-mail existe. Após 5 tentativas, o login é bloqueado por alguns minutos. <span class="ref">US02 · RNF05</span></div></li>
+    </ol>
+  </aside>
+</section>
+
+<!-- =========================================================
+     2. ONBOARDING
+     ========================================================= -->
+<section class="screen" id="onboarding" data-title="2. Criar workspace">
+  <div class="stage">
+    <h2>2. Criar o workspace do setor</h2>
+    <p class="desc">Aparece logo após o primeiro login. Um assistente em 3 passos.</p>
+    <div class="browser">
+      <div class="bar"><i></i><i></i><i></i><span class="url">hubdeprojetos.app/comecar</span></div>
+      <div style="padding:30px 40px;min-height:520px;position:relative">
+        <div class="row" style="justify-content:center;gap:24px;margin-bottom:26px">
+          <span class="chip dark">1 · Workspace</span><span class="muted">———</span>
+          <span class="chip">2 · Grupos</span><span class="muted">———</span>
+          <span class="chip">3 · Convidar pessoas</span>
+          <span class="pin">1</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1.3fr 1fr;gap:30px">
+          <div class="col">
+            <h4>Crie o workspace do seu setor</h4>
+            <p class="muted small" style="margin:0">Você será o <b>Proprietário</b> e poderá ver e gerenciar tudo. <span class="pin">2</span></p>
+            <div class="field"><label>Nome do workspace *</label><div class="input">Ex.: Setor de Pesquisa</div></div>
+            <div class="field"><label>Descrição (opcional)</label><div class="input ta">Para que serve este workspace…</div></div>
+            <div class="row"><span class="btn pri" data-go="kanban">Criar e continuar →</span></div>
+          </div>
+          <div class="col">
+            <div class="box soft">
+              <b>Convites pendentes</b> <span class="pin">3</span>
+              <p class="small muted" style="margin:6px 0 10px">Você foi convidado para entrar em:</p>
+              <div class="row between box"><div><b>Laboratório Y</b><br><span class="small muted">por Prof. Marta · cargo: Membro</span></div><span class="btn sm" data-go="kanban">Aceitar</span></div>
+            </div>
+            <div class="box dash small muted">O que é criado automaticamente:<br>🌐 Espaço geral → 📁 Pasta geral + 📋 Quadro geral</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <h3>Anotações</h3>
+    <ol>
+      <li><span class="pin">1</span><div>Três passos curtos: criar o workspace, criar grupos (e definir líderes) e convidar pessoas. Os passos 2 e 3 podem ser pulados e feitos depois em "Membros e grupos". <span class="ref">US05 · US08 · US06</span></div></li>
+      <li><span class="pin">2</span><div>Quem cria vira <b>Proprietário</b> automaticamente. <span class="ref">RF07</span></div></li>
+      <li><span class="pin">3</span><div>Quem chegou por convite não precisa criar workspace: só aceita. <span class="ref">RF05</span></div></li>
+    </ol>
+  </aside>
+</section>
+
+<!-- =========================================================
+     3. KANBAN
+     ========================================================= -->
+<section class="screen" id="kanban" data-title="3. Kanban">
+  <div class="stage">
+    <h2>3. Quadro Kanban</h2>
+    <p class="desc">A tela principal do dia a dia. Clique num card para abrir a tarefa e use o menu lateral para navegar.</p>
+    <div class="browser">
+      <div class="bar"><i></i><i></i><i></i><span class="url">hubdeprojetos.app/setor-pesquisa/grupo-a/quadro</span></div>
+      <div class="app" data-active="kanban">
+        <div class="content">
+          <div class="row between">
+            <div>
+              <div class="crumb">Grupo A › <b>Quadro do Grupo A</b></div>
+              <div class="row" style="margin-top:4px"><span class="chip">👥 Grupo A</span> <span class="pin">1</span></div>
+            </div>
+            <div class="row">
+              <span class="small muted">Vendo agora:</span>
+              <span class="avs"><span class="av">FA</span><span class="av">AN</span><span class="av">LI</span></span> <span class="pin">2</span>
+            </div>
+          </div>
+          <div class="row" style="margin-top:12px">
+            <span class="input" style="padding:4px 10px">Grupos: <b>A</b> ✓ · B ▾</span> <span class="pin">3</span>
+            <span class="input" style="padding:4px 10px">Responsável ▾</span>
+            <span class="input" style="padding:4px 10px">Etiqueta ▾</span>
+            <span class="sp" style="flex:1"></span>
+            <span class="btn pri">+ Nova tarefa</span>
+          </div>
+          <div class="board">
+            <div class="colk">
+              <div class="hd"><span>A fazer</span><span class="muted">3</span></div>
+              <div class="card late" data-go="tarefa">
+                <div class="tt">Coletar dados do experimento</div>
+                <div class="row" style="gap:4px;margin-bottom:6px"><span class="chip">Alta</span><span class="chip">Dados</span></div>
+                <div class="ft"><span class="due">📅 02/11 (atrasada)</span><span class="avs"><span class="av sm">AN</span><span class="av sm">LI</span></span></div>
+                <span class="pin float" style="right:-10px;top:-10px">4</span>
+              </div>
+              <div class="card" data-go="tarefa">
+                <div class="tt">Escrever introdução</div>
+                <div class="ft"><span>📅 15/11 · 💬 2</span><span class="av sm">GA</span></div>
+              </div>
+              <div class="card" data-go="tarefa">
+                <div class="tt">Avaliar orçamento 🔒</div>
+                <div class="ft"><span>📅 20/11</span><span class="av sm">AN</span></div>
+                <span class="pin float" style="right:-10px;top:-10px">5</span>
+              </div>
+              <div class="addc">+ Adicionar tarefa</div>
+            </div>
+            <div class="colk">
+              <div class="hd"><span>Em andamento</span><span class="muted">2</span></div>
+              <div class="card moving">
+                <span class="who-moving">Lia está movendo…</span>
+                <div class="tt">Revisar artigo base</div>
+                <div class="ft"><span>📅 08/11</span><span class="av sm">LI</span></div>
+                <span class="pin float" style="left:-10px;top:-10px">6</span>
+              </div>
+              <div class="card" data-go="tarefa">
+                <div class="tt">Preparar slides da reunião</div>
+                <div class="ft"><span>📅 06/11 · 💬 5</span><span class="av sm">FA</span></div>
+              </div>
+              <div class="addc">+ Adicionar tarefa</div>
+            </div>
+            <div class="colk">
+              <div class="hd"><span>Concluído</span><span class="muted">1</span></div>
+              <div class="card" data-go="tarefa">
+                <div class="tt">Definir metodologia</div>
+                <div class="ft"><span>✔ 01/11</span><span class="av sm">FA</span></div>
+              </div>
+              <div class="addc">+ Adicionar tarefa</div>
+              <div class="addc" style="margin-top:20px">+ Nova coluna</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <h3>Anotações</h3>
+    <ol>
+      <li><span class="pin">1</span><div>O ícone de visibilidade aparece sempre no cabeçalho, para todos saberem quem vê este quadro. <span class="ref">RNF22</span></div></li>
+      <li><span class="pin">2</span><div><b>Presença:</b> avatares de quem está no quadro agora. <span class="ref">US31 · RF57</span></div></li>
+      <li><span class="pin">3</span><div><b>Filtro por grupo</b>, que só aparece para quem enxerga vários grupos (administradores e proprietário). <span class="ref">US21 · RF54</span></div></li>
+      <li><span class="pin">4</span><div>Tarefa com prazo vencido fica destacada. O card mostra prioridade, etiquetas, prazo, comentários e responsáveis. <span class="ref">US17</span></div></li>
+      <li><span class="pin">5</span><div>🔒 Tarefa privada: só a responsável, o criador e os superiores a veem. Para os outros membros, ela simplesmente não existe. <span class="ref">US20</span></div></li>
+      <li><span class="pin">6</span><div><b>Tempo real:</b> quando outra pessoa move um card, todos veem o movimento na hora. <span class="ref">US32 · RF17</span></div></li>
+    </ol>
+  </aside>
+</section>
+
+<!-- =========================================================
+     4. DETALHE DA TAREFA
+     ========================================================= -->
+<section class="screen" id="tarefa" data-title="4. Tarefa">
+  <div class="stage">
+    <h2>4. Detalhe da tarefa</h2>
+    <p class="desc">Abre por cima do quadro. Clique em "Visibilidade" para ver a tela de compartilhamento.</p>
+    <div class="browser">
+      <div class="bar"><i></i><i></i><i></i><span class="url">hubdeprojetos.app/…/quadro/tarefa/128</span></div>
+      <div class="overlay">
+        <div class="modal">
+          <div class="banner" style="margin-bottom:12px">✏️ Você está editando uma tarefa criada por <b>Ana</b>. As alterações ficam registradas na <b>auditoria</b> e a Ana será notificada. <span class="pin">1</span></div>
+          <div class="row between">
+            <div class="crumb">Grupo A › Quadro do Grupo A › <b>A fazer</b></div>
+            <div class="row"><span class="avs"><span class="av sm">FA</span><span class="av sm">AN</span></span><span class="btn ghost sm" data-go="kanban">✕ Fechar</span></div>
+          </div>
+          <h4 style="margin:10px 0 14px;font-size:19px">Coletar dados do experimento</h4>
+          <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:22px">
+            <div class="col">
+              <div class="field"><label>Descrição</label><div class="input ta">Coletar os dados das sessões 1 a 5 e salvar na pasta "Dados do experimento"…</div></div>
+              <div class="disabled-area"><div class="field"><label>Checklist <span class="v2tag">V2</span></label><div class="small">☐ Sessão 1 &nbsp; ☐ Sessão 2 &nbsp; ☐ Sessão 3</div></div></div>
+              <div class="disabled-area"><div class="field"><label>Anexos <span class="v2tag">V2</span></label><div class="chip">📄 protocolo.pdf</div></div></div>
+              <div class="field">
+                <label>Comentários <span class="pin">2</span></label>
+                <div class="box soft small" style="margin-bottom:6px"><b>Fábio</b> <span class="muted">· ontem</span><br>@Ana consegue terminar até sexta?</div>
+                <div class="box soft small" style="margin-bottom:6px"><b>Ana</b> <span class="muted">· hoje</span><br>Sim! Falta só a sessão 5.</div>
+                <div class="input">Escreva um comentário… use @ para mencionar</div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="field"><label>Visibilidade <span class="pin">3</span></label><div class="btn" data-go="visibilidade" style="width:100%">👥 Grupo A ▾</div></div>
+              <div class="field"><label>Responsáveis <span class="pin">4</span></label><div class="row"><span class="chip">AN Ana ✕</span><span class="chip">LI Lia ✕</span><span class="chip">+</span></div></div>
+              <div class="field"><label>Prazo</label><div class="input">02/11/2026</div></div>
+              <div class="field"><label>Prioridade</label><div class="input">Alta ▾</div></div>
+              <div class="field"><label>Etiquetas</label><div class="row"><span class="chip">Dados</span><span class="chip">+</span></div></div>
+              <div class="small muted">Criada por Ana em 28/10 · editada por Fábio hoje</div>
+              <div class="btn ghost sm" style="width:fit-content">🗑 Excluir tarefa</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <h3>Anotações</h3>
+    <ol>
+      <li><span class="pin">1</span><div>Aviso que aparece quando um <b>superior</b> edita o item de um subordinado. A edição gera auditoria e o dono é notificado. <span class="ref">US14 · RF56 · D17</span></div></li>
+      <li><span class="pin">2</span><div>Comentários com @menção. Só é possível mencionar quem pode ver a tarefa. <span class="ref">US22</span></div></li>
+      <li><span class="pin">3</span><div>Seletor de visibilidade, que abre a tela 5. <span class="ref">US11</span></div></li>
+      <li><span class="pin">4</span><div>A lista de responsáveis só oferece pessoas que podem ver a tarefa. <span class="ref">US17</span></div></li>
+    </ol>
+  </aside>
+</section>
+
+<!-- =========================================================
+     5. VISIBILIDADE / COMPARTILHAR
+     ========================================================= -->
+<section class="screen" id="visibilidade" data-title="5. Visibilidade">
+  <div class="stage">
+    <h2>5. Visibilidade e compartilhamento</h2>
+    <p class="desc">A mesma janela serve para pastas, arquivos, documentos, quadros, tarefas e reuniões. É o coração do modelo de acesso.</p>
+    <div class="browser">
+      <div class="bar"><i></i><i></i><i></i><span class="url">hubdeprojetos.app/…</span></div>
+      <div class="overlay">
+        <div class="modal narrow">
+          <div class="row between"><h4>Quem pode ver "Avaliar orçamento"?</h4><span class="btn ghost sm" data-go="tarefa">✕</span></div>
+          <p class="small muted">Espaço: Grupo A</p>
+          <div class="opt"><span class="radio"></span><div><b>🌐 Workspace</b><br><span class="small muted">Todos do Setor de Pesquisa</span></div></div>
+          <div class="opt"><span class="radio"></span><div style="flex:1"><b>👥 Grupo</b><br><span class="small muted">Todos os membros de:</span> <span class="chip">Grupo A ▾</span></div></div>
+          <div class="opt"><span class="radio"></span><div style="flex:1"><b>🎖 Cargo</b><br><span class="small muted">Todos com o cargo:</span> <span class="chip">Líderes ▾</span></div></div>
+          <div class="opt on">
+            <span class="radio"></span>
+            <div style="flex:1">
+              <b>🔒 Privado / pessoas específicas</b> <span class="pin">1</span><br>
+              <div class="input" style="margin:8px 0">🔍 Adicionar pessoa pelo nome…</div>
+              <div class="row between small" style="margin-bottom:4px"><span><span class="av sm">FA</span> Fábio (você) · criador</span></div>
+              <div class="row between small"><span><span class="av sm">AN</span> Ana</span><span class="row"><span class="input" style="padding:2px 8px">Pode editar ▾</span> <span class="pin">4</span><span class="muted">remover ✕</span></span></div>
+            </div>
+          </div>
+          <div class="box soft small" style="margin-top:6px">
+            <b>Também veem, pela hierarquia:</b> <span class="pin">2</span><br>
+            <span class="avs" style="margin:6px 0"><span class="av sm">DI</span><span class="av sm">CA</span></span><br>
+            Diana (Administradora) · Carlos (Proprietário)
+          </div>
+          <div class="box small" style="margin-top:6px">
+            Você criou este item como <b>Membro</b> e hoje é <b>Líder</b>. <span class="pin">5</span>
+            <div class="row" style="margin-top:6px"><span class="btn sm">Subir para o nível de Líder</span></div>
+          </div>
+          <div class="opt dis small" style="margin-top:10px"><span>ℹ️</span><div>Dentro de uma pasta restrita, as opções mais abertas que a pasta-mãe ficam desabilitadas. <span class="pin">3</span></div></div>
+          <div class="row" style="justify-content:flex-end;margin-top:10px"><span class="btn ghost" data-go="tarefa">Cancelar</span><span class="btn pri" data-go="tarefa">Salvar</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <h3>Anotações</h3>
+    <ol>
+      <li><span class="pin">1</span><div>Os quatro tipos de visibilidade. No privado, é possível adicionar e remover pessoas; quem é adicionado recebe notificação. <span class="ref">US11 · US12 · RF39 · RF49</span></div></li>
+      <li><span class="pin">2</span><div><b>Transparência:</b> o sistema mostra quem enxerga o item pela regra hierárquica, sem a pessoa precisar adivinhar. <span class="ref">RF40 · seção 3.4</span></div></li>
+      <li><span class="pin">3</span><div>Uma subpasta nunca pode ser mais aberta que a pasta-mãe. <span class="ref">US25 · RF21</span></div></li>
+      <li><span class="pin">4</span><div>Quem compartilha escolhe se a pessoa <b>só lê</b> ou <b>também edita</b>. <span class="ref">D24</span></div></li>
+      <li><span class="pin">5</span><div>Só aparece para o dono de um item criado antes de uma promoção. Quem via pela hierarquia continua vendo até ele subir o nível. <span class="ref">RF63 · D22</span></div></li>
+    </ol>
+  </aside>
+</section>
+
+<!-- =========================================================
+     6. ARQUIVOS
+     ========================================================= -->
+<section class="screen" id="arquivos" data-title="6. Arquivos">
+  <div class="stage">
+    <h2>6. Arquivos</h2>
+    <p class="desc">O "Drive" do workspace. Clique no documento "Relatório do Grupo A" para abrir o editor colaborativo.</p>
+    <div class="browser">
+      <div class="bar"><i></i><i></i><i></i><span class="url">hubdeprojetos.app/setor-pesquisa/grupo-a/arquivos/referencias</span></div>
+      <div class="app" data-active="arquivos">
+        <div class="content">
+          <div class="row between">
+            <div class="crumb">Arquivos › Grupo A › <b>Referências</b> <span class="pin">1</span></div>
+            <div class="row">
+              <span class="btn">+ Nova pasta</span>
+              <span class="btn">+ Novo documento</span> <span class="pin">2</span>
+              <span class="btn pri">⬆ Enviar arquivo</span>
+            </div>
+          </div>
+          <div class="box dash muted small" style="text-align:center;margin:12px 0;padding:14px">Arraste arquivos aqui para enviar · máximo de 50 MB por arquivo <span class="pin">3</span></div>
+          <table class="wt">
+            <tr><th>Nome</th><th>Visibilidade</th><th>Dono</th><th>Modificado</th><th>Tamanho</th><th></th></tr>
+            <tr class="click"><td>📁 <b>Artigos lidos</b></td><td><span class="chip">👥 Grupo A</span></td><td>Fábio</td><td>01/11</td><td class="muted">—</td><td class="muted">⋯</td></tr>
+            <tr class="click" data-go="documento"><td>📝 <b>Relatório do Grupo A</b> <span class="chip">documento</span><br><span class="small muted">● 2 pessoas editando agora</span> <span class="pin">4</span></td><td><span class="chip">👥 Grupo A</span></td><td>Ana</td><td>agora</td><td class="muted">—</td><td class="muted">⋯</td></tr>
+            <tr class="click"><td>📄 protocolo_experimento.pdf</td><td><span class="chip">👥 Grupo A</span></td><td>Fábio</td><td>28/10</td><td>1,2 MB</td><td class="muted">⋯</td></tr>
+            <tr class="click"><td>📄 rascunho_resultados.docx</td><td><span class="chip">🔒 Ana, Gabi</span> <span class="pin">5</span></td><td>Ana</td><td>30/10</td><td>340 KB</td><td class="muted">⋯</td></tr>
+            <tr class="click"><td>🖼 grafico_sessao1.png</td><td><span class="chip">👥 Grupo A</span></td><td>Lia</td><td>27/10</td><td>820 KB</td><td class="muted">⋯</td></tr>
+          </table>
+          <div class="box soft small" style="margin-top:12px;width:fit-content">Menu ⋯ : Baixar · Renomear · Mover · Visibilidade · Excluir</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <h3>Anotações</h3>
+    <ol>
+      <li><span class="pin">1</span><div>Trilha de navegação. A raiz mostra a pasta Geral e as pastas dos grupos que a pessoa pode ver. <span class="ref">US23</span></div></li>
+      <li><span class="pin">2</span><div><b>Novo documento</b> cria um documento <b>nativo</b>, editável em conjunto (tela 7). <span class="ref">US29 · D20</span></div></li>
+      <li><span class="pin">3</span><div>Upload por arrastar e soltar, com barra de progresso e limite de tamanho. <span class="ref">US24</span></div></li>
+      <li><span class="pin">4</span><div>Presença também aparece na lista de arquivos. <span class="ref">RF57</span></div></li>
+      <li><span class="pin">5</span><div>Arquivo privado compartilhado com pessoas específicas. A Lia (mesmo grupo) não vê esta linha. <span class="ref">Cenário 1</span></div></li>
+    </ol>
+  </aside>
+</section>
+
+<!-- =========================================================
+     7. DOCUMENTO COLABORATIVO
+     ========================================================= -->
+<section class="screen" id="documento" data-title="7. Documento">
+  <div class="stage">
+    <h2>7. Documento colaborativo</h2>
+    <p class="desc">Edição simultânea, no estilo do Google Docs, com cursores e presença.</p>
+    <div class="browser">
+      <div class="bar"><i></i><i></i><i></i><span class="url">hubdeprojetos.app/…/documentos/relatorio-grupo-a</span></div>
+      <div style="padding:14px 18px;background:var(--soft);min-height:560px">
+        <div class="row between">
+          <div class="row"><span class="btn ghost sm" data-go="arquivos">← Arquivos</span><b>Relatório do Grupo A</b><span class="chip">👥 Grupo A</span></div>
+          <div class="row">
+            <span class="small muted">✓ Salvo automaticamente</span> <span class="pin">1</span>
+            <span class="chip">● Conectado</span> <span class="pin">2</span>
+            <span class="avs"><span class="av">AN</span><span class="av">LI</span><span class="av">FA</span></span> <span class="pin">3</span>
+            <span class="btn sm" data-go="versoes">🕘 Versões</span> <span class="pin">5</span>
+            <span class="btn sm" data-go="visibilidade">Compartilhar</span>
+          </div>
+        </div>
+        <div style="margin-top:12px"><div class="toolbar"><span>H1</span><span>H2</span><span><b>B</b></span><span><i>I</i></span><span>• Lista</span><span>1. Lista</span><span>🔗</span><span>▦ Tabela</span></div></div>
+        <div class="doc-page">
+          <span class="pin float" style="right:-10px;top:60px">4</span>
+          <h1>Relatório parcial: Sessões 1 a 5</h1>
+          <p>Este relatório apresenta os resultados preliminares das sessões de coleta realizadas em outubro<span class="cursor"><span>Ana</span></span>.</p>
+          <p><b>Metodologia.</b> Os participantes foram divididos em dois grupos, e <span class="sel">cada sessão teve duração de 40 minutos</span><span class="cursor c2"><span>Lia</span></span>, com intervalos de…</p>
+          <div class="line" style="width:92%"></div><div class="line" style="width:85%"></div><div class="line" style="width:60%"></div>
+          <p style="margin-top:14px"><b>Resultados.</b></p>
+          <div class="line" style="width:95%"></div><div class="line" style="width:70%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <h3>Anotações</h3>
+    <ol>
+      <li><span class="pin">1</span><div>Salvamento automático, sem botão "Salvar". <span class="ref">US29</span></div></li>
+      <li><span class="pin">2</span><div>Estado da conexão. Se cair, mostra "Reconectando…" e a pessoa continua editando; tudo sincroniza quando a conexão voltar. <span class="ref">RNF27</span></div></li>
+      <li><span class="pin">3</span><div>Avatares de quem está no documento agora. <span class="ref">US31</span></div></li>
+      <li><span class="pin">4</span><div><b>Cursores com nome e cor</b> de cada colaborador, além do trecho que cada um selecionou. As edições aparecem para todos em menos de ~1 s. <span class="ref">US30 · RF24 · RF58</span></div></li>
+      <li><span class="pin">5</span><div>Abre o <b>histórico de versões</b> dentro do documento (tela 7b). <span class="ref">US33 · RF60</span></div></li>
+    </ol>
+  </aside>
+</section>
+
+<!-- =========================================================
+     7b. VERSÕES DO DOCUMENTO
+     ========================================================= -->
+<section class="screen" id="versoes" data-title="7b. Versões">
+  <div class="stage">
+    <h2>7b. Histórico de versões do documento</h2>
+    <p class="desc">Abre pelo botão "🕘 Versões". O documento fica em modo de comparação, e a lista de versões aparece à direita.</p>
+    <div class="browser">
+      <div class="bar"><i></i><i></i><i></i><span class="url">hubdeprojetos.app/…/documentos/relatorio-grupo-a/versoes</span></div>
+      <div style="display:grid;grid-template-columns:1fr 300px;min-height:560px">
+        <div style="padding:14px 18px;background:var(--soft)">
+          <div class="row between">
+            <div class="row"><span class="btn ghost sm" data-go="documento">← Voltar ao documento</span><b>Relatório do Grupo A</b></div>
+            <div class="row"><span class="small muted">Comparando: <b>Hoje 09:15</b> com a versão anterior</span> <span class="pin">1</span></div>
+          </div>
+          <div class="doc-page" style="margin-top:14px">
+            <h1>Relatório parcial: Sessões 1 a 5</h1>
+            <p>Este relatório apresenta os resultados preliminares das sessões de coleta realizadas em <s style="background:#eee;color:#888">setembro</s> <u style="background:#e1e1de;text-decoration-thickness:2px">outubro</u>.</p>
+            <p><b>Metodologia.</b> Os participantes foram divididos em dois grupos, e cada sessão teve duração de <s style="background:#eee;color:#888">30</s> <u style="background:#e1e1de;text-decoration-thickness:2px">40</u> minutos.</p>
+            <p style="background:#e1e1de;border-left:3px solid #555;padding-left:8px"><u style="text-decoration-thickness:2px">Foram excluídas duas sessões por falha no equipamento de gravação.</u></p>
+            <div class="line" style="width:92%"></div><div class="line" style="width:70%"></div>
+            <div class="row small muted" style="margin-top:18px;gap:16px"><span><u style="background:#e1e1de">texto</u> = adicionado</span><span><s style="background:#eee">texto</s> = removido</span></div>
+          </div>
+        </div>
+        <div style="border-left:1px solid var(--line);padding:14px;display:flex;flex-direction:column;gap:8px">
+          <div class="row between"><b>🕘 Versões</b><span class="btn ghost sm" data-go="documento">✕</span></div>
+          <span class="small muted">Uma versão é salva ao fim de cada sessão de edição <span class="pin">2</span></span>
+          <div class="box small"><b>Versão atual</b><br><span class="muted">Ana, Lia · agora (editando)</span></div>
+          <div class="box small" style="border-color:var(--ink);background:var(--soft)">
+            <b>Hoje 09:15</b> <span class="chip">✏️ Superior</span> <span class="pin">3</span><br>
+            <span class="muted">Fábio (Líder A) · +3 −2 trechos</span>
+            <div class="row" style="margin-top:6px"><span class="btn sm pri">Restaurar esta versão</span> <span class="pin">4</span></div>
+          </div>
+          <div class="box small"><b>Ontem 16:40</b> · <span class="chip">🏷 Enviado ao orientador</span> <span class="pin">5</span><br><span class="muted">Ana · +12 −1 trechos</span></div>
+          <div class="box small"><b>Ontem 11:20</b><br><span class="muted">Ana, Lia · +30 trechos</span></div>
+          <div class="box small"><b>30/10 15:02</b><br><span class="muted">Ana · documento criado</span></div>
+          <div class="small muted" style="margin-top:auto">+ Dar nome à versão atual</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <h3>Anotações</h3>
+    <ol>
+      <li><span class="pin">1</span><div>Comparação <b>antes ↔ depois</b>, com o que entrou e o que saiu destacado. <span class="ref">US33</span></div></li>
+      <li><span class="pin">2</span><div>Versões automáticas por <b>sessão de edição</b>, sem uma versão por tecla. <span class="ref">RNF29</span></div></li>
+      <li><span class="pin">3</span><div>Edição feita por um superior aparece marcada. É <b>a mesma versão</b> que consta na auditoria (tela 11), sem dados duplicados. <span class="ref">D21</span></div></li>
+      <li><span class="pin">4</span><div>Restaurar cria uma <b>nova versão</b>, e nada é perdido. Só quem pode editar vê este botão; quem só pode ler vê o histórico mas não restaura.</div></li>
+      <li><span class="pin">5</span><div>Versões importantes podem receber um nome.</div></li>
+    </ol>
+  </aside>
+</section>
+
+<!-- =========================================================
+     8. REUNIÕES
+     ========================================================= -->
+<section class="screen" id="reunioes" data-title="8. Reuniões">
+  <div class="stage">
+    <h2>8. Reuniões</h2>
+    <p class="desc">Lista de reuniões e formulário de agendamento. Clique em "Entrar" para abrir a sala.</p>
+    <div class="browser">
+      <div class="bar"><i></i><i></i><i></i><span class="url">hubdeprojetos.app/setor-pesquisa/reunioes</span></div>
+      <div class="app" data-active="reunioes">
+        <div class="content">
+          <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:18px">
+            <div>
+              <div class="tabs"><span class="on">Próximas</span><span>Passadas</span></div>
+              <div class="box row between" style="margin-bottom:8px">
+                <div><b>Reunião semanal do Grupo A</b><br><span class="small muted">Hoje · 14:00–15:00 · </span><span class="chip">👥 Grupo A</span></div>
+                <div class="row"><span class="avs"><span class="av sm">FA</span><span class="av sm">AN</span><span class="av sm">LI</span><span class="av sm">GA</span></span><span class="btn pri sm" data-go="sala">Entrar</span> <span class="pin">1</span></div>
+              </div>
+              <div class="box row between" style="margin-bottom:8px">
+                <div><b>Alinhamento de líderes</b><br><span class="small muted">Qui, 06/11 · 10:00 · </span><span class="chip">🎖 Líderes</span> <span class="pin">2</span></div>
+                <div class="row"><span class="avs"><span class="av sm">DI</span><span class="av sm">FA</span><span class="av sm">JO</span><span class="av sm">HU</span></span><span class="btn sm dis">Entrar</span></div>
+              </div>
+              <div class="box row between">
+                <div><b>Apresentação do setor</b><br><span class="small muted">Seg, 10/11 · 09:00 · </span><span class="chip">🌐 Workspace</span></div>
+                <div class="row"><span class="small muted">12 participantes</span><span class="btn sm dis">Entrar</span></div>
+              </div>
+            </div>
+            <div class="box soft col">
+              <b>Agendar reunião</b> <span class="pin">3</span>
+              <div class="field"><label>Título *</label><div class="input">Ex.: Reunião semanal</div></div>
+              <div class="row"><div class="field" style="flex:1"><label>Data</label><div class="input">06/11/2026</div></div><div class="field" style="flex:1"><label>Hora</label><div class="input">14:00</div></div><div class="field" style="flex:1"><label>Duração</label><div class="input">1h ▾</div></div></div>
+              <div class="field"><label>Pauta</label><div class="input ta">1. Resultados da semana…</div></div>
+              <div class="field"><label>Grupo</label><div class="input">Grupo A ▾ (Grupo A, Grupo B)</div></div>
+              <div class="field"><label>Visibilidade</label><div class="input">👥 Grupo A ▾</div></div>
+              <div class="field"><label>Participantes</label><div class="row"><span class="chip">FA ✕</span><span class="chip">AN ✕</span><span class="chip">+ adicionar</span></div></div>
+              <span class="btn pri" style="width:fit-content">Agendar</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <h3>Anotações</h3>
+    <ol>
+      <li><span class="pin">1</span><div>O botão "Entrar" é liberado alguns minutos antes do horário. <span class="ref">US27</span></div></li>
+      <li><span class="pin">2</span><div>Reunião com visibilidade <b>Cargo: Líderes</b>: os membros nem a veem na lista. <span class="ref">Cenário 3</span></div></li>
+      <li><span class="pin">3</span><div>Agendamento com pauta, participantes e visibilidade. Só é possível convidar quem pode ver a reunião, e alterar ou cancelar notifica todos. O campo <b>Grupo</b> só aparece para quem está em mais de um grupo. Com um grupo só, a reunião vai direto para ele. <span class="ref">US26 · RF62 · D09</span></div></li>
+    </ol>
+  </aside>
+</section>
+
+<!-- =========================================================
+     9. SALA DE REUNIÃO
+     ========================================================= -->
+<section class="screen" id="sala" data-title="9. Sala de vídeo">
+  <div class="stage">
+    <h2>9. Sala de reunião</h2>
+    <p class="desc">O vídeo vem de um serviço pronto, embutido na página. O usuário não sai do sistema.</p>
+    <div class="browser">
+      <div class="bar"><i></i><i></i><i></i><span class="url">hubdeprojetos.app/…/reunioes/semanal-grupo-a/sala</span></div>
+      <div style="display:grid;grid-template-columns:1.7fr 1fr;min-height:540px">
+        <div style="padding:14px;position:relative">
+          <div class="row between" style="margin-bottom:10px"><b>Reunião semanal do Grupo A</b><span class="small muted">● 14:07 · 4 participantes</span></div>
+          <span class="pin float" style="left:4px;top:40px">1</span>
+          <div class="video-grid">
+            <div class="ph"><span class="av lg">FA</span>Fábio</div>
+            <div class="ph"><span class="av lg">AN</span>Ana · 🔇</div>
+            <div class="ph"><span class="av lg">LI</span>Lia</div>
+            <div class="ph"><span class="av lg">GA</span>Gabi</div>
+          </div>
+          <div class="controls"><span>🎤</span><span>📷</span><span>🖥</span><span class="end" data-go="reunioes">Sair</span></div>
+        </div>
+        <div style="border-left:1px solid var(--line);padding:14px;background:var(--soft)" class="col">
+          <div class="tabs"><span class="on">Pauta</span><span>Ata <span class="v2tag">V2</span></span></div>
+          <div class="small">1. Resultados da semana<br>2. Próximos passos do artigo<br>3. Dúvidas</div>
+          <div class="box dash" style="margin-top:10px;border-color:var(--v2);color:var(--v2)">
+            <b class="small">🤖 Ata ao vivo <span class="v2tag">V2</span></b> <span class="pin">2</span>
+            <p class="small" style="margin:6px 0 0">O assistente vai transcrever e montar a ata aqui durante a reunião: resumo, decisões e pendências. No fim, sugere tarefas para aprovar.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <h3>Anotações</h3>
+    <ol>
+      <li><span class="pin">1</span><div>Área do <b>serviço de vídeo integrado</b>, com áudio, vídeo e compartilhamento de tela. Quem não pode ver a reunião não entra, nem com o link. <span class="ref">US27 · RF26 · D01</span></div></li>
+      <li><span class="pin">2</span><div>O espaço da <b>ata ao vivo</b> já fica reservado na tela, pronto para a V2. <span class="ref">RF32 · RF33</span></div></li>
+    </ol>
+  </aside>
+</section>
+
+<!-- =========================================================
+     10. MEMBROS E GRUPOS
+     ========================================================= -->
+<section class="screen" id="membros" data-title="10. Membros e grupos">
+  <div class="stage">
+    <h2>10. Membros e grupos</h2>
+    <p class="desc">Administração das pessoas do workspace, vista aqui pela administradora Diana.</p>
+    <div class="browser">
+      <div class="bar"><i></i><i></i><i></i><span class="url">hubdeprojetos.app/setor-pesquisa/membros</span></div>
+      <div class="app" data-active="membros">
+        <div class="content">
+          <div class="row between">
+            <div class="tabs" style="margin:0;border:0"><span class="on">Membros (9)</span><span>Grupos (3)</span><span>Convites (2)</span></div>
+            <span class="btn pri">+ Convidar pessoas</span>
+          </div>
+          <table class="wt" style="margin-top:10px">
+            <tr><th>Pessoa</th><th>Cargo</th><th>Grupos</th><th></th></tr>
+            <tr><td><span class="av sm">CA</span> Carlos <span class="small muted">carlos@…</span></td><td><span class="chip">👑 Proprietário</span> <span class="small muted">🔒</span></td><td class="muted">—</td><td class="muted small">não editável</td></tr>
+            <tr><td><span class="av sm">DI</span> Diana (você)</td><td><span class="chip">Administradora</span></td><td class="muted">—</td><td></td></tr>
+            <tr><td><span class="av sm">RU</span> Rui</td><td><span class="chip">Administrador</span> <span class="small muted">🔒</span> <span class="pin">1</span></td><td class="muted">—</td><td class="muted small">mesmo cargo</td></tr>
+            <tr><td><span class="av sm">FA</span> Fábio</td><td><span class="input" style="padding:2px 8px">Líder de grupo ▾</span></td><td><span class="chip">A · líder ★</span></td><td class="small">Remover</td></tr>
+            <tr><td><span class="av sm">AN</span> Ana</td><td><span class="input" style="padding:2px 8px">Membro ▾</span></td><td><span class="chip">A</span> <span class="chip">B</span></td><td class="small">Remover</td></tr>
+            <tr><td><span class="av sm">BR</span> Bruno</td><td><span class="input" style="padding:2px 8px">Membro ▾</span></td><td><span class="chip">B</span></td><td class="small">Remover</td></tr>
+          </table>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px">
+            <div class="box"><b>👥 Grupo A</b> <span class="pin">2</span><br><span class="small muted">Líder: Fábio ★ · 4 membros</span><div class="avs" style="margin-top:6px"><span class="av sm">FA</span><span class="av sm">AN</span><span class="av sm">GA</span><span class="av sm">LI</span></div></div>
+            <div class="box"><b>👥 Grupo B</b><br><span class="small muted">Líder: João ★ · 3 membros</span><div class="avs" style="margin-top:6px"><span class="av sm">JO</span><span class="av sm">BR</span><span class="av sm">AN</span></div></div>
+            <div class="box dash muted" style="display:flex;align-items:center;justify-content:center">+ Novo grupo</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <h3>Anotações</h3>
+    <ol>
+      <li><span class="pin">1</span><div>Só é possível gerenciar quem tem cargo <b>menor</b> que o seu. A Diana não altera o Rui (mesmo cargo) nem o Carlos, e o seletor de cargos só oferece cargos menores que o dela. <span class="ref">US07 · D14</span></div></li>
+      <li><span class="pin">2</span><div>Grupos com líder (★) e membros. Um membro pode estar em vários grupos (a Ana está no A e no B). Criar um grupo gera a pasta e o quadro dele. <span class="ref">US08 · US09 · US10</span></div></li>
+    </ol>
+  </aside>
+</section>
+
+<!-- =========================================================
+     11. AUDITORIA
+     ========================================================= -->
+<section class="screen" id="auditoria" data-title="11. Auditoria">
+  <div class="stage">
+    <h2>11. Auditoria</h2>
+    <p class="desc">Histórico das edições e exclusões feitas por superiores em itens de subordinados.</p>
+    <div class="browser">
+      <div class="bar"><i></i><i></i><i></i><span class="url">hubdeprojetos.app/setor-pesquisa/auditoria</span></div>
+      <div class="app" data-active="auditoria">
+        <div class="content">
+          <div class="row"><h4>Auditoria</h4><span class="small muted">· registros imutáveis</span> <span class="pin">1</span></div>
+          <div class="row" style="margin:12px 0">
+            <span class="input" style="padding:4px 10px">Quem agiu ▾</span>
+            <span class="input" style="padding:4px 10px">Ação ▾</span>
+            <span class="input" style="padding:4px 10px">Dono do item ▾</span>
+            <span class="input" style="padding:4px 10px">Período: últimos 30 dias ▾</span>
+            <span class="pin">2</span>
+          </div>
+          <table class="wt">
+            <tr><th>Quando</th><th>Quem</th><th>Ação</th><th>Item</th><th>Dono</th><th></th></tr>
+            <tr><td>Hoje 10:42</td><td>Fábio <span class="small muted">(Líder A)</span></td><td><span class="chip">✏️ Editou</span></td><td>📋 Coletar dados do experimento</td><td>Ana</td><td><span class="btn sm">Ver antes ↔ depois</span> <span class="pin">3</span></td></tr>
+            <tr><td>Hoje 09:15</td><td>Fábio <span class="small muted">(Líder A)</span></td><td><span class="chip">✏️ Editou</span> <span class="small muted">sessão de 12 min</span></td><td>📝 Relatório do Grupo A</td><td>Ana</td><td><span class="btn sm" data-go="versoes">Ver antes ↔ depois</span></td></tr>
+            <tr><td>Ontem 17:30</td><td>Diana <span class="small muted">(Admin)</span></td><td><span class="chip">🗑 Excluiu</span></td><td>📄 planilha_antiga.xlsx</td><td>Bruno</td><td><span class="btn sm">Ver cópia</span></td></tr>
+            <tr><td>Ontem 11:02</td><td>João <span class="small muted">(Líder B)</span></td><td><span class="chip">👁 Alterou visibilidade</span></td><td>📁 Entrevistas</td><td>Bruno</td><td class="small muted">🔒 Privado → 👥 Grupo B</td></tr>
+          </table>
+          <p class="small muted" style="margin-top:12px">Não existe botão para editar ou excluir registros, nem para o proprietário.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <h3>Anotações</h3>
+    <ol>
+      <li><span class="pin">1</span><div>Registros <b>imutáveis</b>. Visível para o proprietário e os administradores. <span class="ref">US15 · RF55 · RNF24</span></div></li>
+      <li><span class="pin">2</span><div>Filtros por pessoa, ação, dono e período. Só edições, exclusões e alterações de visibilidade aparecem aqui; visualizações não são registradas. <span class="ref">D18</span></div></li>
+      <li><span class="pin">3</span><div>Comparação do antes e depois. Num documento colaborativo, é <b>um registro por sessão</b> de edição. <span class="ref">RNF29</span></div></li>
+    </ol>
+  </aside>
+</section>
+
+<!-- =========================================================
+     12. NOTIFICAÇÕES
+     ========================================================= -->
+<section class="screen" id="notificacoes" data-title="12. Notificações">
+  <div class="stage">
+    <h2>12. Notificações</h2>
+    <p class="desc">Painel aberto ao clicar no sino 🔔, visto aqui pela Ana.</p>
+    <div class="browser">
+      <div class="bar"><i></i><i></i><i></i><span class="url">hubdeprojetos.app/setor-pesquisa</span></div>
+      <div class="app" data-active="">
+        <div class="content" style="display:flex;justify-content:flex-end">
+          <div class="box" style="width:440px;padding:0;position:relative">
+            <span class="pin float" style="left:-10px;top:-10px">1</span>
+            <div class="row between" style="padding:10px 12px;border-bottom:1.5px solid var(--line)"><b>Notificações</b><span class="small muted">Marcar todas como lidas</span></div>
+            <div class="notif unread" data-go="tarefa"><span class="dot"></span><div><b>Fábio</b> editou sua tarefa <b>"Coletar dados do experimento"</b><br><span class="small muted">há 5 min</span></div> <span class="pin">2</span></div>
+            <div class="notif unread" data-go="arquivos"><span class="dot"></span><div><b>Gabi</b> compartilhou <b>"rascunho_resultados.docx"</b> com você<br><span class="small muted">há 1 h</span></div></div>
+            <div class="notif unread" data-go="reunioes"><span class="dot"></span><div><b>Fábio</b> agendou <b>"Reunião semanal do Grupo A"</b> para hoje às 14:00<br><span class="small muted">há 2 h</span></div></div>
+            <div class="notif" data-go="tarefa"><span class="dot"></span><div><b>Fábio</b> mencionou você em <b>"Coletar dados"</b>: "@Ana consegue terminar até sexta?"<br><span class="small muted">ontem</span></div></div>
+            <div class="notif" data-go="tarefa"><span class="dot"></span><div>Você foi atribuída a <b>"Avaliar orçamento"</b> 🔒<br><span class="small muted">ontem</span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <h3>Anotações</h3>
+    <ol>
+      <li><span class="pin">1</span><div>O sino mostra quantas notificações não foram lidas. Clicar numa notificação leva ao item. <span class="ref">US28 · RF35</span></div></li>
+      <li><span class="pin">2</span><div>Aviso de que um superior <b>editou</b> um item seu. <span class="ref">D17</span></div></li>
+    </ol>
+  </aside>
+</section>
+
+<!-- =========================================================
+     13. ASSISTENTE (V2)
+     ========================================================= -->
+<section class="screen" id="assistente" data-title="13. Assistente (V2)">
+  <div class="stage">
+    <h2>13. Assistente de IA <span class="v2tag" style="font-size:12px">V2</span></h2>
+    <p class="desc">Prévia de como o chat do assistente vai aparecer, para o layout do MVP já reservar espaço para ele.</p>
+    <div class="browser">
+      <div class="bar"><i></i><i></i><i></i><span class="url">hubdeprojetos.app/setor-pesquisa/grupo-a/quadro</span></div>
+      <div style="display:grid;grid-template-columns:1fr 330px">
+        <div class="app" data-active="kanban">
+          <div class="content">
+            <div class="crumb">Grupo A › <b>Quadro do Grupo A</b></div>
+            <div class="board" style="opacity:.5">
+              <div class="colk"><div class="hd">A fazer</div><div class="card"><div class="tt">Coletar dados</div></div><div class="card"><div class="tt">Escrever introdução</div></div></div>
+              <div class="colk"><div class="hd">Em andamento</div><div class="card"><div class="tt">Revisar artigo</div></div></div>
+              <div class="colk"><div class="hd">Concluído</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="ai-panel">
+          <div class="row between"><b>🤖 Assistente</b><span class="small muted">contexto: Quadro do Grupo A</span></div>
+          <span class="pin">1</span>
+          <div class="msg me">Divida em tarefas: preparar o artigo para o congresso até 30/11</div>
+          <div class="msg bot">
+            Sugiro estas 4 tarefas: <span class="pin">2</span>
+            <div class="box small" style="margin-top:6px">☑ Revisar literatura · Gabi · 12/11<br>☑ Analisar dados · Ana · 18/11<br>☑ Escrever resultados · Lia · 24/11<br>☐ Revisão final · Fábio · 28/11</div>
+            <div class="row" style="margin-top:8px"><span class="btn sm pri">Criar 3 tarefas</span><span class="btn sm">Editar</span></div>
+          </div>
+          <div class="msg me">Resuma o protocolo_experimento.pdf</div>
+          <div class="msg bot muted">Gerando resumo… <span class="pin">3</span></div>
+          <div class="input" style="margin-top:auto">Pergunte ou peça algo…</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <h3>Anotações</h3>
+    <ol>
+      <li><span class="pin">1</span><div>Painel lateral, aberto pelo botão "🤖" da barra superior. Ele sabe em que tela o usuário está. <span class="ref">RF30</span></div></li>
+      <li><span class="pin">2</span><div>O assistente <b>propõe</b> e o usuário <b>aprova</b>: nada é criado sem confirmação. <span class="ref">RF31 · RNF19</span></div></li>
+      <li><span class="pin">3</span><div>Tarefas pesadas (resumos, atas) rodam em segundo plano. <span class="ref">RF34 · RNF08</span></div></li>
+    </ol>
+  </aside>
+</section>
+
+<script>
+  // ----- Monta a barra lateral e a barra superior de cada tela do app -----
+  const SIDE_ITEMS = [
+    { group: 'Espaços' },
+    { label: '🌐 Geral' },
+    { label: '👥 Grupo A', on: true },
+    { label: '👥 Grupo B' },
+    { group: 'Navegar' },
+    { label: '📋 Quadros', go: 'kanban' },
+    { label: '📁 Arquivos', go: 'arquivos' },
+    { label: '🎥 Reuniões', go: 'reunioes', badge: '1 hoje' },
+    { group: 'Administração' },
+    { label: '👤 Membros e grupos', go: 'membros' },
+    { label: '📜 Auditoria', go: 'auditoria' },
+  ];
+
+  document.querySelectorAll('.app').forEach(app => {
+    const active = app.dataset.active;
+    const side = document.createElement('div');
+    side.className = 'side';
+    let html = '<div class="ws"><span>Setor de Pesquisa</span><span class="muted">▾</span></div>';
+    SIDE_ITEMS.forEach(it => {
+      if (it.group) { html += `<div class="lbl">${it.group}</div>`; return; }
+      const isOn = (it.go && it.go === active);
+      const spaceOn = it.on && !it.go;
+      html += `<div class="it ${isOn ? 'on' : ''}" ${it.go ? `data-go="${it.go}"` : ''} style="${spaceOn ? 'font-weight:600' : ''}">
+                 <span>${it.label}</span>${it.badge ? `<small>${it.badge}</small>` : ''}</div>`;
+    });
+    side.innerHTML = html;
+
+    const top = document.createElement('div');
+    top.className = 'topbar';
+    top.innerHTML = `
+      <div class="search">🔍 Buscar tarefas, arquivos, pessoas…</div>
+      <div class="sp"></div>
+      <span class="ai" data-go="assistente">🤖 Assistente <span class="v2tag">V2</span></span>
+      <span class="bell" data-go="notificacoes">🔔<b>3</b></span>
+      <span class="av">AN</span>`;
+
+    app.prepend(top);
+    app.prepend(side);
+  });
+
+  // ----- Abas e navegação entre telas -----
+  const screens = [...document.querySelectorAll('.screen')];
+  const tabs = document.getElementById('tabs');
+  screens.forEach(s => {
+    const b = document.createElement('button');
+    b.textContent = s.dataset.title;
+    b.dataset.go = s.id;
+    tabs.appendChild(b);
+  });
+
+  function show(id) {
+    if (!document.getElementById(id)) id = screens[0].id;
+    screens.forEach(s => s.classList.toggle('on', s.id === id));
+    tabs.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.go === id));
+    if (location.hash !== '#' + id) history.replaceState(null, '', '#' + id);
+    window.scrollTo(0, 0);
+  }
+
+  document.addEventListener('click', e => {
+    const el = e.target.closest('[data-go]');
+    if (el) { e.preventDefault(); show(el.dataset.go); }
+  });
+
+  show(location.hash.slice(1) || 'login');
+</script>
+</body>
+</html>

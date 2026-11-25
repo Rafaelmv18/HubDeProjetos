@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hub de Projetos — Modelo de Dados</title>
+<style>
+  :root {
+    --bg: #f7f7f5; --surface: #fff; --text: #1f2328; --muted: #5d6470; --border: #e3e3df;
+    --accent: #3b5bdb; --accent-soft: #edf1ff;
+    --pk: #b35c00; --pk-bg: #fff1e0; --fk: #2b8a3e; --fk-bg: #e6f4ea;
+    --core: #6b4fbb; --core-bg: #f1ecfc;
+    --warn-bg: #fff8e1; --warn-border: #f0c14b;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; font-size: 15px; }
+  .layout { display: flex; min-height: 100vh; }
+  nav { width: 250px; flex-shrink: 0; position: sticky; top: 0; height: 100vh; overflow-y: auto; background: var(--surface); border-right: 1px solid var(--border); padding: 28px 20px; }
+  nav .brand { font-weight: 700; font-size: 17px; }
+  nav .sub { color: var(--muted); font-size: 12px; margin-bottom: 20px; }
+  nav a { display: block; color: var(--muted); text-decoration: none; padding: 5px 10px; border-radius: 6px; font-size: 14px; }
+  nav a:hover { background: var(--accent-soft); color: var(--accent); }
+  nav .group { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: #9aa0a8; margin: 16px 10px 6px; }
+  main { flex: 1; max-width: 1040px; padding: 40px 48px 80px; }
+  header.hero { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 26px 30px; margin-bottom: 28px; }
+  header.hero h1 { margin: 0 0 6px; font-size: 27px; }
+  header.hero p { margin: 0; color: var(--muted); }
+  section { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 26px 30px; margin-bottom: 22px; scroll-margin-top: 20px; }
+  h2 { margin: 0 0 14px; font-size: 21px; display: flex; align-items: center; gap: 10px; }
+  h2 .num { background: var(--accent-soft); color: var(--accent); font-size: 13px; font-weight: 700; width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; }
+  h3 { font-size: 16px; margin: 24px 0 10px; }
+  .note { background: var(--accent-soft); border-radius: 10px; padding: 13px 17px; margin: 12px 0; }
+  .callout { background: var(--warn-bg); border: 1px solid var(--warn-border); border-radius: 10px; padding: 13px 17px; margin: 12px 0; }
+  .core { background: var(--core-bg); border: 1px solid #d6caf5; border-radius: 10px; padding: 13px 17px; margin: 12px 0; }
+  code, pre { font-family: ui-monospace, Consolas, monospace; }
+  code { background: #f1f1ee; padding: 1px 6px; border-radius: 4px; font-size: 13px; }
+  pre { background: #1f2328; color: #e8e8e8; border-radius: 10px; padding: 16px 18px; overflow-x: auto; font-size: 13px; line-height: 1.55; }
+  pre .c { color: #8b949e; }
+  pre .k { color: #ff9e64; }
+  pre.diagram { background: #fafaf8; color: var(--text); border: 1px solid var(--border); font-size: 12.5px; line-height: 1.45; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 8px 11px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); background: #fafaf8; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .card { border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; background: #fcfcfb; }
+  .card h4 { margin: 0 0 6px; font-size: 15px; }
+
+  /* Cartões de tabela */
+  .tables { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 10px; }
+  .tbl { border: 1.5px solid var(--border); border-radius: 10px; overflow: hidden; background: #fff; }
+  .tbl.core-t { border-color: #b9a6ef; }
+  .tbl .tn { background: #2b2f36; color: #fff; padding: 7px 12px; font-family: ui-monospace, Consolas, monospace; font-weight: 700; font-size: 14px; display: flex; justify-content: space-between; align-items: center; }
+  .tbl.core-t .tn { background: var(--core); }
+  .tbl .tn small { font-family: -apple-system, "Segoe UI", sans-serif; font-weight: 400; color: #cfd3da; font-size: 11px; }
+  .tbl .td { padding: 6px 12px 4px; font-size: 13px; color: var(--muted); border-bottom: 1px solid var(--border); }
+  .tbl table { font-size: 12.5px; }
+  .tbl td { padding: 5px 12px; border-bottom: 1px solid #f0f0ec; }
+  .tbl td:first-child { font-family: ui-monospace, Consolas, monospace; white-space: nowrap; }
+  .tbl td.ty { font-family: ui-monospace, Consolas, monospace; color: var(--muted); white-space: nowrap; font-size: 12px; }
+  .tbl td.ob { color: var(--muted); font-size: 12px; }
+  .k-pk, .k-fk, .k-uq { font-size: 9.5px; font-weight: 800; padding: 1px 5px; border-radius: 4px; margin-right: 4px; font-family: -apple-system, sans-serif; }
+  .k-pk { background: var(--pk-bg); color: var(--pk); }
+  .k-fk { background: var(--fk-bg); color: var(--fk); }
+  .k-uq { background: #e7f5ff; color: #1864ab; }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 13px; color: var(--muted); }
+  .ok { color: #2b8a3e; font-weight: 700; }
+  .no { color: #c92a2a; font-weight: 700; }
+  .status { font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 6px; white-space: nowrap; background: var(--warn-bg); color: #8a6100; }
+  .status.done { background: #e6f4ea; color: #2b8a3e; }
+  @media (max-width: 900px) { nav { display: none; } main { padding: 18px; } .tables, .grid-2 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="layout">
+
+<nav>
+  <div class="brand">Hub de Projetos</div>
+  <div class="sub">Modelo de dados · v0.2</div>
+  <div class="group">Conceitos</div>
+  <a href="#visao">1. Visão geral</a>
+  <a href="#itens">2. A ideia central: itens</a>
+  <a href="#diagrama">3. Diagrama</a>
+  <div class="group">Tabelas</div>
+  <a href="#t-conta">4. Conta</a>
+  <a href="#t-hier">5. Workspace e hierarquia</a>
+  <a href="#t-itens">6. Itens e visibilidade</a>
+  <a href="#t-conteudo">7. Conteúdo</a>
+  <a href="#t-suporte">8. Notificações e auditoria</a>
+  <div class="group">Regra de acesso</div>
+  <a href="#regra">9. A regra em SQL</a>
+  <a href="#exemplo">10. Exemplo passo a passo</a>
+  <div class="group">Projeto</div>
+  <a href="#decisoes">11. Decisões de modelagem</a>
+  <a href="#historico">12. Histórico</a>
+  <div class="group">Outros documentos</div>
+  <a href="requisitos.html">📄 Requisitos</a>
+  <a href="wireframes.html">🖼 Wireframes</a>
+  <a href="design-system.html">🎨 Design system</a>
+  <a href="arquitetura.html">🏗 Arquitetura</a>
+  <a href="plano.html">✅ Plano de construção</a>
+  <a href="guia.html">📘 Guia do desenvolvedor</a>
+  <a href="../landing/index.html">🌐 Landing page</a>
+</nav>
+
+<main>
+
+<header class="hero">
+  <h1>Modelo de Dados</h1>
+  <p>Como as informações do Hub de Projetos ficam guardadas no banco (PostgreSQL): tabelas, colunas, ligações e, principalmente, como a <b>hierarquia</b> e a <b>visibilidade</b> são representadas.</p>
+</header>
+
+<!-- 1 -->
+<section id="visao">
+  <h2><span class="num">1</span> Visão geral</h2>
+  <p>O banco tem <b>24 tabelas principais</b>, organizadas em 5 áreas:</p>
+  <table>
+    <tr><th>Área</th><th>Tabelas</th><th>Para que serve</th></tr>
+    <tr><td><b>Conta</b></td><td><code>usuarios</code>, <code>tokens_senha</code></td><td>Quem é a pessoa e como ela entra</td></tr>
+    <tr><td><b>Workspace e hierarquia</b></td><td><code>workspaces</code>, <code>membros_workspace</code>, <code>grupos</code>, <code>membros_grupo</code>, <code>convites</code></td><td>Setor, cargos, grupos e líderes</td></tr>
+    <tr><td><b>Itens e visibilidade</b> ⭐</td><td><code>itens</code>, <code>compartilhamentos</code></td><td>Quem pode ver cada coisa. É o coração do sistema</td></tr>
+    <tr><td><b>Conteúdo</b></td><td><code>pastas</code>, <code>arquivos</code>, <code>documentos</code>, <code>documento_versoes</code>, <code>quadros</code>, <code>colunas</code>, <code>tarefas</code>, <code>tarefa_responsaveis</code>, <code>etiquetas</code>, <code>tarefa_etiquetas</code>, <code>comentarios</code>, <code>reunioes</code>, <code>reuniao_participantes</code></td><td>O trabalho em si: arquivos, tarefas e reuniões</td></tr>
+    <tr><td><b>Suporte</b></td><td><code>notificacoes</code>, <code>auditoria</code></td><td>Avisos e rastro de ações de superiores</td></tr>
+  </table>
+  <p style="margin-bottom:6px">Mais 3 tabelas de apoio internas: <code>preferencias_usuario</code> (ex.: último filtro de grupo), <code>sessoes</code> e <code>tentativas_login</code>. Elas costumam vir prontas com o framework e não aparecem no diagrama.</p>
+
+  <h3>Convenções</h3>
+  <ul>
+    <li><b>Nomes em português</b>, minúsculos e com <code>_</code> (snake_case)</li>
+    <li><b>Chave primária <code>id</code> do tipo UUID</b>: um identificador aleatório que não revela quantos registros existem, ao contrário de 1, 2, 3…</li>
+    <li>Toda tabela importante tem <code>criado_em</code>; as que mudam têm <code>atualizado_em</code></li>
+    <li><b>Nada é apagado de verdade</b> nos itens: excluir preenche <code>excluido_em</code> (<i>soft delete</i>). Isso permite a auditoria guardar "como estava antes" e, no futuro, ter uma lixeira</li>
+    <li><b>Presença</b> ("quem está vendo agora") <b>não vai para o banco</b>: ela é temporária e vive só no servidor de tempo real</li>
+  </ul>
+  <div class="legend"><span><span class="k-pk">PK</span> chave primária</span><span><span class="k-fk">FK</span> chave estrangeira (aponta para outra tabela)</span><span><span class="k-uq">ÚNICO</span> não pode repetir</span></div>
+</section>
+
+<!-- 2 -->
+<section id="itens">
+  <h2><span class="num">2</span> A ideia central: a tabela <code>itens</code></h2>
+  <p>O sistema tem <b>seis tipos de coisa</b> com visibilidade: pastas, arquivos, documentos, quadros, tarefas e reuniões. Todos seguem <b>a mesma regra de acesso</b>. Há duas formas de modelar isso:</p>
+  <div class="grid-2">
+    <div class="card">
+      <h4>❌ Opção A: visibilidade em cada tabela</h4>
+      Cada uma das 6 tabelas teria as colunas de visibilidade, e haveria 6 tabelas de compartilhamento.<br><br>
+      <b>Problema:</b> a regra de acesso teria que ser escrita <b>6 vezes</b>. Basta esquecer um detalhe em uma delas para algo "vazar".
+    </div>
+    <div class="card" style="border-color:#b9a6ef">
+      <h4>✅ Opção B: uma tabela <code>itens</code> comum (escolhida)</h4>
+      Tudo o que tem visibilidade é, antes de tudo, um <b>item</b>. A tabela <code>itens</code> guarda o espaço, a visibilidade e o criador. As tabelas específicas (<code>tarefas</code>, <code>arquivos</code>…) guardam só os detalhes e usam o <b>mesmo id</b> do item.<br><br>
+      <b>Vantagem:</b> a regra de acesso é escrita <b>uma única vez</b> (RNF21).
+    </div>
+  </div>
+<pre class="diagram">
+                         ┌──────────────────────────────────┐
+                         │              itens               │   ← "quem pode ver?"
+                         │ id · tipo · grupo_id (espaço)    │
+                         │ visibilidade · criador_id · …    │
+                         └───────────────┬──────────────────┘
+                                         │ mesmo id (relação 1 para 1)
+     ┌──────────┬──────────┬─────────────┼─────────────┬───────────┬───────────┐
+     ▼          ▼          ▼             ▼             ▼           ▼
+  pastas    arquivos   documentos     quadros       tarefas     reunioes      ← "o que é?"
+</pre>
+  <div class="note">Em orientação a objetos, isso equivale a uma <b>classe-mãe</b> <code>Item</code> com várias classes filhas. Em banco de dados, esse padrão se chama <b>herança por tabela de classe</b> (<i>class table inheritance</i>). Vale citar numa entrevista!</div>
+</section>
+
+<!-- 3 -->
+<section id="diagrama">
+  <h2><span class="num">3</span> Diagrama de relacionamentos</h2>
+  <p class="muted" style="margin-top:0">Leitura: <code>A ──&lt; B</code> quer dizer "um A tem muitos B". <code>A ── B</code> quer dizer "um para um".</p>
+<pre class="diagram">
+ CONTA                       WORKSPACE E HIERARQUIA
+ ┌───────────┐               ┌──────────────┐
+ │ usuarios  │──────────────&lt;│ membros_     │&gt;──────────┐
+ └─────┬─────┘               │ workspace    │           │
+       │                     │ (cargo,nível)│     ┌─────┴──────┐        ┌──────────┐
+       │                     └──────────────┘     │ workspaces │──────&lt;│ convites │
+       │                                          └─────┬──────┘        └──────────┘
+       │                     ┌──────────────┐           │
+       ├────────────────────&lt;│ membros_     │&gt;───┐ ┌────┴─────┐
+       │                     │ grupo        │    └─┤  grupos  │ (lider_id → usuarios)
+       │                     └──────────────┘      └────┬─────┘
+       │                                                │ espaço do item
+ ITENS E VISIBILIDADE                                   │
+       │       ┌───────────────────┐             ┌──────┴───────────────────┐
+       └──────&lt;│ compartilhamentos │&gt;────────────│          itens           │
+               │ (ler / editar)    │             │ tipo · visibilidade ·    │
+               └───────────────────┘             │ criador_id · excluido_em │
+                                                 └──┬───┬───┬───┬───┬───┬───┘
+ CONTEÚDO                                           │   │   │   │   │   │
+   pastas ──────────────────────────────────────────┘   │   │   │   │   │
+     ├──&lt; pastas (subpastas)                            │   │   │   │   │
+     ├──&lt; arquivos ─────────────────────────────────────┘   │   │   │   │
+     └──&lt; documentos ───────────────────────────────────────┘   │   │   │
+            └──&lt; documento_versoes                              │   │   │
+   quadros ─────────────────────────────────────────────────────┘   │   │
+     ├──&lt; colunas                                                   │   │
+     └──&lt; tarefas ──────────────────────────────────────────────────┘   │
+            ├──&lt; tarefa_responsaveis &gt;── usuarios                      │
+            ├──&lt; tarefa_etiquetas &gt;── etiquetas                        │
+            └──&lt; comentarios                                            │
+   reunioes ────────────────────────────────────────────────────────────┘
+     └──&lt; reuniao_participantes &gt;── usuarios
+
+ SUPORTE
+   notificacoes  (usuario_id → usuarios, item_id → itens)
+   auditoria     (ator_id, dono_id → usuarios · item_id → itens · versao_id → documento_versoes)
+</pre>
+</section>
+
+<!-- 4 -->
+<section id="t-conta">
+  <h2><span class="num">4</span> Conta</h2>
+  <div class="tables">
+    <div class="tbl">
+      <div class="tn">usuarios <small>US01–US04</small></div>
+      <table>
+        <tr><td><span class="k-pk">PK</span>id</td><td class="ty">uuid</td><td class="ob"></td></tr>
+        <tr><td>nome</td><td class="ty">text</td><td class="ob"></td></tr>
+        <tr><td><span class="k-uq">ÚNICO</span>email</td><td class="ty">citext</td><td class="ob">ignora maiúsculas/minúsculas</td></tr>
+        <tr><td>senha_hash</td><td class="ty">text</td><td class="ob">nunca a senha em si (RNF01)</td></tr>
+        <tr><td>foto_url</td><td class="ty">text?</td><td class="ob">opcional</td></tr>
+        <tr><td>criado_em</td><td class="ty">timestamptz</td><td class="ob"></td></tr>
+      </table>
+    </div>
+    <div class="tbl">
+      <div class="tn">tokens_senha <small>US03</small></div>
+      <div class="td">Links de "esqueci minha senha".</div>
+      <table>
+        <tr><td><span class="k-pk">PK</span>id</td><td class="ty">uuid</td><td class="ob"></td></tr>
+        <tr><td><span class="k-fk">FK</span>usuario_id</td><td class="ty">uuid</td><td class="ob">→ usuarios</td></tr>
+        <tr><td>token_hash</td><td class="ty">text</td><td class="ob">guarda só o hash do link</td></tr>
+        <tr><td>expira_em</td><td class="ty">timestamptz</td><td class="ob">+1 hora</td></tr>
+        <tr><td>usado_em</td><td class="ty">timestamptz?</td><td class="ob">uso único</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section id="t-hier">
+  <h2><span class="num">5</span> Workspace e hierarquia</h2>
+  <div class="tables">
+    <div class="tbl">
+      <div class="tn">workspaces <small>US05</small></div>
+      <table>
+        <tr><td><span class="k-pk">PK</span>id</td><td class="ty">uuid</td><td class="ob"></td></tr>
+        <tr><td>nome</td><td class="ty">text</td><td class="ob">ex.: Setor de Pesquisa</td></tr>
+        <tr><td>descricao</td><td class="ty">text?</td><td class="ob"></td></tr>
+        <tr><td><span class="k-fk">FK</span>proprietario_id</td><td class="ty">uuid</td><td class="ob">→ usuarios</td></tr>
+        <tr><td>criado_em</td><td class="ty">timestamptz</td><td class="ob"></td></tr>
+      </table>
+    </div>
+    <div class="tbl">
+      <div class="tn">membros_workspace <small>US06 · US07</small></div>
+      <div class="td">Quem está no workspace e com qual cargo. <b>Aqui mora a hierarquia.</b></div>
+      <table>
+        <tr><td><span class="k-pk">PK</span><span class="k-fk">FK</span>workspace_id</td><td class="ty">uuid</td><td class="ob">→ workspaces</td></tr>
+        <tr><td><span class="k-pk">PK</span><span class="k-fk">FK</span>usuario_id</td><td class="ty">uuid</td><td class="ob">→ usuarios</td></tr>
+        <tr><td>cargo</td><td class="ty">enum</td><td class="ob">proprietario · administrador · lider · membro · convidado</td></tr>
+        <tr><td>nivel</td><td class="ty">smallint</td><td class="ob">4 · 3 · 2 · 1 · 0, calculado a partir do cargo</td></tr>
+        <tr><td>entrou_em</td><td class="ty">timestamptz</td><td class="ob"></td></tr>
+        <tr><td>removido_em</td><td class="ty">timestamptz?</td><td class="ob">preenchido = perdeu acesso</td></tr>
+      </table>
+    </div>
+    <div class="tbl">
+      <div class="tn">grupos <small>US08 · US10</small></div>
+      <table>
+        <tr><td><span class="k-pk">PK</span>id</td><td class="ty">uuid</td><td class="ob"></td></tr>
+        <tr><td><span class="k-fk">FK</span>workspace_id</td><td class="ty">uuid</td><td class="ob">→ workspaces</td></tr>
+        <tr><td><span class="k-uq">ÚNICO</span>nome</td><td class="ty">text</td><td class="ob">único dentro do workspace</td></tr>
+        <tr><td><span class="k-fk">FK</span>lider_id</td><td class="ty">uuid?</td><td class="ob">→ usuarios · um líder por grupo (D16)</td></tr>
+        <tr><td><span class="k-fk">FK</span>grupo_pai_id</td><td class="ty">uuid?</td><td class="ob">→ grupos · <b>sempre vazio no MVP</b>, já preparado para subgrupos (RNF23)</td></tr>
+        <tr><td>criado_em</td><td class="ty">timestamptz</td><td class="ob"></td></tr>
+      </table>
+    </div>
+    <div class="tbl">
+      <div class="tn">membros_grupo <small>US09</small></div>
+      <div class="td">Quem está em qual grupo. Uma pessoa pode estar em vários.</div>
+      <table>
+        <tr><td><span class="k-pk">PK</span><span class="k-fk">FK</span>grupo_id</td><td class="ty">uuid</td><td class="ob">→ grupos</td></tr>
+        <tr><td><span class="k-pk">PK</span><span class="k-fk">FK</span>usuario_id</td><td class="ty">uuid</td><td class="ob">→ usuarios</td></tr>
+        <tr><td>entrou_em</td><td class="ty">timestamptz</td><td class="ob"></td></tr>
+      </table>
+    </div>
+    <div class="tbl">
+      <div class="tn">convites <small>US06</small></div>
+      <table>
+        <tr><td><span class="k-pk">PK</span>id</td><td class="ty">uuid</td><td class="ob"></td></tr>
+        <tr><td><span class="k-fk">FK</span>workspace_id</td><td class="ty">uuid</td><td class="ob">→ workspaces</td></tr>
+        <tr><td>email</td><td class="ty">citext</td><td class="ob">pode ainda não ter conta</td></tr>
+        <tr><td>cargo</td><td class="ty">enum</td><td class="ob">menor que o de quem convida (D14)</td></tr>
+        <tr><td>token_hash</td><td class="ty">text</td><td class="ob">para o link de convite</td></tr>
+        <tr><td><span class="k-fk">FK</span>convidado_por</td><td class="ty">uuid</td><td class="ob">→ usuarios</td></tr>
+        <tr><td>expira_em · aceito_em · revogado_em</td><td class="ty">timestamptz</td><td class="ob">7 dias · aceito · cancelado</td></tr>
+      </table>
+    </div>
+    <div class="card" style="align-self:start">
+      <h4>💡 Por que guardar o <code>nivel</code>?</h4>
+      A regra de acesso pergunta o tempo todo "o cargo de X está <b>acima</b> do de Y?". Comparar números (<code>4 &gt; 2</code>) é mais simples e rápido do que comparar textos. O <code>nivel</code> é uma <b>coluna gerada</b>: o banco calcula sozinho a partir do <code>cargo</code>, e os dois nunca ficam inconsistentes.
+    </div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section id="t-itens">
+  <h2><span class="num">6</span> Itens e visibilidade ⭐</h2>
+  <div class="tables">
+    <div class="tbl core-t">
+      <div class="tn">itens <small>RF39 · RF40 · US11 · US13</small></div>
+      <div class="td">Uma linha para cada pasta, arquivo, documento, quadro, tarefa ou reunião.</div>
+      <table>
+        <tr><td><span class="k-pk">PK</span>id</td><td class="ty">uuid</td><td class="ob">o mesmo id da tabela específica</td></tr>
+        <tr><td><span class="k-fk">FK</span>workspace_id</td><td class="ty">uuid</td><td class="ob">→ workspaces</td></tr>
+        <tr><td>tipo</td><td class="ty">enum</td><td class="ob">pasta · arquivo · documento · quadro · tarefa · reuniao</td></tr>
+        <tr><td><span class="k-fk">FK</span>grupo_id</td><td class="ty">uuid?</td><td class="ob"><b>Espaço</b> onde o item vive. Vazio = espaço geral</td></tr>
+        <tr><td>visibilidade</td><td class="ty">enum</td><td class="ob">workspace · grupo · cargo · privado</td></tr>
+        <tr><td><span class="k-fk">FK</span>visivel_grupo_id</td><td class="ty">uuid?</td><td class="ob">qual grupo vê (quando visibilidade = grupo)</td></tr>
+        <tr><td>visivel_cargo</td><td class="ty">enum?</td><td class="ob">qual cargo vê (quando visibilidade = cargo)</td></tr>
+        <tr><td><span class="k-fk">FK</span>criador_id</td><td class="ty">uuid</td><td class="ob">→ usuarios · o "dono"</td></tr>
+        <tr><td>nivel_criador</td><td class="ty">smallint</td><td class="ob">nível do cargo do criador ao criar o item. Só o dono pode subir, até o próprio cargo atual (D22)</td></tr>
+        <tr><td>criado_em · atualizado_em</td><td class="ty">timestamptz</td><td class="ob"></td></tr>
+        <tr><td>excluido_em</td><td class="ty">timestamptz?</td><td class="ob">soft delete</td></tr>
+      </table>
+    </div>
+    <div class="tbl core-t">
+      <div class="tn">compartilhamentos <small>RF49 · US12</small></div>
+      <div class="td">Pessoas específicas que podem acessar um item.</div>
+      <table>
+        <tr><td><span class="k-pk">PK</span><span class="k-fk">FK</span>item_id</td><td class="ty">uuid</td><td class="ob">→ itens</td></tr>
+        <tr><td><span class="k-pk">PK</span><span class="k-fk">FK</span>usuario_id</td><td class="ty">uuid</td><td class="ob">→ usuarios</td></tr>
+        <tr><td>permissao</td><td class="ty">enum</td><td class="ob">ler · editar (D24)</td></tr>
+        <tr><td><span class="k-fk">FK</span>compartilhado_por</td><td class="ty">uuid</td><td class="ob">→ usuarios</td></tr>
+        <tr><td>criado_em</td><td class="ty">timestamptz</td><td class="ob"></td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="core">
+    <b>Os três "lugares" de um item, sem confundir:</b><br>
+    • <code>grupo_id</code> = <b>onde o item vive</b> (o espaço). Define <b>quem é superior</b> sobre ele: o líder desse grupo ou, no espaço geral, todos os líderes (D25).<br>
+    • <code>visibilidade</code> + <code>visivel_*</code> = <b>quem foi convidado a ver</b>.<br>
+    • <code>compartilhamentos</code> = <b>pessoas adicionadas uma a uma</b>.<br><br>
+    Exemplo: o arquivo privado da Ana na pasta do Grupo A tem <code>grupo_id = Grupo A</code>, <code>visibilidade = privado</code> e uma linha em <code>compartilhamentos</code> para a Gabi.
+  </div>
+  <div class="callout"><b>Herança de pastas (RF21):</b> uma subpasta não pode ser mais aberta que a pasta-mãe. Isso é <b>validado pelo back-end</b> ao criar ou alterar a visibilidade. Cada item guarda a <b>própria</b> visibilidade, já resolvida, para que a consulta de acesso não precise subir a árvore de pastas inteira a cada vez.</div>
+</section>
+
+<!-- 7 -->
+<section id="t-conteudo">
+  <h2><span class="num">7</span> Conteúdo</h2>
+  <p class="muted" style="margin-top:0">Nas tabelas abaixo, <code>item_id</code> é ao mesmo tempo a <b>chave primária</b> e a <b>ligação</b> com <code>itens</code> (relação 1 para 1).</p>
+
+  <h3>📁 Arquivos e documentos</h3>
+  <div class="tables">
+    <div class="tbl">
+      <div class="tn">pastas <small>US23</small></div>
+      <table>
+        <tr><td><span class="k-pk">PK</span><span class="k-fk">FK</span>item_id</td><td class="ty">uuid</td><td class="ob">→ itens</td></tr>
+        <tr><td><span class="k-fk">FK</span>pasta_pai_id</td><td class="ty">uuid?</td><td class="ob">→ pastas · vazio = pasta raiz</td></tr>
+        <tr><td>nome</td><td class="ty">text</td><td class="ob"></td></tr>
+      </table>
+    </div>
+    <div class="tbl">
+      <div class="tn">arquivos <small>US24</small></div>
+      <div class="td">Arquivos enviados (PDF, DOCX, imagens…).</div>
+      <table>
+        <tr><td><span class="k-pk">PK</span><span class="k-fk">FK</span>item_id</td><td class="ty">uuid</td><td class="ob">→ itens</td></tr>
+        <tr><td><span class="k-fk">FK</span>pasta_id</td><td class="ty">uuid</td><td class="ob">→ pastas</td></tr>
+        <tr><td>nome</td><td class="ty">text</td><td class="ob"></td></tr>
+        <tr><td>tipo_mime</td><td class="ty">text</td><td class="ob">ex.: application/pdf</td></tr>
+        <tr><td>tamanho_bytes</td><td class="ty">bigint</td><td class="ob">limite de 50 MB</td></tr>
+        <tr><td>chave_storage</td><td class="ty">text</td><td class="ob">onde o arquivo está no armazenamento (RNF18). <b>O arquivo não fica no banco</b></td></tr>
+      </table>
+    </div>
+    <div class="tbl">
+      <div class="tn">documentos <small>US29 · US30</small></div>
+      <div class="td">Documentos nativos, editados em conjunto.</div>
+      <table>
+        <tr><td><span class="k-pk">PK</span><span class="k-fk">FK</span>item_id</td><td class="ty">uuid</td><td class="ob">→ itens</td></tr>
+        <tr><td><span class="k-fk">FK</span>pasta_id</td><td class="ty">uuid</td><td class="ob">→ pastas</td></tr>
+        <tr><td>titulo</td><td class="ty">text</td><td class="ob"></td></tr>
+        <tr><td>estado_colaborativo</td><td class="ty">bytea</td><td class="ob">estado da edição em tempo real (formato binário da biblioteca de colaboração)</td></tr>
+        <tr><td>conteudo_texto</td><td class="ty">text</td><td class="ob">cópia em texto puro, para busca e, na V2, para a IA</td></tr>
+      </table>
+    </div>
+    <div class="tbl">
+      <div class="tn">documento_versoes <small>US33 · D21</small></div>
+      <div class="td">Uma linha por sessão de edição. É usada pelo histórico <b>e</b> pela auditoria.</div>
+      <table>
+        <tr><td><span class="k-pk">PK</span>id</td><td class="ty">uuid</td><td class="ob"></td></tr>
+        <tr><td><span class="k-fk">FK</span>documento_id</td><td class="ty">uuid</td><td class="ob">→ documentos</td></tr>
+        <tr><td>numero</td><td class="ty">int</td><td class="ob">1, 2, 3… por documento</td></tr>
+        <tr><td>snapshot</td><td class="ty">bytea</td><td class="ob">o documento completo naquele momento</td></tr>
+        <tr><td>autores</td><td class="ty">uuid[]</td><td class="ob">quem editou nessa sessão</td></tr>
+        <tr><td>feita_por_superior</td><td class="ty">boolean</td><td class="ob">marca "✏️ Superior"</td></tr>
+        <tr><td>nome</td><td class="ty">text?</td><td class="ob">ex.: "Enviado ao orientador"</td></tr>
+        <tr><td>criado_em</td><td class="ty">timestamptz</td><td class="ob"></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <h3>📋 Kanban</h3>
+  <div class="tables">
+    <div class="tbl">
+      <div class="tn">quadros <small>US16</small></div>
+      <table>
+        <tr><td><span class="k-pk">PK</span><span class="k-fk">FK</span>item_id</td><td class="ty">uuid</td><td class="ob">→ itens</td></tr>
+        <tr><td>nome</td><td class="ty">text</td><td class="ob"></td></tr>
+      </table>
+    </div>
+    <div class="tbl">
+      <div class="tn">colunas <small>US16</small></div>
+      <table>
+        <tr><td><span class="k-pk">PK</span>id</td><td class="ty">uuid</td><td class="ob"></td></tr>
+        <tr><td><span class="k-fk">FK</span>quadro_id</td><td class="ty">uuid</td><td class="ob">→ quadros</td></tr>
+        <tr><td>nome</td><td class="ty">text</td><td class="ob">A fazer, Em andamento…</td></tr>
+        <tr><td>posicao</td><td class="ty">numeric</td><td class="ob">ordem da coluna</td></tr>
+      </table>
+    </div>
+    <div class="tbl">
+      <div class="tn">tarefas <small>US17–US20</small></div>
+      <table>
+        <tr><td><span class="k-pk">PK</span><span class="k-fk">FK</span>item_id</td><td class="ty">uuid</td><td class="ob">→ itens</td></tr>
+        <tr><td><span class="k-fk">FK</span>quadro_id</td><td class="ty">uuid</td><td class="ob">→ quadros</td></tr>
+        <tr><td><span class="k-fk">FK</span>coluna_id</td><td class="ty">uuid</td><td class="ob">→ colunas</td></tr>
+        <tr><td>titulo</td><td class="ty">text</td><td class="ob">obrigatório</td></tr>
+        <tr><td>descricao</td><td class="ty">text?</td><td class="ob"></td></tr>
+        <tr><td>prazo</td><td class="ty">date?</td><td class="ob"></td></tr>
+        <tr><td>prioridade</td><td class="ty">enum?</td><td class="ob">baixa · media · alta</td></tr>
+        <tr><td>posicao</td><td class="ty">numeric</td><td class="ob">ordem dentro da coluna (veja a dica)</td></tr>
+      </table>
+    </div>
+    <div class="card" style="align-self:start">
+      <h4>💡 Por que <code>posicao</code> é <code>numeric</code>?</h4>
+      Para mover um card <b>entre</b> outros dois sem renumerar a coluna inteira. Se o card vai entre as posições 1 e 2, ele recebe 1,5. Só uma linha muda no banco, o que é ótimo para o kanban em tempo real (US18, US32).
+    </div>
+    <div class="tbl">
+      <div class="tn">tarefa_responsaveis <small>US17</small></div>
+      <table>
+        <tr><td><span class="k-pk">PK</span><span class="k-fk">FK</span>tarefa_id</td><td class="ty">uuid</td><td class="ob">→ tarefas</td></tr>
+        <tr><td><span class="k-pk">PK</span><span class="k-fk">FK</span>usuario_id</td><td class="ty">uuid</td><td class="ob">→ usuarios</td></tr>
+      </table>
+    </div>
+    <div class="tbl">
+      <div class="tn">etiquetas · tarefa_etiquetas <small>US17</small></div>
+      <table>
+        <tr><td colspan="3" class="ob"><b>etiquetas:</b> id, workspace_id, nome, cor</td></tr>
+        <tr><td colspan="3" class="ob"><b>tarefa_etiquetas:</b> tarefa_id + etiqueta_id (PK composta)</td></tr>
+      </table>
+    </div>
+    <div class="tbl">
+      <div class="tn">comentarios <small>US22</small></div>
+      <div class="td">Não é um item: herda a visibilidade da tarefa.</div>
+      <table>
+        <tr><td><span class="k-pk">PK</span>id</td><td class="ty">uuid</td><td class="ob"></td></tr>
+        <tr><td><span class="k-fk">FK</span>tarefa_id</td><td class="ty">uuid</td><td class="ob">→ tarefas</td></tr>
+        <tr><td><span class="k-fk">FK</span>autor_id</td><td class="ty">uuid</td><td class="ob">→ usuarios</td></tr>
+        <tr><td>texto</td><td class="ty">text</td><td class="ob">as @menções ficam no texto</td></tr>
+        <tr><td>criado_em · editado_em · excluido_em</td><td class="ty">timestamptz</td><td class="ob"></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <h3>🎥 Reuniões</h3>
+  <div class="tables">
+    <div class="tbl">
+      <div class="tn">reunioes <small>US26 · US27</small></div>
+      <table>
+        <tr><td><span class="k-pk">PK</span><span class="k-fk">FK</span>item_id</td><td class="ty">uuid</td><td class="ob">→ itens</td></tr>
+        <tr><td>titulo</td><td class="ty">text</td><td class="ob"></td></tr>
+        <tr><td>inicio</td><td class="ty">timestamptz</td><td class="ob">com fuso horário</td></tr>
+        <tr><td>duracao_min</td><td class="ty">int</td><td class="ob"></td></tr>
+        <tr><td>pauta</td><td class="ty">text?</td><td class="ob"></td></tr>
+        <tr><td>sala_externa_id</td><td class="ty">text?</td><td class="ob">id da sala no serviço de vídeo (RNF18)</td></tr>
+        <tr><td>cancelada_em</td><td class="ty">timestamptz?</td><td class="ob"></td></tr>
+      </table>
+    </div>
+    <div class="tbl">
+      <div class="tn">reuniao_participantes <small>US26</small></div>
+      <table>
+        <tr><td><span class="k-pk">PK</span><span class="k-fk">FK</span>reuniao_id</td><td class="ty">uuid</td><td class="ob">→ reunioes</td></tr>
+        <tr><td><span class="k-pk">PK</span><span class="k-fk">FK</span>usuario_id</td><td class="ty">uuid</td><td class="ob">→ usuarios</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 8 -->
+<section id="t-suporte">
+  <h2><span class="num">8</span> Notificações e auditoria</h2>
+  <div class="tables">
+    <div class="tbl">
+      <div class="tn">notificacoes <small>US28</small></div>
+      <table>
+        <tr><td><span class="k-pk">PK</span>id</td><td class="ty">uuid</td><td class="ob"></td></tr>
+        <tr><td><span class="k-fk">FK</span>usuario_id</td><td class="ty">uuid</td><td class="ob">quem recebe</td></tr>
+        <tr><td>tipo</td><td class="ty">enum</td><td class="ob">atribuicao · compartilhamento · mencao · reuniao · edicao_superior …</td></tr>
+        <tr><td><span class="k-fk">FK</span>item_id</td><td class="ty">uuid?</td><td class="ob">→ itens · para onde o clique leva</td></tr>
+        <tr><td><span class="k-fk">FK</span>ator_id</td><td class="ty">uuid?</td><td class="ob">quem causou</td></tr>
+        <tr><td>dados</td><td class="ty">jsonb</td><td class="ob">detalhes extras (ex.: trecho do comentário)</td></tr>
+        <tr><td>lida_em</td><td class="ty">timestamptz?</td><td class="ob">vazio = não lida</td></tr>
+        <tr><td>criado_em</td><td class="ty">timestamptz</td><td class="ob"></td></tr>
+      </table>
+    </div>
+    <div class="tbl">
+      <div class="tn">auditoria <small>US15 · RNF24</small></div>
+      <div class="td"><b>Imutável:</b> o banco recusa UPDATE e DELETE nesta tabela.</div>
+      <table>
+        <tr><td><span class="k-pk">PK</span>id</td><td class="ty">bigint</td><td class="ob">sequencial: a ordem importa aqui</td></tr>
+        <tr><td><span class="k-fk">FK</span>workspace_id</td><td class="ty">uuid</td><td class="ob"></td></tr>
+        <tr><td><span class="k-fk">FK</span>ator_id</td><td class="ty">uuid</td><td class="ob">o superior que agiu</td></tr>
+        <tr><td>acao</td><td class="ty">enum</td><td class="ob">editou · excluiu · alterou_visibilidade (D18)</td></tr>
+        <tr><td><span class="k-fk">FK</span>item_id</td><td class="ty">uuid</td><td class="ob">→ itens (continua existindo graças ao soft delete)</td></tr>
+        <tr><td><span class="k-fk">FK</span>dono_id</td><td class="ty">uuid</td><td class="ob">o subordinado dono do item</td></tr>
+        <tr><td>estado_anterior</td><td class="ty">jsonb?</td><td class="ob">cópia do item antes (tarefas, pastas…)</td></tr>
+        <tr><td><span class="k-fk">FK</span>versao_id</td><td class="ty">uuid?</td><td class="ob">→ documento_versoes (para documentos, sem duplicar)</td></tr>
+        <tr><td>criado_em</td><td class="ty">timestamptz</td><td class="ob"></td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="note"><b>Como garantir que ninguém apaga a auditoria?</b> Em duas camadas: (1) o usuário do banco usado pela aplicação só tem permissão de <code>INSERT</code> e <code>SELECT</code> nessa tabela; (2) um <i>trigger</i> recusa qualquer <code>UPDATE</code> ou <code>DELETE</code>. Mesmo um bug no código não consegue alterar o histórico.</div>
+</section>
+
+<!-- 9 -->
+<section id="regra">
+  <h2><span class="num">9</span> A regra de acesso em SQL</h2>
+  <p>A regra da seção 3.4 dos requisitos vira <b>uma única consulta</b>. Ela responde: "quais itens o usuário <code>:eu</code> pode ver neste workspace?". Todo o sistema (listas, busca, notificações, tempo real) passa por ela.</p>
+<pre><span class="c">-- Itens que o usuário :eu pode ver no workspace :ws</span>
+<span class="k">SELECT</span> i.*
+<span class="k">FROM</span> itens i
+<span class="k">JOIN</span> membros_workspace eu      <span class="k">ON</span> eu.workspace_id = i.workspace_id <span class="k">AND</span> eu.usuario_id = :eu
+<span class="k">WHERE</span> i.workspace_id = :ws
+  <span class="k">AND</span> i.excluido_em <span class="k">IS NULL</span>
+  <span class="k">AND</span> eu.removido_em <span class="k">IS NULL</span>
+  <span class="k">AND</span> (
+        <span class="c">-- (a) fui eu que criei</span>
+        i.criador_id = :eu
+
+        <span class="c">-- (b) estou incluído na visibilidade</span>
+     <span class="k">OR</span> (i.visibilidade = 'workspace' <span class="k">AND</span> eu.cargo &lt;&gt; 'convidado')
+     <span class="k">OR</span> (i.visibilidade = 'grupo' <span class="k">AND EXISTS</span> (
+            <span class="k">SELECT</span> 1 <span class="k">FROM</span> membros_grupo mg
+            <span class="k">WHERE</span> mg.grupo_id = i.visivel_grupo_id <span class="k">AND</span> mg.usuario_id = :eu))
+     <span class="k">OR</span> (i.visibilidade = 'cargo' <span class="k">AND</span> eu.cargo = i.visivel_cargo)
+     <span class="k">OR EXISTS</span> (
+            <span class="k">SELECT</span> 1 <span class="k">FROM</span> compartilhamentos c
+            <span class="k">WHERE</span> c.item_id = i.id <span class="k">AND</span> c.usuario_id = :eu)
+
+        <span class="c">-- (c) sou superior na cadeia: cargo acima do nível guardado no item (D22) E autoridade sobre o espaço</span>
+     <span class="k">OR</span> (eu.nivel &gt; i.nivel_criador <span class="k">AND</span> (
+            eu.nivel &gt;= 3                                        <span class="c">-- admin/proprietário: autoridade sobre tudo</span>
+         <span class="k">OR</span> i.grupo_id <span class="k">IS NULL</span>                                  <span class="c">-- espaço geral: qualquer cargo acima (D25)</span>
+         <span class="k">OR EXISTS</span> (<span class="k">SELECT</span> 1 <span class="k">FROM</span> grupos g                        <span class="c">-- líder: só sobre o próprio grupo</span>
+                    <span class="k">WHERE</span> g.id = i.grupo_id <span class="k">AND</span> g.lider_id = :eu)))
+  );</pre>
+  <div class="grid-2">
+    <div class="card"><h4>✅ Por que isso é bom</h4>Uma regra, um lugar. Os <b>9 cenários</b> dos requisitos viram testes automáticos dessa consulta (RNF21). Se eles passam, o acesso está certo em todo o sistema.</div>
+    <div class="card"><h4>⚡ Desempenho</h4>Índices em <code>itens(workspace_id, grupo_id)</code>, <code>compartilhamentos(usuario_id)</code> e <code>membros_grupo(usuario_id)</code> mantêm a consulta rápida, mesmo com milhares de itens.</div>
+  </div>
+  <div class="callout"><b>E para editar?</b> Pode editar quem pode ver <b>e</b> não é convidado, com uma exceção: quem só tem acesso por um compartilhamento com <code>permissao = 'ler'</code> não edita. Superiores na cadeia sempre podem editar e excluir (RF56), e isso gera auditoria.</div>
+</section>
+
+<!-- 10 -->
+<section id="exemplo">
+  <h2><span class="num">10</span> Exemplo passo a passo</h2>
+  <p>Cenário 1 dos requisitos: a <b>Ana</b> (membro, nível 1) cria um arquivo <b>privado</b> na pasta do <b>Grupo A</b> e o compartilha com a <b>Gabi</b>. No banco, isso fica assim:</p>
+<pre><span class="c">-- itens</span>
+id = 'arq-77' · tipo = 'arquivo' · grupo_id = 'grupo-A' · visibilidade = 'privado' · criador_id = 'ana' · nivel_criador = 1
+
+<span class="c">-- compartilhamentos</span>
+item_id = 'arq-77' · usuario_id = 'gabi' · permissao = 'editar'</pre>
+  <table>
+    <tr><th>Quem pergunta</th><th>Nível</th><th>(a) criou?</th><th>(b) incluído?</th><th>(c) superior na cadeia?</th><th>Resultado</th></tr>
+    <tr><td>Ana</td><td>1</td><td class="ok">sim</td><td>—</td><td>—</td><td class="ok">vê</td></tr>
+    <tr><td>Gabi</td><td>1</td><td>não</td><td class="ok">compartilhado</td><td>—</td><td class="ok">vê</td></tr>
+    <tr><td>Lia (membro A)</td><td>1</td><td>não</td><td>não</td><td>1 &gt; 1? não</td><td class="no">não vê</td></tr>
+    <tr><td>Fábio (líder A)</td><td>2</td><td>não</td><td>não</td><td>2 &gt; 1 ✓ e é líder do grupo-A ✓</td><td class="ok">vê</td></tr>
+    <tr><td>João (líder B)</td><td>2</td><td>não</td><td>não</td><td>2 &gt; 1 ✓, mas não lidera o grupo-A ✗</td><td class="no">não vê</td></tr>
+    <tr><td>Diana (admin)</td><td>3</td><td>não</td><td>não</td><td>3 &gt; 1 ✓ e nível ≥ 3 ✓</td><td class="ok">vê</td></tr>
+  </table>
+  <p>O resultado é exatamente o da tabela do cenário 1 nos requisitos. ✅</p>
+</section>
+
+<!-- 11 -->
+<section id="decisoes">
+  <h2><span class="num">11</span> Decisões de modelagem</h2>
+  <table>
+    <tr><th>#</th><th>Decisão</th><th>Status</th></tr>
+    <tr><td><code>D22</code></td><td><b>Nível do criador guardado no item.</b> Cada item guarda o nível que o criador tinha ao criá-lo (<code>nivel_criador</code>). Se a Ana for promovida a líder, quem já via os itens dela pela hierarquia continua vendo, e só os itens novos seguem o cargo novo. A dona pode subir o nível de um item antigo, até o próprio cargo atual, na janela de visibilidade.</td><td><span class="status done">Decidido</span></td></tr>
+    <tr><td><code>D23</code></td><td><b>Soft delete nos itens.</b> Excluir só marca <code>excluido_em</code>. Isso permite à auditoria guardar o "antes" e abre caminho para uma lixeira no futuro.</td><td><span class="status done">Decidido</span></td></tr>
+    <tr><td><code>D24</code></td><td><b>Compartilhar como leitura ou edição.</b> Quem compartilha escolhe se a pessoa só lê ou também edita. O seletor está na tela 5 dos wireframes.</td><td><span class="status done">Decidido</span></td></tr>
+    <tr><td><code>D25</code></td><td><b>Hierarquia no espaço geral.</b> Um item no <b>espaço geral</b> pode ser visto, editado e excluído pela hierarquia por <b>todos</b> com cargo acima do nível do criador, incluindo os líderes de qualquer grupo. Editar e excluir geram auditoria e aviso ao dono. Nos grupos, continua valendo que o líder só tem autoridade sobre o próprio grupo.</td><td><span class="status done">Decidido</span></td></tr>
+    <tr><td><code>D26</code></td><td><b>Arquivos fora do banco.</b> O banco guarda só os dados do arquivo e a chave de onde ele está. O conteúdo vai para um armazenamento de arquivos separado (RNF18).</td><td><span class="status done">Decidido</span></td></tr>
+  </table>
+</section>
+
+<!-- 12 -->
+<section id="historico">
+  <h2><span class="num">12</span> Histórico</h2>
+  <table>
+    <tr><th>Versão</th><th>Data</th><th>Alteração</th></tr>
+    <tr><td><code>v0.2</code></td><td>06/11/2026</td><td>D22–D25 fechadas: nova coluna <code>itens.nivel_criador</code> e regra de acesso atualizada para ela e para o espaço geral</td></tr>
+    <tr><td><code>v0.1</code></td><td>04/11/2026</td><td>Primeira versão: 24 tabelas principais (+3 de apoio) em 5 áreas, tabela <code>itens</code> como base da visibilidade, regra de acesso em SQL, exemplo do cenário 1 e decisões D22–D26</td></tr>
+  </table>
+</section>
+
+</main>
+</div>
+</body>
+</html>

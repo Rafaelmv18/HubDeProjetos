@@ -1,0 +1,154 @@
+/*
+  TOKENS DO DESIGN SYSTEM
+  Este arquivo é a única fonte de valores do app (cores, fontes, espaços etc.).
+  Foi copiado de docs/design-system.html. Os componentes só devem usar var(--...),
+  nunca escrever cores ou medidas direto.
+*/
+
+/* Tema claro (padrão) */
+:root,
+[data-theme='light'] {
+  color-scheme: light;
+  /* Superfícies */
+  --ground: #f2f5f3;
+  --surface: #ffffff;
+  --surface-sunken: #e8edea;
+  --surface-hover: #edf1ee;
+  /* Texto e linhas */
+  --ink: #15211f;
+  --ink-muted: #53615d;
+  --line: #d5ddd9;
+  --line-strong: #7c8a85;
+  /* Marca */
+  --primary: #0b5d4e;
+  --primary-hover: #084a3e;
+  --on-primary: #ffffff;
+  --primary-soft: #dceee8;
+  --on-primary-soft: #0a4a3e;
+  --accent: #f2b705;
+  --on-accent: #2a2000;
+  --focus: #1f5fbf;
+  /* Visibilidade */
+  --vis-workspace: #0b5d4e;
+  --vis-workspace-soft: #dceee8;
+  --vis-group: #1f5fbf;
+  --vis-group-soft: #e1ebfa;
+  --vis-role: #7a2e73;
+  --vis-role-soft: #f3e4f1;
+  --vis-private: #3a4246;
+  --vis-private-soft: #e6e9ea;
+  /* Estados */
+  --success: #1e6f3a;
+  --success-soft: #dff2e5;
+  --warning: #7a5200;
+  --warning-soft: #fff2cc;
+  --danger: #b3261e;
+  --danger-soft: #fbe6e4;
+  --on-danger: #ffffff;
+  --v2: #9a4f00;
+  --v2-soft: #ffeedc;
+  /* Presença: uma cor para cada colaborador */
+  --presence-1: #0b5d4e;
+  --presence-2: #1f5fbf;
+  --presence-3: #7a2e73;
+  --presence-4: #a8420f;
+  --presence-5: #00687a;
+  --presence-6: #5b4bb5;
+  --on-presence: #ffffff;
+  /* Elevação */
+  --scrim: rgba(21, 33, 31, 0.45);
+  --shadow-drag: 0 8px 20px rgba(21, 33, 31, 0.18);
+  --shadow-overlay: 0 16px 40px rgba(21, 33, 31, 0.22);
+  /* Telas de entrada: os anéis e os cartões flutuantes (iguais aos da landing) */
+  --ring-tint: rgba(11, 93, 78, 0.05);
+  --ring-line: rgba(11, 93, 78, 0.16);
+  --shadow-float: 0 16px 40px rgba(21, 33, 31, 0.16);
+}
+/* Tema escuro: mesmas variáveis, valores diferentes */
+[data-theme='dark'] {
+  color-scheme: dark;
+  --ground: #0f1716;
+  --surface: #172120;
+  --surface-sunken: #0b1211;
+  --surface-hover: #202c2a;
+  --ink: #e8efec;
+  --ink-muted: #a7b5b0;
+  --line: #2e3b38;
+  --line-strong: #6f7f7a;
+  --primary: #62d2b6;
+  --primary-hover: #83dec7;
+  --on-primary: #06261f;
+  --primary-soft: #173a32;
+  --on-primary-soft: #a6ebd8;
+  --accent: #f2b705;
+  --on-accent: #2a2000;
+  --focus: #8db8ff;
+  --vis-workspace: #62d2b6;
+  --vis-workspace-soft: #173a32;
+  --vis-group: #8db8ff;
+  --vis-group-soft: #1b2f4d;
+  --vis-role: #e3a6dc;
+  --vis-role-soft: #3b2339;
+  --vis-private: #c3cccf;
+  --vis-private-soft: #2a3235;
+  --success: #6fd38f;
+  --success-soft: #17351f;
+  --warning: #f2c14e;
+  --warning-soft: #3a2e0d;
+  --danger: #ff9c94;
+  --danger-soft: #43201d;
+  --on-danger: #3a0b07;
+  --v2: #f5b26b;
+  --v2-soft: #3a2710;
+  --presence-1: #62d2b6;
+  --presence-2: #8db8ff;
+  --presence-3: #e3a6dc;
+  --presence-4: #f5a67a;
+  --presence-5: #6bd0e3;
+  --presence-6: #b9aeff;
+  --on-presence: #0b1513;
+  --scrim: rgba(0, 0, 0, 0.6);
+  --shadow-drag: 0 8px 20px rgba(0, 0, 0, 0.5);
+  --shadow-overlay: 0 16px 40px rgba(0, 0, 0, 0.6);
+  --ring-tint: rgba(98, 210, 182, 0.05);
+  --ring-line: rgba(98, 210, 182, 0.18);
+  --shadow-float: 0 16px 40px rgba(0, 0, 0, 0.55);
+}
+/* Fontes, espaçamentos, bordas, medidas e movimento (iguais nos dois temas) */
+:root {
+  /* Cores da marca: iguais nos dois temas (as mesmas da landing page).
+     Usadas onde a identidade não pode mudar, como o painel das telas de entrada. */
+  --brand-pine: #0b5d4e;
+  --brand-pine-deep: #084a3e;
+  --brand-gema: #f2b705;
+  --brand-mist: #dceee8;
+  --brand-white: #ffffff;
+  --on-gema: #2a2000;
+  /* Fontes */
+  --font-ui: 'Plus Jakarta Sans Variable', 'Segoe UI', system-ui, sans-serif;
+  --font-doc: 'Source Serif 4 Variable', Georgia, 'Times New Roman', serif;
+  /* Espaçamento: passos de 4px */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  /* Bordas */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-full: 999px;
+  /* Medidas da interface */
+  --control-sm: 28px;
+  --control-md: 36px;
+  --sidebar-width: 232px;
+  --topbar-height: 52px;
+  /* Movimento */
+  --motion-fast: 120ms;
+  --motion-base: 200ms;
+  /* Curva das animações de entrada: começa rápido e freia no fim */
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+}

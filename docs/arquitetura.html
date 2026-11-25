@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hub de Projetos — Arquitetura técnica</title>
+<style>
+  :root {
+    --bg: #f7f7f5;
+    --surface: #ffffff;
+    --text: #1f2328;
+    --muted: #5d6470;
+    --border: #e3e3df;
+    --accent: #3b5bdb;
+    --accent-soft: #edf1ff;
+    --ok: #2b8a3e;
+    --ok-bg: #e6f4ea;
+    --warn-bg: #fff8e1;
+    --warn-border: #f0c14b;
+    --warn-text: #8a6100;
+    --code-bg: #f1f1ee;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; font-size: 15px; }
+  .layout { display: flex; min-height: 100vh; }
+  nav { width: 260px; flex-shrink: 0; position: sticky; top: 0; height: 100vh; overflow-y: auto; background: var(--surface); border-right: 1px solid var(--border); padding: 28px 20px; }
+  nav .brand { font-weight: 700; font-size: 17px; margin-bottom: 4px; }
+  nav .sub { color: var(--muted); font-size: 12px; margin-bottom: 24px; }
+  nav a { display: block; color: var(--muted); text-decoration: none; padding: 6px 10px; border-radius: 6px; font-size: 14px; }
+  nav a:hover { background: var(--accent-soft); color: var(--accent); }
+  nav .group { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: #767c85; margin: 18px 10px 6px; }
+  main { flex: 1; min-width: 0; max-width: 1000px; padding: 40px 48px 80px; }
+  header.hero { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 28px 32px; margin-bottom: 32px; }
+  header.hero h1 { margin: 0 0 6px; font-size: 28px; }
+  header.hero p { margin: 0; color: var(--muted); }
+  section { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 28px 32px; margin-bottom: 24px; scroll-margin-top: 20px; }
+  h2 { margin: 0 0 16px; font-size: 21px; display: flex; align-items: center; gap: 10px; }
+  h2 .num { background: var(--accent-soft); color: var(--accent); font-size: 13px; font-weight: 700; width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  h3 { font-size: 16px; margin: 26px 0 10px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 8px 0; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 600; background: #fafaf8; }
+  code { font-family: ui-monospace, Consolas, monospace; background: var(--code-bg); padding: 1px 6px; border-radius: 4px; font-size: 13px; }
+  pre { font-family: ui-monospace, Consolas, monospace; font-size: 13px; line-height: 1.65; background: #fafaf8; border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px; overflow-x: auto; margin: 10px 0; }
+  pre code { background: none; padding: 0; }
+  pre .c { color: #5d6470; }
+  .note { background: var(--accent-soft); border-radius: 10px; padding: 14px 18px; margin: 12px 0; }
+  .callout { background: var(--warn-bg); border: 1px solid var(--warn-border); border-radius: 10px; padding: 14px 18px; margin: 12px 0; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 12px 0; }
+  .card { border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; background: #fcfcfb; }
+  .card h4 { margin: 0 0 8px; font-size: 15px; }
+  .card ul { margin: 0; padding-left: 18px; }
+
+  /* Diagrama */
+  .diagram { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 16px 0; }
+  .box { border: 2px solid var(--border); border-radius: 10px; padding: 10px 14px; background: #fff; text-align: center; font-weight: 600; font-size: 14px; min-width: 0; }
+  .box small { display: block; font-weight: 400; color: var(--muted); font-size: 12px; line-height: 1.4; margin-top: 2px; }
+  .box.user { border-color: #868e96; width: min(100%, 420px); }
+  .box.entry { border-color: var(--accent); background: var(--accent-soft); width: min(100%, 420px); }
+  .box.data { border-color: var(--ok); background: var(--ok-bg); }
+  .arrow { color: #5d6470; font-size: 13px; line-height: 1.3; text-align: center; }
+  .svc { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; width: 100%; }
+  .data-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; width: 100%; }
+
+  ol.flow { counter-reset: step; list-style: none; padding: 0; margin: 8px 0; }
+  ol.flow li { counter-increment: step; position: relative; padding: 8px 0 8px 42px; border-bottom: 1px dashed var(--border); }
+  ol.flow li:last-child { border-bottom: none; }
+  ol.flow li::before { content: counter(step); position: absolute; left: 0; top: 7px; width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+  .status { font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 6px; white-space: nowrap; background: var(--warn-bg); color: var(--warn-text); }
+  .status.done { background: var(--ok-bg); color: var(--ok); }
+  @media (max-width: 900px) {
+    nav { display: none; }
+    main { padding: 20px; }
+    section { padding: 20px; }
+    .grid-2, .svc, .data-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+
+<nav>
+  <div class="brand">Hub de Projetos</div>
+  <div class="sub">Arquitetura técnica · v0.1</div>
+  <div class="group">Visão geral</div>
+  <a href="#visao">1. As peças do sistema</a>
+  <a href="#servicos">2. Serviços do Docker</a>
+  <a href="#pastas">3. Pastas do projeto</a>
+  <div class="group">Como funciona</div>
+  <a href="#acesso">4. Regra de acesso no código</a>
+  <a href="#login">5. Login e segurança</a>
+  <a href="#fluxos">6. Os caminhos principais</a>
+  <div class="group">Construção</div>
+  <a href="#testes">7. Testes</a>
+  <a href="#etapas">8. Ordem de construção</a>
+  <a href="#riscos">9. Riscos</a>
+  <a href="#decisoes">10. Decisões</a>
+  <a href="#historico">11. Histórico</a>
+  <div class="group">Outros documentos</div>
+  <a href="requisitos.html">📄 Requisitos</a>
+  <a href="wireframes.html">🖼 Wireframes</a>
+  <a href="modelo-de-dados.html">🗄 Modelo de dados</a>
+  <a href="design-system.html">🎨 Design system</a>
+  <a href="plano.html">✅ Plano de construção</a>
+  <a href="guia.html">📘 Guia do desenvolvedor</a>
+  <a href="../landing/index.html">🌐 Landing page</a>
+</nav>
+
+<main>
+
+<header class="hero">
+  <h1>Arquitetura técnica</h1>
+  <p>Como as peças do Hub de Projetos se organizam e conversam, e por que cada uma existe. A ideia principal é manter o sistema simples: um comando sobe tudo, e a regra de acesso fica em um só lugar.</p>
+</header>
+
+<!-- 1 -->
+<section id="visao">
+  <h2><span class="num">1</span> As peças do sistema</h2>
+  <p>O Laravel é o centro: só ele conhece as regras do negócio e fala com o banco de dados para valer. Os outros serviços cuidam de tarefas específicas e sempre perguntam ao Laravel antes de liberar algo.</p>
+  <div class="diagram">
+    <div class="box user">Navegador<small>o app em React</small></div>
+    <div class="arrow">↓ tudo passa por um único endereço</div>
+    <div class="box entry">Vite (web)<small>entrega o React e repassa cada chamada ao serviço certo</small></div>
+    <div class="arrow">↓ repassa conforme o caminho</div>
+    <div class="svc">
+      <div class="box">Laravel (api)<small>regras, login, permissões</small></div>
+      <div class="box">Reverb<small>avisos ao vivo e presença</small></div>
+      <div class="box">Hocuspocus (collab)<small>edição em conjunto</small></div>
+      <div class="box">LiveKit<small>áudio e vídeo</small></div>
+    </div>
+    <div class="arrow">↓ onde os dados ficam</div>
+    <div class="data-row">
+      <div class="box data">PostgreSQL<small>dados e documentos</small></div>
+      <div class="box data">Volume de arquivos<small>PDFs, imagens e DOCX</small></div>
+      <div class="box data">Mailpit<small>caixa de e-mails de teste</small></div>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="card"><h4>Por que um único endereço?</h4>A pessoa abre <code>http://localhost:5173</code> e o Vite repassa <code>/api</code>, <code>/app</code> e <code>/collab</code> para cada serviço. Para o navegador, tudo vem do mesmo lugar, então o login por cookie funciona e não é preciso configurar CORS. O LiveKit é a exceção: o navegador conecta direto nele.</div>
+    <div class="card"><h4>Por que não usar microsserviços?</h4>O sistema é feito por uma pessoa e atende até cerca de 50 usuários por setor. Um Laravel único, com o código separado por módulo, atende à RNF17 sem a complexidade de vários back-ends.</div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section id="servicos">
+  <h2><span class="num">2</span> Serviços do Docker</h2>
+  <p>Cada linha é um contêiner, como um pequeno computador com uma função só. O <code>docker compose up</code> liga todos eles juntos.</p>
+  <table>
+    <tr><th>Serviço</th><th>O que faz</th><th>Porta</th></tr>
+    <tr><td><code>web</code></td><td>Vite com o React. É o endereço que a pessoa abre</td><td>5173</td></tr>
+    <tr><td><code>api</code></td><td>Laravel: rotas, regras e acesso ao banco</td><td>8000 (interna)</td></tr>
+    <tr><td><code>queue</code></td><td>Laravel em segundo plano: envia notificações e e-mails</td><td>nenhuma</td></tr>
+    <tr><td><code>reverb</code></td><td>WebSocket do Laravel: kanban ao vivo e presença</td><td>8080 (interna)</td></tr>
+    <tr><td><code>collab</code></td><td>Hocuspocus em Node.js: edição conjunta de documentos</td><td>1234 (interna)</td></tr>
+    <tr><td><code>db</code></td><td>PostgreSQL, com os dados em um volume</td><td>5432 (interna)</td></tr>
+    <tr><td><code>mailpit</code></td><td>Captura os e-mails de convite e de senha</td><td>8025</td></tr>
+    <tr><td><code>livekit</code></td><td>Servidor de vídeo, em modo de desenvolvimento</td><td>7880 e as portas de mídia</td></tr>
+    <tr><td><code>e2e</code></td><td>Playwright: testes de ponta a ponta. Não sobe com os outros; só roda quando é chamado (D40)</td><td>nenhuma</td></tr>
+  </table>
+  <div class="note"><b>Sem Redis no começo.</b> Ele é comum em projetos Laravel, mas a fila pode ficar no próprio PostgreSQL, e o Reverb não precisa dele com um só servidor. É uma peça a menos para entender e manter. Se a fila ficar lenta, ele entra depois.</div>
+  <h3>Na primeira execução</h3>
+  <p>O serviço <code>api</code> instala as dependências, cria as tabelas e carrega os dados de exemplo sozinho, se o banco estiver vazio. Assim, quem testa não precisa rodar nenhum comando a mais (RNF15).</p>
+<pre><code>git clone &lt;link-do-repositório&gt;
+cd hub-de-projetos
+cp .env.example .env
+docker compose up
+
+<span class="c"># Sistema:  http://localhost:5173</span>
+<span class="c"># E-mails:  http://localhost:8025</span></code></pre>
+</section>
+
+<!-- 3 -->
+<section id="pastas">
+  <h2><span class="num">3</span> Pastas do projeto</h2>
+  <p>Um único repositório guarda tudo, o que facilita para quem vai testar e mantém o histórico junto.</p>
+<pre><code>hub-de-projetos/
+├── README.md              <span class="c"># passo a passo para testar e a stack</span>
+├── docker-compose.yml     <span class="c"># os serviços da seção 2</span>
+├── .env.example           <span class="c"># configurações de exemplo, sem segredos reais</span>
+├── docs/                  <span class="c"># estes documentos</span>
+├── landing/               <span class="c"># a landing page</span>
+│
+├── backend/               <span class="c"># Laravel</span>
+│   ├── app/
+│   │   ├── Acesso/        <span class="c"># a regra de acesso: o único lugar onde ela existe</span>
+│   │   ├── Policies/      <span class="c"># usam a regra para decidir ver, editar e excluir</span>
+│   │   └── Modulos/       <span class="c"># Conta, Workspace, Kanban, Arquivos, Documentos,</span>
+│   │       │              <span class="c"># Reunioes, Notificacoes, Auditoria</span>
+│   │       └── Kanban/    <span class="c"># exemplo: todo módulo segue o mesmo formato</span>
+│   │           ├── Models/       <span class="c"># o "M": Tarefa, Coluna... (o User fica em Conta/Models, D41)</span>
+│   │           ├── Controllers/  <span class="c"># o "C": recebe, chama a Policy e responde</span>
+│   │           ├── rotas.php     <span class="c"># as rotas do módulo (D42); o routes/api.php só as carrega</span>
+│   │           ├── Requests/     <span class="c"># valida o que chega</span>
+│   │           ├── Resources/    <span class="c"># o "V": monta o JSON devolvido ao React</span>
+│   │           └── Services/     <span class="c"># a regra de negócio (salvar + auditoria + aviso)</span>
+│   ├── database/
+│   │   ├── migrations/    <span class="c"># as tabelas do modelo de dados</span>
+│   │   └── seeders/       <span class="c"># Setor de Pesquisa com Carlos, Diana, Fábio, Ana...</span>
+│   └── tests/
+│       └── Feature/Acesso/ <span class="c"># os 9 cenários dos requisitos</span>
+│
+├── frontend/              <span class="c"># React + TypeScript + Vite</span>
+│   └── src/
+│       ├── App.tsx        <span class="c"># a tabela de rotas do front-end (D43)</span>
+│       ├── modulos/      <span class="c"># os mesmos módulos do back-end</span>
+│       │   └── kanban/    <span class="c"># exemplo: primeiro o assunto, depois o tipo</span>
+│       │       ├── components/   <span class="c"># CardTarefa, ColunaKanban</span>
+│       │       ├── hooks/        <span class="c"># useTarefas, useMoverTarefa</span>
+│       │       ├── services/     <span class="c"># kanbanApi.ts</span>
+│       │       ├── types.ts      <span class="c"># Tarefa, Coluna</span>
+│       │       └── KanbanPage.tsx
+│       ├── compartilhado/ <span class="c"># o que mais de um módulo usa (Avatar, useAuth...)</span>
+│       ├── design-system/ <span class="c"># tokens e componentes do design system</span>
+│       └── lib/           <span class="c"># cliente HTTP e conexão ao vivo</span>
+│
+├── collab/                <span class="c"># Hocuspocus: pequeno serviço em Node.js + TypeScript</span>
+│
+└── e2e/                   <span class="c"># testes de ponta a ponta com o Playwright (D40)</span>
+    └── tests/             <span class="c"># um arquivo por fluxo: saude.spec.ts, conta.spec.ts...</span></code></pre>
+  <div class="grid-2">
+    <div class="card"><h4>Back-end: MVC com Services (D36)</h4>O Laravel já é MVC. Como a tela fica no React, o "V" passa a ser o JSON montado pelos <b>API Resources</b>. A regra de negócio fica nos <b>Services</b>, e não nos controllers, porque uma ação como "superior edita tarefa" faz várias coisas na mesma transação: salva, registra a auditoria, notifica o dono e avisa o Reverb. Assim, o controller continua curto.</div>
+    <div class="card"><h4>Front-end: organizado por módulo (D37)</h4>Primeiro vem o assunto (<code>kanban/</code>), depois o tipo (<code>components/</code>, <code>hooks/</code>). Tudo de uma funcionalidade fica em uma pasta só, os módulos têm os mesmos nomes do back-end, e um módulo pode ser adiado ou removido sem procurar arquivos pelo projeto todo (RNF17, D19). Se um módulo importar algo de outro, isso precisa ir para <code>compartilhado/</code>.</div>
+  </div>
+  <div class="note"><b>Nomes em português nas regras do negócio.</b> O modelo de dados já usa <code>tarefas</code> e <code>reunioes</code>, então as classes seguem o mesmo vocabulário: <code>Tarefa</code>, <code>Reuniao</code>. O que vem do framework continua em inglês, como <code>Controller</code> e <code>Policy</code>. Como o Laravel espera tabelas em inglês, cada Model informa o nome da tabela com <code>$table</code>.</div>
+</section>
+
+<!-- 4 -->
+<section id="acesso">
+  <h2><span class="num">4</span> Regra de acesso no código</h2>
+  <p>É a parte mais importante do sistema. A consulta da <a href="modelo-de-dados.html#regra">seção 9 do modelo de dados</a> fica em um único lugar, e todo o resto chama esse lugar (RNF21).</p>
+<pre><code><span class="c">// backend/app/Acesso/Item.php (esboço)</span>
+public function scopeVisivelPara(Builder $query, Membro $eu): Builder
+{
+    <span class="c">// Aqui fica a regra (a), (b) e (c) dos requisitos, e em nenhum outro lugar</span>
+}
+
+<span class="c">// Toda listagem usa a regra, em vez de escrever o próprio filtro</span>
+Item::visivelPara($eu)-&gt;where('tipo', 'tarefa')-&gt;get();</code></pre>
+  <table>
+    <tr><th>Onde a regra é usada</th><th>Como</th></tr>
+    <tr><td>Listas e busca</td><td><code>Item::visivelPara($eu)</code></td></tr>
+    <tr><td>Abrir, editar e excluir um item</td><td>Uma Policy do Laravel, que usa a mesma regra</td></tr>
+    <tr><td>Canais ao vivo</td><td>O Reverb pergunta ao Laravel se a pessoa pode entrar no canal</td></tr>
+    <tr><td>Documentos em conjunto</td><td>O Hocuspocus pergunta ao Laravel antes de conectar</td></tr>
+    <tr><td>Sala de vídeo</td><td>O Laravel só gera o token do LiveKit para quem pode ver a reunião</td></tr>
+    <tr><td>Download de arquivo</td><td>O arquivo só sai pelo Laravel, depois da verificação (RNF04)</td></tr>
+  </table>
+  <div class="callout"><b>O React nunca decide o acesso.</b> Ele pode esconder um botão para a tela ficar mais limpa, mas quem garante a regra é o back-end (RNF02). Quem chamar a API diretamente recebe a mesma resposta.</div>
+  <h3>Auditoria automática</h3>
+  <p>Quando uma Policy libera uma ação porque a pessoa é <b>superior</b>, e não porque é dona do item, o Laravel registra a auditoria e notifica o dono na mesma transação do banco. Assim, ninguém altera um item de subordinado sem deixar registro, nem mesmo por esquecimento de quem programou. A proteção contra apagar registros continua no próprio banco.</p>
+</section>
+
+<!-- 5 -->
+<section id="login">
+  <h2><span class="num">5</span> Login e segurança</h2>
+  <div class="grid-2">
+    <div class="card"><h4>Login por cookie (Laravel Sanctum)</h4>Depois de entrar, o navegador guarda um cookie de sessão que o JavaScript não consegue ler. Isso protege melhor contra roubo de sessão por XSS do que guardar um token no <code>localStorage</code>. O Sanctum também cuida da proteção contra CSRF.</div>
+    <div class="card"><h4>Conversa entre os serviços</h4>O Hocuspocus chama uma rota interna do Laravel, protegida por uma senha compartilhada que fica no <code>.env</code>. Essa rota não é repassada pelo Vite, então o navegador não tem como acessá-la.</div>
+  </div>
+  <table>
+    <tr><th>Requisito</th><th>Como é atendido</th></tr>
+    <tr><td>RNF01: senhas</td><td>Hash do próprio Laravel</td></tr>
+    <tr><td>RNF05: injeção, XSS e CSRF</td><td>Consultas do Eloquent com parâmetros, escape automático do React e Sanctum</td></tr>
+    <tr><td>RNF05: limite de tentativas</td><td>Rate limiter do Laravel na rota de login</td></tr>
+    <tr><td>RNF03: HTTPS</td><td>Não se aplica ao teste em <code>localhost</code>; passa a valer se o sistema for publicado</td></tr>
+  </table>
+</section>
+
+<!-- 6 -->
+<section id="fluxos">
+  <h2><span class="num">6</span> Os caminhos principais</h2>
+
+  <h3>Mover uma tarefa no kanban</h3>
+  <ol class="flow">
+    <li>O card muda de coluna na tela da pessoa na hora, antes da resposta do servidor. Se o servidor recusar, ele volta.</li>
+    <li>O React envia a mudança para o Laravel, que verifica a permissão e salva.</li>
+    <li>O Laravel avisa o Reverb: "a tarefa 128 mudou neste quadro".</li>
+    <li>O Reverb repassa o aviso a quem está no quadro.</li>
+    <li>Cada navegador pede a tarefa 128 ao Laravel, que aplica a regra de acesso para aquela pessoa.</li>
+  </ol>
+  <div class="callout"><b>Por que o aviso leva só o número da tarefa?</b> Um quadro pode ter tarefas privadas. Se o aviso levasse título e responsáveis, os dados chegariam a todos no quadro, mesmo sem aparecer na tela. Levando só o número, quem não tem acesso recebe uma recusa ao pedir a tarefa, e nada vaza (RNF20). Custa uma chamada a mais, mas o tempo deve caber na meta de cerca de 1 segundo (RNF25). Vamos medir isso na construção.</div>
+
+  <h3>Editar um documento em conjunto</h3>
+  <ol class="flow">
+    <li>O React pede ao Laravel um token temporário para aquele documento.</li>
+    <li>O navegador conecta no Hocuspocus com o token, e ele confere com o Laravel se a pessoa tem acesso.</li>
+    <li>Cada edição vira uma pequena mudança do Yjs, enviada às outras pessoas. O Yjs mescla edições simultâneas sem perder texto (RNF26).</li>
+    <li>O Hocuspocus salva o estado no banco, em <code>documentos.estado_colaborativo</code>, alguns segundos depois da última edição.</li>
+    <li>Quando todos saem, o Hocuspocus avisa o Laravel, que cria a versão da sessão em <code>documento_versoes</code> (RNF29, D21). Se um superior editou, a auditoria aponta para essa versão.</li>
+  </ol>
+  <div class="note"><b>Se alguém perder o acesso (RNF28):</b> o Laravel avisa o Hocuspocus, que desconecta a pessoa na hora. Na queda de conexão (RNF27), o Yjs continua registrando o que a pessoa escreve e sincroniza quando ela voltar.</div>
+
+  <h3>Entrar em uma reunião</h3>
+  <ol class="flow">
+    <li>A pessoa clica em Entrar, e o React pede um token ao Laravel.</li>
+    <li>O Laravel verifica se ela pode ver a reunião e gera um token do LiveKit válido só para aquela sala.</li>
+    <li>O navegador conecta direto no LiveKit com o token, e o áudio e o vídeo não passam pelo Laravel.</li>
+  </ol>
+
+  <h3>Enviar um arquivo</h3>
+  <ol class="flow">
+    <li>O Laravel verifica a permissão, o tamanho (até 50 MB) e o tipo do arquivo.</li>
+    <li>Ele salva o conteúdo no volume, com o sistema de arquivos do Laravel, e guarda só a referência em <code>arquivos.chave_storage</code>.</li>
+    <li>O envio não depende de onde o arquivo fica: para trocar o disco por um serviço como o S3, muda só a configuração (RNF18).</li>
+  </ol>
+</section>
+
+<!-- 7 -->
+<section id="testes">
+  <h2><span class="num">7</span> Testes</h2>
+  <table>
+    <tr><th>O que testar</th><th>Ferramenta</th><th>Prioridade</th></tr>
+    <tr><td><b>Os 9 cenários de acesso</b>, cada um como um teste</td><td>Pest, com PostgreSQL de verdade</td><td>Máxima: entram junto com a regra, na Etapa 3</td></tr>
+    <tr><td>Permissão de cada rota da API, inclusive recusas</td><td>Pest</td><td>Alta (Definição de Pronto)</td></tr>
+    <tr><td>Auditoria: registro criado e banco recusando alterações</td><td>Pest</td><td>Alta</td></tr>
+    <tr><td>Lógica de tela, como filtros e estados</td><td>Vitest + Testing Library</td><td>Média</td></tr>
+    <tr><td>Fluxos principais no navegador, com todos os serviços no ar</td><td>Playwright (E2E)</td><td>Um por etapa</td></tr>
+    <tr><td>Análise estática e padrão de código</td><td>Larastan e Pint · TypeScript <code>strict</code>, oxlint e Prettier</td><td>Sempre, no comando <code>check</code></td></tr>
+  </table>
+  <div class="callout"><b>Desenvolvimento guiado por testes (TDD).</b> O teste é escrito antes do código, a partir dos critérios de aceite, seguindo o ciclo vermelho → verde → refatorar. A meta de cobertura é de 80% no geral e de 100% na regra de acesso e nas Policies. O passo a passo está no <a href="plano.html#qualidade">plano de construção</a>.</div>
+  <div class="note"><b>Por que testar com PostgreSQL de verdade?</b> A regra de acesso é uma consulta SQL, e os triggers da auditoria só existem no banco. Testar em outro banco poderia passar no teste e falhar no sistema real.</div>
+</section>
+
+<!-- 8 -->
+<section id="etapas">
+  <h2><span class="num">8</span> Ordem de construção</h2>
+  <p>As etapas são as dos requisitos. A novidade é a <b>Etapa 0</b>, que deixa o ambiente pronto antes da primeira funcionalidade.</p>
+  <table>
+    <tr><th>Etapa</th><th>Entrega</th><th>Peças novas</th></tr>
+    <tr><td><b>0. Esqueleto</b></td><td>Docker sobe tudo, e o React mostra uma resposta da API. Tokens do design system no projeto</td><td>Docker, Laravel, React, PostgreSQL</td></tr>
+    <tr><td>1. Conta</td><td>Cadastro, login e recuperação de senha</td><td>Sanctum, Mailpit</td></tr>
+    <tr><td>2. Estrutura</td><td>Workspace, membros, grupos e líderes</td><td>Seeders</td></tr>
+    <tr><td>3. Kanban + acesso</td><td>Quadros, tarefas, visibilidade e os 9 cenários passando</td><td>Regra de acesso, dnd-kit, TanStack Query</td></tr>
+    <tr><td>4. Arquivos</td><td>Pastas, envio e compartilhamento</td><td>Volume de arquivos</td></tr>
+    <tr><td>5. Superior + auditoria</td><td>Editar e excluir como superior, com registro</td><td>Trigger no banco</td></tr>
+    <tr><td>6. Reuniões</td><td>Agendamento e sala de vídeo</td><td>LiveKit</td></tr>
+    <tr><td>7. Notificações</td><td>Sino e avisos no sistema</td><td>Serviço <code>queue</code></td></tr>
+    <tr><td>8. Tempo real</td><td>Presença, kanban ao vivo, documentos e versões</td><td>Reverb, Hocuspocus, Yjs, TipTap</td></tr>
+  </table>
+  <div class="note">O <code>docker-compose.yml</code> começa com poucos serviços e ganha um novo em cada etapa. Assim, você aprende cada peça na hora em que ela é necessária.</div>
+</section>
+
+<!-- 9 -->
+<section id="riscos">
+  <h2><span class="num">9</span> Riscos</h2>
+  <table>
+    <tr><th>Risco</th><th>O que fazer</th></tr>
+    <tr><td><b>Vídeo no Docker:</b> o LiveKit usa portas de mídia que podem dar trabalho no Docker do Windows</td><td>Testar uma chamada entre duas abas no começo da Etapa 6. Se não funcionar, buscar outro serviço de vídeo (D01). O restante do sistema não depende disso</td></tr>
+    <tr><td><b>Tempo real é a parte mais difícil:</b> envolve Hocuspocus, Yjs e permissões</td><td>Fica por último e pode ir para a V2 sem quebrar nada (D19)</td></tr>
+    <tr><td><b>Consulta de acesso lenta</b> conforme os dados crescem</td><td>Usar os índices previstos no modelo de dados e medir com dados de exemplo em volume (RNF07)</td></tr>
+    <tr><td><b>Pouca memória:</b> oito contêineres podem pesar em computadores modestos</td><td>Documentar o mínimo no README, depois de medir o uso real</td></tr>
+    <tr><td><b>Versões das bibliotecas</b> mudam com o tempo</td><td>Escolher e fixar as versões na Etapa 0, com os arquivos de lock no repositório</td></tr>
+  </table>
+</section>
+
+<!-- 10 -->
+<section id="decisoes">
+  <h2><span class="num">10</span> Decisões de arquitetura</h2>
+  <table>
+    <tr><th>#</th><th>Decisão</th><th>Status</th></tr>
+    <tr><td><code>D30</code></td><td><b>Um único endereço:</b> o Vite repassa as chamadas aos serviços, sem servidor extra e sem CORS.</td><td><span class="status done">Decidido</span></td></tr>
+    <tr><td><code>D31</code></td><td><b>Um repositório só</b>, com as pastas <code>backend</code>, <code>frontend</code> e <code>collab</code>.</td><td><span class="status done">Decidido</span></td></tr>
+    <tr><td><code>D32</code></td><td><b>Avisos ao vivo levam só o id do item</b>, e cada navegador busca os dados pela regra de acesso.</td><td><span class="status done">Decidido</span></td></tr>
+    <tr><td><code>D33</code></td><td><b>Login por cookie</b> com Laravel Sanctum, em vez de token no navegador.</td><td><span class="status done">Decidido</span></td></tr>
+    <tr><td><code>D34</code></td><td><b>Sem Redis no MVP:</b> a fila fica no PostgreSQL.</td><td><span class="status done">Decidido</span></td></tr>
+    <tr><td><code>D35</code></td><td><b>Regras do negócio em português</b> no código (<code>Tarefa</code>, <code>Reuniao</code>), iguais às do modelo de dados.</td><td><span class="status done">Decidido</span></td></tr>
+    <tr><td><code>D36</code></td><td><b>Back-end em MVC com Services</b>, dentro de cada módulo: Models, Controllers curtos, API Resources como "view" e a regra de negócio nos Services.</td><td><span class="status done">Decidido</span></td></tr>
+    <tr><td><code>D37</code></td><td><b>Front-end organizado por módulo</b> (primeiro o assunto, depois o tipo), espelhando os módulos do back-end. O que é usado por mais de um módulo fica em <code>compartilhado/</code>.</td><td><span class="status done">Decidido</span></td></tr>
+    <tr><td><code>D38</code></td><td><b>Fontes do design system com Fontsource</b> (pacotes npm), em vez do Google Fonts: as fontes ficam dentro do projeto e funcionam sem internet.</td><td><span class="status done">Decidido</span></td></tr>
+    <tr><td><code>D39</code></td><td><b>Lint e formatação do front-end com oxlint + Prettier</b> (decisão revisada em 10/11/2026): o oxlint aponta erros e más práticas, e o Prettier só formata (a mesma divisão de Larastan e Pint no back-end). A primeira versão era ESLint + Prettier, mas a <code>typescript-eslint</code> ainda não suporta o TypeScript 7.</td><td><span class="status done">Decidido</span></td></tr>
+    <tr><td><code>D40</code></td><td><b>Testes de ponta a ponta na pasta <code>e2e/</code>, na raiz</b>, rodando no serviço <code>e2e</code> do Docker (imagem oficial do Playwright). Ficam fora de <code>backend/</code> e <code>frontend/</code> porque atravessam o sistema inteiro. É uma quarta pasta, além das três da D31. O serviço só roda quando é chamado.</td><td><span class="status done">Decidido</span></td></tr>
+    <tr><td><code>D41</code></td><td><b>O model <code>User</code> fica em <code>Modulos/Conta/Models</code></b> (namespace <code>App\Modulos\Conta\Models</code>), e não em <code>app/Models</code>. É a D36 sem exceção: tudo de um assunto mora na pasta do módulo, e a pasta <code>app/Models</code> deixa de existir. Ponto contra aceito: pacotes do Laravel assumem <code>App\Models\User</code>, então às vezes será preciso informar o caminho na configuração (como já foi feito em <code>config/auth.php</code>).</td><td><span class="status done">Decidido</span></td></tr>
+    <tr><td><code>D42</code></td><td><b>Um arquivo de rotas por módulo.</b> Cada módulo do back-end guarda as próprias rotas em <code>backend/app/Modulos/&lt;Modulo&gt;/rotas.php</code>, junto do código que as atende. O <code>backend/routes/api.php</code> vira só um índice, que carrega esses arquivos com <code>require app_path('Modulos/&lt;Modulo&gt;/rotas.php');</code>, e por isso todas as rotas continuam começando com <code>/api</code>. Motivo: é a mesma ideia da D36 (tudo de um assunto na pasta do módulo); com 8 módulos previstos, um <code>api.php</code> único ficaria longo e as rotas ficariam longe do código. Alternativa descartada: todas as rotas no <code>routes/api.php</code> (o padrão do Laravel).</td><td><span class="status done">Decidido</span></td></tr>
+    <tr><td><code>D43</code></td><td><b>React Router para as rotas do front-end.</b> Cada tela tem endereço próprio (<code>/entrar</code>, <code>/criar-conta</code>), como no wireframe 1, e o botão voltar do navegador funciona. O <code>BrowserRouter</code> fica no <code>frontend/src/main.tsx</code> e a tabela de rotas no <code>frontend/src/App.tsx</code>. Pacote: <code>react-router</code> 8.5.1. Motivo: é o padrão do mercado para React e é compatível com React 19, Node 26 e o TypeScript 7 do projeto (o <code>check</code> passou). Alternativa descartada: trocar de tela com estado do React, sem endereços (o voltar do navegador e os links diretos não funcionariam).</td><td><span class="status done">Decidido</span></td></tr>
+  </table>
+</section>
+
+<!-- 11 -->
+<section id="historico">
+  <h2><span class="num">11</span> Histórico</h2>
+  <table>
+    <tr><th>Versão</th><th>Data</th><th>Alteração</th></tr>
+    <tr><td><code>v0.5</code></td><td>11/11/2026</td><td>D42 (um arquivo de rotas por módulo, em <code>Modulos/&lt;Modulo&gt;/rotas.php</code>; o <code>routes/api.php</code> vira só um índice); árvore de pastas da seção 3 com o <code>rotas.php</code> dentro do módulo</td></tr>
+    <tr><td><code>v0.6</code></td><td>11/11/2026</td><td>D43 (React Router para as rotas do front-end, com a tabela de rotas em <code>frontend/src/App.tsx</code>); árvore de pastas da seção 3 com o <code>App.tsx</code> dentro de <code>frontend/src/</code></td></tr>
+    <tr><td><code>v0.4</code></td><td>11/11/2026</td><td>D41 (o model <code>User</code> fica em <code>Modulos/Conta/Models</code>); árvore de pastas da seção 3 sem a pasta <code>app/Models</code>, com <code>Models/</code> dentro do módulo</td></tr>
+    <tr><td><code>v0.3</code></td><td>10/11/2026</td><td>D38 (fontes com Fontsource), D39 (oxlint + Prettier, revisada no mesmo dia) e D40 (pasta <code>e2e/</code> na raiz e serviço <code>e2e</code> no Docker); seções 2 e 3 atualizadas com o serviço e a pasta novos</td></tr>
+    <tr><td><code>v0.2</code></td><td>09/11/2026</td><td>D30–D35 aprovadas; D36 (back-end em MVC com Services) e D37 (front-end por módulo) decididas; árvore de pastas da seção 3 detalhada; seção 7 com TDD, Playwright e análise estática</td></tr>
+    <tr><td><code>v0.1</code></td><td>06/11/2026</td><td>Primeira versão: serviços do Docker, pastas, regra de acesso no código, fluxos principais, testes, ordem de construção, riscos e propostas D30–D35</td></tr>
+  </table>
+</section>
+
+</main>
+</div>
+</body>
+</html>

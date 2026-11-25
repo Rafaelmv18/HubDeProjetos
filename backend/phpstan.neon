@@ -1,0 +1,16 @@
+# Larastan (PHPStan para Laravel): análise estática do back-end.
+# Lê o código sem executar e aponta erros antes de eles acontecerem.
+# Rodar: docker compose exec api vendor/bin/phpstan analyse
+
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    # Nível de rigor, de 0 (tolerante) a 10 (máximo). Começamos no 6 e subimos depois.
+    level: 6
+
+    paths:
+        - app/
+        - routes/
+        - database/
+        - tests/

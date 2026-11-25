@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hub de Projetos — Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400..800;1,400..800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..700&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================================
+   1. TOKENS — a única fonte de valores. Os componentes só usam var(--...).
+   ========================================================================== */
+:root, [data-theme="light"] {
+  color-scheme: light;
+  /* Superfícies */
+  --ground: #f2f5f3;
+  --surface: #ffffff;
+  --surface-sunken: #e8edea;
+  --surface-hover: #edf1ee;
+  /* Texto e linhas */
+  --ink: #15211f;
+  --ink-muted: #53615d;
+  --line: #d5ddd9;
+  --line-strong: #7c8a85;
+  /* Marca */
+  --primary: #0b5d4e;
+  --primary-hover: #084a3e;
+  --on-primary: #ffffff;
+  --primary-soft: #dceee8;
+  --on-primary-soft: #0a4a3e;
+  --accent: #f2b705;
+  --on-accent: #2a2000;
+  --focus: #1f5fbf;
+  /* Marca fixa (iguais nos dois temas) */
+  --brand-pine: #0b5d4e;
+  --brand-pine-deep: #084a3e;
+  --brand-gema: #f2b705;
+  --brand-mist: #dceee8;
+  --brand-white: #ffffff;
+  --on-gema: #2a2000;
+  /* Visibilidade */
+  --vis-workspace: #0b5d4e;
+  --vis-workspace-soft: #dceee8;
+  --vis-group: #1f5fbf;
+  --vis-group-soft: #e1ebfa;
+  --vis-role: #7a2e73;
+  --vis-role-soft: #f3e4f1;
+  --vis-private: #3a4246;
+  --vis-private-soft: #e6e9ea;
+  /* Estados */
+  --success: #1e6f3a;
+  --success-soft: #dff2e5;
+  --warning: #7a5200;
+  --warning-soft: #fff2cc;
+  --danger: #b3261e;
+  --danger-soft: #fbe6e4;
+  --on-danger: #ffffff;
+  --v2: #9a4f00;
+  --v2-soft: #ffeedc;
+  /* Presença: uma cor para cada colaborador */
+  --presence-1: #0b5d4e;
+  --presence-2: #1f5fbf;
+  --presence-3: #7a2e73;
+  --presence-4: #a8420f;
+  --presence-5: #00687a;
+  --presence-6: #5b4bb5;
+  --on-presence: #ffffff;
+  /* Elevação */
+  --scrim: rgba(21, 33, 31, .45);
+  --shadow-drag: 0 8px 20px rgba(21, 33, 31, .18);
+  --shadow-overlay: 0 16px 40px rgba(21, 33, 31, .22);
+  /* Telas de entrada (anéis e cartões flutuantes) */
+  --ring-tint: rgba(11, 93, 78, 0.05);
+  --ring-line: rgba(11, 93, 78, 0.16);
+  --shadow-float: 0 16px 40px rgba(21, 33, 31, 0.16);
+}
+[data-theme="dark"] {
+  color-scheme: dark;
+  --ground: #0f1716;
+  --surface: #172120;
+  --surface-sunken: #0b1211;
+  --surface-hover: #202c2a;
+  --ink: #e8efec;
+  --ink-muted: #a7b5b0;
+  --line: #2e3b38;
+  --line-strong: #6f7f7a;
+  --primary: #62d2b6;
+  --primary-hover: #83dec7;
+  --on-primary: #06261f;
+  --primary-soft: #173a32;
+  --on-primary-soft: #a6ebd8;
+  --accent: #f2b705;
+  --on-accent: #2a2000;
+  --focus: #8db8ff;
+  /* Marca fixa: não muda no tema escuro */
+  --brand-pine: #0b5d4e;
+  --brand-pine-deep: #084a3e;
+  --brand-gema: #f2b705;
+  --brand-mist: #dceee8;
+  --brand-white: #ffffff;
+  --on-gema: #2a2000;
+  --vis-workspace: #62d2b6;
+  --vis-workspace-soft: #173a32;
+  --vis-group: #8db8ff;
+  --vis-group-soft: #1b2f4d;
+  --vis-role: #e3a6dc;
+  --vis-role-soft: #3b2339;
+  --vis-private: #c3cccf;
+  --vis-private-soft: #2a3235;
+  --success: #6fd38f;
+  --success-soft: #17351f;
+  --warning: #f2c14e;
+  --warning-soft: #3a2e0d;
+  --danger: #ff9c94;
+  --danger-soft: #43201d;
+  --on-danger: #3a0b07;
+  --v2: #f5b26b;
+  --v2-soft: #3a2710;
+  --presence-1: #62d2b6;
+  --presence-2: #8db8ff;
+  --presence-3: #e3a6dc;
+  --presence-4: #f5a67a;
+  --presence-5: #6bd0e3;
+  --presence-6: #b9aeff;
+  --on-presence: #0b1513;
+  --scrim: rgba(0, 0, 0, .6);
+  --shadow-drag: 0 8px 20px rgba(0, 0, 0, .5);
+  --shadow-overlay: 0 16px 40px rgba(0, 0, 0, .6);
+  /* Telas de entrada (anéis e cartões flutuantes) */
+  --ring-tint: rgba(98, 210, 182, 0.05);
+  --ring-line: rgba(98, 210, 182, 0.18);
+  --shadow-float: 0 16px 40px rgba(0, 0, 0, 0.55);
+}
+:root {
+  /* Fontes */
+  --font-ui: "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+  --font-doc: "Source Serif 4", Georgia, "Times New Roman", serif;
+  /* Espaçamento: passos de 4px */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  /* Bordas */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-full: 999px;
+  /* Medidas da interface */
+  --control-sm: 28px;
+  --control-md: 36px;
+  --sidebar-width: 232px;
+  --topbar-height: 52px;
+  /* Movimento */
+  --motion-fast: 120ms;
+  --motion-base: 200ms;
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* ==========================================================================
+   2. BASE
+   ========================================================================== */
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--ground); color: var(--ink);
+  font-family: var(--font-ui); font-size: 14px; line-height: 20px;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--focus); border-radius: var(--radius-sm); }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 1ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; }
+}
+
+/* Escala de tipos */
+.t-display { font-size: 32px; line-height: 38px; font-weight: 700; letter-spacing: -.015em; }
+.t-title-lg { font-size: 24px; line-height: 30px; font-weight: 700; letter-spacing: -.01em; }
+.t-title { font-size: 18px; line-height: 24px; font-weight: 600; }
+.t-subtitle { font-size: 15px; line-height: 20px; font-weight: 600; }
+.t-body { font-size: 14px; line-height: 20px; font-weight: 400; }
+.t-small { font-size: 13px; line-height: 18px; font-weight: 400; }
+.t-caption { font-size: 12px; line-height: 16px; font-weight: 500; }
+.t-doc-h1 { font-family: var(--font-doc); font-size: 28px; line-height: 36px; font-weight: 600; }
+.t-doc-h2 { font-family: var(--font-doc); font-size: 20px; line-height: 28px; font-weight: 600; }
+.t-doc-body { font-family: var(--font-doc); font-size: 16px; line-height: 27px; font-weight: 400; }
+.t-num { font-variant-numeric: tabular-nums; }
+.muted { color: var(--ink-muted); }
+
+/* Ícone */
+.hub-icon { width: 16px; height: 16px; flex-shrink: 0; display: inline-block; vertical-align: -3px; }
+.hub-icon--lg { width: 20px; height: 20px; }
+
+/* ==========================================================================
+   3. COMPONENTES
+   ========================================================================== */
+/* Botão */
+.hub-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+  height: var(--control-md); padding: 0 var(--space-4);
+  font: inherit; font-weight: 600; white-space: nowrap; cursor: pointer;
+  color: var(--ink); background: var(--surface);
+  border: 1px solid var(--line-strong); border-radius: var(--radius-md);
+  transition: background var(--motion-fast), border-color var(--motion-fast);
+}
+.hub-btn:hover { background: var(--surface-hover); }
+.hub-btn:focus-visible { border-radius: var(--radius-md); }
+.hub-btn--primary { color: var(--on-primary); background: var(--primary); border-color: var(--primary); }
+.hub-btn--primary:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
+.hub-btn--ghost { background: transparent; border-color: transparent; }
+.hub-btn--danger { color: var(--on-danger); background: var(--danger); border-color: var(--danger); }
+.hub-btn--danger:hover { background: var(--danger); filter: brightness(.92); }
+.hub-btn--sm { height: var(--control-sm); padding: 0 var(--space-2); font-size: 13px; }
+.hub-btn--icon { width: var(--control-md); padding: 0; }
+.hub-btn--icon.hub-btn--sm { width: var(--control-sm); }
+.hub-btn:disabled, .hub-btn[aria-disabled="true"] { opacity: .5; cursor: not-allowed; }
+.hub-btn:disabled:hover { background: var(--surface); filter: none; }
+.hub-btn--primary:disabled:hover { background: var(--primary); }
+.hub-spin { animation: hub-spin 900ms linear infinite; }
+@keyframes hub-spin { to { transform: rotate(360deg); } }
+
+/* Formulário */
+.hub-field { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
+.hub-field > label { font-size: 13px; line-height: 18px; font-weight: 600; }
+.hub-field__hint { font-size: 12px; line-height: 16px; color: var(--ink-muted); }
+.hub-field__error { font-size: 12px; line-height: 16px; font-weight: 500; color: var(--danger); display: flex; gap: var(--space-1); align-items: center; }
+.hub-input {
+  width: 100%; height: var(--control-md); padding: 0 var(--space-3);
+  font: inherit; color: var(--ink); background: var(--surface);
+  border: 1px solid var(--line-strong); border-radius: var(--radius-md);
+}
+.hub-input::placeholder { color: var(--ink-muted); }
+.hub-input:focus-visible { border-radius: var(--radius-md); border-color: var(--focus); }
+.hub-input:disabled { background: var(--surface-sunken); color: var(--ink-muted); cursor: not-allowed; }
+.hub-input[aria-invalid="true"] { border-color: var(--danger); border-width: 2px; }
+textarea.hub-input { height: auto; min-height: 84px; padding: var(--space-2) var(--space-3); resize: vertical; }
+select.hub-input { appearance: none; padding-right: var(--space-8); background-image: linear-gradient(45deg, transparent 50%, var(--ink-muted) 50%), linear-gradient(135deg, var(--ink-muted) 50%, transparent 50%); background-position: right 16px center, right 11px center; background-size: 5px 5px; background-repeat: no-repeat; }
+.hub-check { display: inline-flex; gap: var(--space-2); align-items: center; font-size: 13px; cursor: pointer; }
+.hub-check input { width: 16px; height: 16px; margin: 0; accent-color: var(--primary); }
+
+/* Avatar e presença */
+.hub-avatar {
+  display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+  width: 28px; height: 28px; border-radius: var(--radius-full);
+  font-size: 11px; font-weight: 700; color: var(--on-presence); background: var(--presence-1);
+}
+.hub-avatar--sm { width: 20px; height: 20px; font-size: 9px; }
+.hub-avatar--lg { width: 44px; height: 44px; font-size: 15px; }
+.hub-avatar--neutral { color: var(--ink); background: var(--surface-sunken); }
+.hub-avatars { display: inline-flex; }
+.hub-avatars .hub-avatar { box-shadow: 0 0 0 2px var(--surface); }
+.hub-avatars .hub-avatar + .hub-avatar { margin-left: -6px; }
+.c1 { background: var(--presence-1); } .c2 { background: var(--presence-2); } .c3 { background: var(--presence-3); }
+.c4 { background: var(--presence-4); } .c5 { background: var(--presence-5); } .c6 { background: var(--presence-6); }
+
+/* Selo de visibilidade */
+.hub-vis {
+  display: inline-flex; align-items: center; gap: var(--space-1); height: 24px; padding: 0 var(--space-2);
+  font-size: 12px; line-height: 16px; font-weight: 600; white-space: nowrap; border-radius: var(--radius-full);
+}
+.hub-vis--workspace { color: var(--vis-workspace); background: var(--vis-workspace-soft); }
+.hub-vis--group { color: var(--vis-group); background: var(--vis-group-soft); }
+.hub-vis--role { color: var(--vis-role); background: var(--vis-role-soft); }
+.hub-vis--private { color: var(--vis-private); background: var(--vis-private-soft); }
+.hub-vis--compact { width: 24px; padding: 0; justify-content: center; }
+
+/* Etiqueta e selo de estado */
+.hub-tag {
+  display: inline-flex; align-items: center; gap: var(--space-1); height: 22px; padding: 0 var(--space-2);
+  font-size: 12px; line-height: 16px; font-weight: 500; white-space: nowrap;
+  color: var(--ink); background: var(--surface); border: 1px solid var(--line-strong); border-radius: var(--radius-sm);
+}
+.hub-tag button { all: unset; display: inline-flex; cursor: pointer; }
+.hub-tag button:focus-visible { box-shadow: 0 0 0 2px var(--focus); border-radius: var(--radius-sm); }
+.hub-status {
+  display: inline-flex; align-items: center; gap: var(--space-1); height: 22px; padding: 0 var(--space-2);
+  font-size: 12px; line-height: 16px; font-weight: 600; white-space: nowrap; border-radius: var(--radius-sm);
+}
+.hub-status--neutral { color: var(--ink); background: var(--surface-sunken); }
+.hub-status--success { color: var(--success); background: var(--success-soft); }
+.hub-status--warning { color: var(--warning); background: var(--warning-soft); }
+.hub-status--danger { color: var(--danger); background: var(--danger-soft); }
+.hub-status--v2 { color: var(--v2); background: var(--v2-soft); }
+
+/* Navegação */
+.hub-tabs { display: flex; gap: var(--space-4); border-bottom: 1px solid var(--line); }
+.hub-tabs button {
+  all: unset; padding: var(--space-2) 0; cursor: pointer; font-size: 14px; font-weight: 500; color: var(--ink-muted);
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+}
+.hub-tabs button:hover { color: var(--ink); }
+.hub-tabs button[aria-selected="true"] { color: var(--ink); font-weight: 700; border-bottom-color: var(--primary); }
+.hub-tabs button:focus-visible { box-shadow: 0 0 0 2px var(--focus); border-radius: var(--radius-sm); }
+.hub-crumb { display: flex; align-items: center; gap: var(--space-1); font-size: 13px; color: var(--ink-muted); flex-wrap: wrap; }
+.hub-crumb a { color: inherit; text-decoration: none; }
+.hub-crumb a:hover { color: var(--ink); text-decoration: underline; }
+.hub-crumb [aria-current] { color: var(--ink); font-weight: 600; }
+.hub-steps { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; font-size: 13px; }
+.hub-steps span { display: inline-flex; align-items: center; gap: var(--space-2); color: var(--ink-muted); }
+.hub-steps b { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: var(--radius-full); font-size: 12px; border: 1px solid var(--line-strong); }
+.hub-steps .on { color: var(--ink); font-weight: 600; }
+.hub-steps .on b { color: var(--on-primary); background: var(--primary); border-color: var(--primary); }
+.hub-steps i { width: 24px; height: 1px; background: var(--line-strong); }
+
+.hub-side { background: var(--surface); border-right: 1px solid var(--line); padding: var(--space-3); display: flex; flex-direction: column; gap: 2px; }
+.hub-side__ws { display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); padding: var(--space-2); font-weight: 700; margin-bottom: var(--space-2); }
+.hub-side__label { font-size: 12px; line-height: 16px; font-weight: 600; color: var(--ink-muted); padding: var(--space-3) var(--space-2) var(--space-1); }
+.hub-side__item { display: flex; align-items: center; gap: var(--space-2); padding: 6px var(--space-2); border-radius: var(--radius-md); color: var(--ink); text-decoration: none; font-size: 13px; }
+.hub-side__item:hover { background: var(--surface-hover); }
+.hub-side__item[aria-current] { background: var(--primary-soft); color: var(--on-primary-soft); font-weight: 600; }
+.hub-side__item small { margin-left: auto; font-size: 12px; color: inherit; }
+.hub-topbar { height: var(--topbar-height); background: var(--surface); border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: var(--space-3); padding: 0 var(--space-4); }
+.hub-topbar .hub-search { max-width: 340px; flex: 1; position: relative; }
+.hub-search .hub-icon { position: absolute; left: 10px; top: 10px; color: var(--ink-muted); }
+.hub-search .hub-input { padding-left: 32px; }
+.hub-bell { position: relative; }
+.hub-bell em { position: absolute; top: 2px; right: 0; min-width: 16px; height: 16px; padding: 0 4px; font-style: normal; font-size: 11px; line-height: 16px; font-weight: 700; text-align: center; color: var(--on-accent); background: var(--accent); border-radius: var(--radius-full); }
+
+/* Avisos */
+.hub-banner { display: flex; gap: var(--space-2); padding: var(--space-3); font-size: 13px; line-height: 18px; border-radius: var(--radius-md); }
+.hub-banner .hub-icon { margin-top: 1px; }
+.hub-banner--info { color: var(--vis-group); background: var(--vis-group-soft); }
+.hub-banner--warning { color: var(--warning); background: var(--warning-soft); }
+.hub-banner--danger { color: var(--danger); background: var(--danger-soft); }
+.hub-banner--success { color: var(--success); background: var(--success-soft); }
+.hub-banner span { color: var(--ink); }
+.hub-empty { display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--space-2); padding: var(--space-8) var(--space-4); border: 1px dashed var(--line-strong); border-radius: var(--radius-lg); }
+.hub-skeleton { display: block; height: 12px; border-radius: var(--radius-sm); background: var(--surface-sunken); animation: hub-pulse 1400ms ease-in-out infinite; }
+@keyframes hub-pulse { 50% { opacity: .5; } }
+.hub-conn { display: inline-flex; align-items: center; gap: var(--space-1); font-size: 12px; font-weight: 500; }
+.hub-conn i { width: 8px; height: 8px; border-radius: var(--radius-full); background: var(--success); }
+.hub-conn--retry { color: var(--warning); }
+.hub-conn--retry i { background: var(--warning); }
+
+/* Kanban */
+.hub-board { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); align-items: start; }
+.hub-col { background: var(--surface-sunken); border-radius: var(--radius-lg); padding: var(--space-2); display: flex; flex-direction: column; gap: var(--space-2); }
+.hub-col__head { display: flex; justify-content: space-between; padding: var(--space-1) var(--space-2); font-size: 13px; font-weight: 700; }
+.hub-col__head span { font-weight: 500; color: var(--ink-muted); }
+.hub-card { position: relative; display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-3); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-md); cursor: pointer; }
+.hub-card:hover { border-color: var(--line-strong); }
+.hub-card__title { font-size: 13px; line-height: 18px; font-weight: 600; }
+.hub-card__foot { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); font-size: 12px; line-height: 16px; color: var(--ink-muted); }
+.hub-card__meta { display: inline-flex; align-items: center; gap: var(--space-2); }
+.hub-card__meta > span { display: inline-flex; align-items: center; gap: var(--space-1); }
+.hub-card__late { color: var(--danger); font-weight: 600; }
+.hub-card--remote { border: 2px solid var(--presence-3); box-shadow: var(--shadow-drag); }
+.hub-card__who { position: absolute; top: -9px; right: var(--space-2); padding: 0 var(--space-1); font-size: 11px; line-height: 16px; font-weight: 600; color: var(--on-presence); background: var(--presence-3); border-radius: var(--radius-sm); }
+.hub-add { all: unset; padding: var(--space-1) var(--space-2); font-size: 13px; color: var(--ink-muted); cursor: pointer; border-radius: var(--radius-sm); display: flex; align-items: center; gap: var(--space-1); }
+.hub-add:hover { color: var(--ink); background: var(--surface-hover); }
+.hub-add:focus-visible { box-shadow: 0 0 0 2px var(--focus); }
+
+/* Tabela */
+.hub-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.hub-table th { text-align: left; font-size: 12px; line-height: 16px; font-weight: 600; color: var(--ink-muted); padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--line-strong); }
+.hub-table td { padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--line); vertical-align: middle; }
+.hub-table tbody tr:hover td { background: var(--surface-hover); }
+.hub-table .name { display: flex; align-items: center; gap: var(--space-2); font-weight: 600; }
+.hub-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* Janela */
+.hub-modal { background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-overlay); padding: var(--space-5); width: 100%; max-width: 520px; display: flex; flex-direction: column; gap: var(--space-3); }
+.hub-modal__head { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-3); }
+.hub-modal__foot { display: flex; justify-content: flex-end; gap: var(--space-2); }
+.hub-scrim { background: var(--scrim); padding: var(--space-6); display: flex; justify-content: center; border-radius: var(--radius-lg); }
+.hub-menu { display: inline-flex; flex-direction: column; min-width: 180px; padding: var(--space-1); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-md); box-shadow: var(--shadow-overlay); }
+.hub-menu button { all: unset; display: flex; align-items: center; gap: var(--space-2); padding: 6px var(--space-2); font-size: 13px; border-radius: var(--radius-sm); cursor: pointer; }
+.hub-menu button:hover { background: var(--surface-hover); }
+.hub-menu button:focus-visible { box-shadow: 0 0 0 2px var(--focus); }
+.hub-menu .danger { color: var(--danger); }
+.hub-menu hr { width: 100%; border: 0; border-top: 1px solid var(--line); margin: var(--space-1) 0; }
+
+/* Seletor de visibilidade */
+.hub-opt { display: flex; gap: var(--space-3); align-items: flex-start; padding: var(--space-3); border: 1px solid var(--line-strong); border-radius: var(--radius-md); cursor: pointer; }
+.hub-opt:hover { background: var(--surface-hover); }
+.hub-opt input { margin: 2px 0 0; width: 16px; height: 16px; accent-color: var(--primary); flex-shrink: 0; }
+.hub-opt:has(input:checked) { border: 2px solid var(--primary); padding: 11px; background: var(--primary-soft); }
+.hub-opt:has(input:disabled) { opacity: .5; cursor: not-allowed; }
+.hub-opt__title { display: flex; align-items: center; gap: var(--space-1); font-weight: 600; }
+.hub-opt p { margin: 0; font-size: 12px; line-height: 16px; color: var(--ink-muted); }
+.hub-opt:has(input:checked) p { color: var(--on-primary-soft); }
+.hub-chain { padding: var(--space-3); background: var(--surface-sunken); border-radius: var(--radius-md); font-size: 13px; line-height: 18px; display: flex; gap: var(--space-3); align-items: center; }
+
+/* Documento colaborativo */
+.hub-doc { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: var(--space-8) var(--space-12); max-width: 680px; margin: 0 auto; font-family: var(--font-doc); font-size: 16px; line-height: 27px; }
+.hub-doc h3 { margin: 0 0 var(--space-3); font-size: 28px; line-height: 36px; font-weight: 600; }
+.hub-doc p { margin: 0 0 var(--space-3); }
+.hub-doc p:last-child { margin-bottom: 0; }
+.hub-cursor { display: inline-block; position: relative; width: 2px; height: 20px; vertical-align: text-bottom; background: var(--presence-1); }
+.hub-cursor span { position: absolute; bottom: 100%; left: 0; padding: 0 var(--space-1); font-family: var(--font-ui); font-size: 11px; line-height: 15px; font-weight: 600; white-space: nowrap; color: var(--on-presence); background: inherit; border-radius: 3px 3px 3px 0; }
+.hub-sel { background: var(--vis-role-soft); }
+.hub-toolbar { display: inline-flex; gap: 2px; padding: var(--space-1); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-md); flex-wrap: wrap; }
+.hub-toolbar button { all: unset; display: inline-flex; align-items: center; justify-content: center; min-width: var(--control-sm); height: var(--control-sm); padding: 0 var(--space-1); font-family: var(--font-ui); font-size: 13px; font-weight: 600; border-radius: var(--radius-sm); cursor: pointer; }
+.hub-toolbar button:hover { background: var(--surface-hover); }
+.hub-toolbar button[aria-pressed="true"] { color: var(--on-primary-soft); background: var(--primary-soft); }
+.hub-toolbar button:focus-visible { box-shadow: 0 0 0 2px var(--focus); }
+.hub-toolbar i { width: 1px; margin: var(--space-1) 2px; background: var(--line); }
+.hub-add-text { background: var(--success-soft); color: var(--success); text-decoration: underline; text-decoration-thickness: 2px; }
+.hub-del-text { background: var(--danger-soft); color: var(--danger); text-decoration: line-through; }
+.hub-version { display: flex; flex-direction: column; gap: var(--space-1); padding: var(--space-3); border: 1px solid var(--line); border-radius: var(--radius-md); font-size: 13px; line-height: 18px; }
+.hub-version[aria-current] { border: 2px solid var(--primary); padding: 11px; }
+
+/* Reunião */
+.hub-meeting { display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); padding: var(--space-3) var(--space-4); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-md); flex-wrap: wrap; }
+.hub-tile { aspect-ratio: 16 / 9; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-2); background: var(--surface-sunken); border-radius: var(--radius-md); font-size: 13px; font-weight: 600; }
+.hub-tile--speaking { box-shadow: inset 0 0 0 2px var(--primary); }
+.hub-call { display: flex; justify-content: center; gap: var(--space-2); }
+.hub-call .hub-btn { border-radius: var(--radius-full); }
+
+/* Notificação */
+.hub-notif { display: flex; gap: var(--space-3); padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--line); text-decoration: none; color: inherit; font-size: 13px; line-height: 18px; }
+.hub-notif:last-child { border-bottom: 0; }
+.hub-notif:hover { background: var(--surface-hover); }
+.hub-notif time { display: block; font-size: 12px; color: var(--ink-muted); }
+.hub-notif__dot { width: 8px; height: 8px; margin-top: 5px; flex-shrink: 0; border-radius: var(--radius-full); }
+.hub-notif--unread .hub-notif__dot { background: var(--primary); }
+.hub-notif--unread strong.lead { font-weight: 700; }
+
+/* Assistente (V2) */
+.hub-msg { padding: var(--space-2) var(--space-3); font-size: 13px; line-height: 18px; border-radius: var(--radius-lg); max-width: 92%; }
+.hub-msg--me { align-self: flex-end; background: var(--surface-sunken); }
+.hub-msg--bot { align-self: flex-start; background: var(--v2-soft); }
+.hub-suggest { display: flex; flex-direction: column; gap: var(--space-1); margin: var(--space-2) 0; padding: var(--space-2) var(--space-3); background: var(--surface); border-radius: var(--radius-md); }
+
+/* ==========================================================================
+   4. PÁGINA DA DOCUMENTAÇÃO (não faz parte do produto)
+   ========================================================================== */
+.ds { display: grid; grid-template-columns: 228px minmax(0, 1fr); min-height: 100vh; }
+.ds-nav { position: sticky; top: 0; height: 100vh; overflow-y: auto; padding: var(--space-6) var(--space-4); background: var(--surface); border-right: 1px solid var(--line); }
+.ds-brand { display: flex; align-items: center; gap: var(--space-2); font-weight: 700; font-size: 15px; }
+.ds-brand svg { width: 28px; height: 28px; }
+.ds-nav p { margin: var(--space-1) 0 var(--space-5); font-size: 12px; color: var(--ink-muted); }
+.ds-nav a { display: block; padding: 5px var(--space-2); font-size: 13px; color: var(--ink-muted); text-decoration: none; border-radius: var(--radius-sm); }
+.ds-nav a:hover { color: var(--ink); background: var(--surface-hover); }
+.ds-nav h2 { margin: var(--space-4) var(--space-2) var(--space-1); font-size: 12px; font-weight: 700; color: var(--ink); }
+.ds-theme { width: 100%; margin-bottom: var(--space-2); }
+.ds-main { padding: var(--space-8) var(--space-8) 80px; max-width: 1060px; min-width: 0; }
+.ds-section { padding: var(--space-8) 0; border-top: 1px solid var(--line); scroll-margin-top: var(--space-2); }
+.ds-section > h2 { margin: 0 0 var(--space-2); }
+.ds-section > p, .ds-measure { max-width: 68ch; margin: 0 0 var(--space-4); }
+.ds-sub { margin: var(--space-6) 0 var(--space-2); }
+.ds-stage { padding: var(--space-5); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); margin-bottom: var(--space-3); overflow-x: auto; }
+.ds-stage--ground { background: var(--ground); }
+.ds-row { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+.ds-stack { display: flex; flex-direction: column; gap: var(--space-3); }
+.ds-grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
+.ds-rules { margin: 0 0 var(--space-3); padding-left: var(--space-5); max-width: 68ch; }
+.ds-rules li { margin-bottom: var(--space-1); }
+.ds-why { max-width: 68ch; padding: var(--space-3) var(--space-4); margin: 0 0 var(--space-4); background: var(--primary-soft); color: var(--on-primary-soft); border-radius: var(--radius-md); font-size: 13px; line-height: 19px; }
+code { font-family: ui-monospace, Consolas, monospace; font-size: 12px; padding: 1px 4px; background: var(--surface-sunken); border-radius: var(--radius-sm); }
+pre { margin: 0 0 var(--space-3); padding: var(--space-3) var(--space-4); background: var(--surface-sunken); border-radius: var(--radius-md); overflow-x: auto; font-size: 12px; line-height: 18px; }
+pre code { padding: 0; background: none; }
+
+.ds-hero { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: var(--space-8); align-items: center; padding-bottom: var(--space-8); }
+.ds-hero h1 { margin: 0 0 var(--space-3); font-size: 52px; line-height: 54px; font-weight: 800; letter-spacing: -.025em; }
+.ds-hero p { margin: 0 0 var(--space-4); max-width: 52ch; font-size: 15px; line-height: 23px; }
+.ds-wheel { width: 100%; max-width: 340px; display: block; }
+.ds-wheel .seg { fill: none; }
+.ds-wheel .grid { fill: none; stroke: var(--line-strong); stroke-width: 1; }
+.ds-picker { display: flex; gap: var(--space-2); flex-wrap: wrap; margin-bottom: var(--space-3); }
+.ds-picker button[aria-pressed="true"] { color: var(--on-primary); background: var(--primary); border-color: var(--primary); }
+.ds-caption { min-height: 60px; margin: 0; max-width: 52ch; font-size: 13px; line-height: 19px; }
+.ds-legend { display: flex; gap: var(--space-4); flex-wrap: wrap; margin-top: var(--space-2); font-size: 12px; color: var(--ink-muted); }
+.ds-legend i { display: inline-block; width: 10px; height: 10px; margin-right: var(--space-1); border-radius: 2px; vertical-align: -1px; }
+
+.ds-swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(226px, 1fr)); gap: var(--space-3); margin-bottom: var(--space-3); }
+.ds-swatch { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-md); overflow: hidden; }
+.ds-swatch__chip { height: 56px; display: flex; align-items: center; justify-content: space-between; padding: 0 var(--space-3); font-size: 15px; font-weight: 600; border-bottom: 1px solid var(--line); }
+.ds-swatch__chip small { font-size: 11px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.ds-swatch__body { padding: var(--space-2) var(--space-3) var(--space-3); font-size: 12px; line-height: 16px; }
+.ds-swatch__body b { display: block; font-family: ui-monospace, Consolas, monospace; font-weight: 600; }
+.ds-swatch__body span { color: var(--ink-muted); }
+.ds-scale { display: flex; align-items: center; gap: var(--space-3); font-size: 13px; padding: var(--space-1) 0; }
+.ds-scale code { width: 92px; flex-shrink: 0; }
+.ds-scale i { display: block; height: 14px; background: var(--primary); border-radius: 2px; }
+.ds-radius { display: flex; gap: var(--space-4); flex-wrap: wrap; }
+.ds-radius div { width: 96px; height: 64px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 12px; background: var(--surface); border: 1px solid var(--line-strong); }
+.ds-type { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: var(--space-3); align-items: baseline; padding: var(--space-2) 0; border-bottom: 1px solid var(--line); }
+.ds-type small { font-size: 12px; color: var(--ink-muted); }
+.ds-type small code { display: block; width: fit-content; margin-bottom: 2px; color: var(--ink); }
+.ds-icons { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: var(--space-2); }
+.ds-icons div { display: flex; flex-direction: column; align-items: center; gap: var(--space-1); padding: var(--space-2) var(--space-1); font-size: 11px; line-height: 14px; color: var(--ink-muted); text-align: center; word-break: break-word; }
+.ds-icons svg { color: var(--ink); }
+.ds-app { display: grid; grid-template-columns: var(--sidebar-width) minmax(0, 1fr); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; min-width: 860px; }
+.ds-app__main { background: var(--ground); display: flex; flex-direction: column; min-width: 0; }
+.ds-app__content { padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-3); }
+
+@media (max-width: 900px) {
+  .ds { display: block; }
+  .ds-nav { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+  .ds-nav nav { display: none; }
+  .ds-main { padding: var(--space-4); }
+  .ds-hero, .ds-grid2 { grid-template-columns: minmax(0, 1fr); }
+  .ds-hero h1 { font-size: 40px; line-height: 42px; }
+  .hub-board { grid-template-columns: minmax(0, 1fr); }
+  .hub-doc { padding: var(--space-4); }
+  .ds-type { grid-template-columns: minmax(0, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== ÍCONES (sprite SVG) ==================== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- Alcance: os 4 símbolos de visibilidade, desenhados a partir da Roda -->
+    <symbol id="vis-workspace" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5" fill="currentColor" stroke="currentColor" stroke-width="1.5"/></symbol>
+    <symbol id="vis-group" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 8 3.05 3.05A7 7 0 0 1 12.95 3.05Z" fill="currentColor"/></symbol>
+    <symbol id="vis-role" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="3.4" fill="none" stroke="currentColor" stroke-width="2.4"/></symbol>
+    <symbol id="vis-private" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="2.5" fill="currentColor"/></symbol>
+
+    <!-- Interface: traço de 1,75 em grade de 24 -->
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></symbol>
+    <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9.5 6 6 6-6"/></symbol>
+    <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9.5 6 6 6-6 6"/></symbol>
+    <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M20 12H4.5M10.5 6l-6 6 6 6"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 10a6 6 0 0 1 12 0c0 5 2 6.5 2 6.5H4S6 15 6 10Z"/><path d="M10 20a2.2 2.2 0 0 0 4 0"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="4" y="5.5" width="16" height="15" rx="2"/><path d="M4 10h16M8.5 3v4M15.5 3v4"/></symbol>
+    <symbol id="i-comment" viewBox="0 0 24 24"><path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H9l-5 4Z"/></symbol>
+    <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M4 20l1-4.5L16.5 4a2.1 2.1 0 0 1 3 3L8 18.8Z"/><path d="m14.5 6 3 3"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13M10 11v5.5M14 11v5.5"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4.5M7 9.5l5-5 5 5M4.5 15.5v3a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-3"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4.5V16M7 11l5 5 5-5M4.5 15.5v3a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-3"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3.5 7a2 2 0 0 1 2-2h4l2 2.5h7a2 2 0 0 1 2 2V18a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2Z"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3.5h8l4.5 4.5v12.5H6Z"/><path d="M14 3.5V8h4.5"/></symbol>
+    <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 3.5h8l4.5 4.5v12.5H6Z"/><path d="M14 3.5V8h4.5M9 12.5h6.5M9 16h6.5"/></symbol>
+    <symbol id="i-image" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="m3.5 17 5-4.5 3.5 3 3-2.5 5.5 4.5"/></symbol>
+    <symbol id="i-board" viewBox="0 0 24 24"><rect x="3.5" y="4" width="17" height="16" rx="2"/><path d="M8 8v7M12 8v3.5M16 8v9"/></symbol>
+    <symbol id="i-video" viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="m16 10.5 5-3v9l-5-3"/></symbol>
+    <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></symbol>
+    <symbol id="i-mic-off" viewBox="0 0 24 24"><path d="M9 9V6a3 3 0 0 1 6 0v5M5.5 11a6.5 6.5 0 0 0 10.5 5M18.5 11a6.5 6.5 0 0 1-.4 2.2M12 17.5V21M4 4l16 16"/></symbol>
+    <symbol id="i-screen" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="12.5" rx="2"/><path d="M8.5 20.5h7M12 17v3.5M12 13.5v-6M9.5 10 12 7.5l2.5 2.5"/></symbol>
+    <symbol id="i-leave" viewBox="0 0 24 24"><path d="M10 4.5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h4M15.5 8l4 4-4 4M19.5 12H10"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9.5" cy="8" r="3.5"/><path d="M3 20c.4-3.5 3-5.5 6.5-5.5S15.600 16.500 16 20M15.500 4.800a3.500 3.500 0 0 1 0 6.400M18 15c1.700.700 2.800 2.500 3 5"/></symbol>
+    <symbol id="i-history" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.600-5.900L4 8.500M4 4v4.500h4.500M12 8v4.500l3 1.800"/></symbol>
+    <symbol id="i-restore" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.600-5.900L4 8.500M4 4v4.500h4.500"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.700 0l3-3a4 4 0 0 0-5.700-5.700l-1 1M14 10a4 4 0 0 0-5.700 0l-3 3A4 4 0 0 0 11 18.700l1-1"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.500"/><path d="M12 11v5.500M12 7.700v.1"/></symbol>
+    <symbol id="i-warning" viewBox="0 0 24 24"><path d="M12 4 2.800 20h18.400ZM12 10v4.500M12 17.300v.1"/></symbol>
+    <symbol id="i-error" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.500"/><path d="M12 7.500V13M12 16.300v.1"/></symbol>
+    <symbol id="i-success" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.500"/><path d="m8 12.300 2.800 2.800L16 9.500"/></symbol>
+    <symbol id="i-loader" viewBox="0 0 24 24"><path d="M20.500 12A8.500 8.500 0 1 1 12 3.500"/></symbol>
+    <symbol id="i-offline" viewBox="0 0 24 24"><path d="M4 4l16 16M8.500 16a5 5 0 0 1 5.500-1M5 12.500a10 10 0 0 1 3.500-2.300M19 12.500a10 10 0 0 0-6-3M2 9a14.500 14.500 0 0 1 3-2.200M22 9a14.500 14.500 0 0 0-11-3.800M12 19.500v.1"/></symbol>
+    <symbol id="i-crown" viewBox="0 0 24 24"><path d="m4 8 4 4 4-7 4 7 4-4-1.500 10h-13Z"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 4 2.500 5.200 5.700.8-4.100 4 1 5.700L12 17l-5.100 2.700 1-5.700-4.100-4 5.700-.8Z"/></symbol>
+    <symbol id="i-audit" viewBox="0 0 24 24"><path d="M6 3.500h12v17H6ZM9.500 8h5M9.500 12h5M9.500 16h3"/></symbol>
+    <symbol id="i-bot" viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="11.500" rx="2.500"/><path d="M12 8V4M9 13v1.500M15 13v1.500"/></symbol>
+  </defs>
+</svg>
+
+<div class="ds">
+  <aside class="ds-nav">
+    <div class="ds-brand">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="#0b5d4e"/><path d="M16 16 5.400 5.400A15 15 0 0 1 26.600 5.400Z" fill="#f2b705"/><circle cx="16" cy="16" r="4.500" fill="#ffffff"/></svg>
+      Hub de Projetos
+    </div>
+    <p>Design system, versão 0.2</p>
+    <button class="hub-btn hub-btn--sm ds-theme" id="themeBtn" type="button" aria-pressed="false">Ver tema escuro</button>
+    <nav aria-label="Seções">
+      <h2>Fundamentos</h2>
+      <a href="#roda">A Roda</a>
+      <a href="#cores">Cores</a>
+      <a href="#tipos">Tipografia</a>
+      <a href="#medidas">Espaços e bordas</a>
+      <a href="#icones">Ícones</a>
+      <a href="#escrita">Como escrever</a>
+      <h2>Componentes</h2>
+      <a href="#acoes">Ações</a>
+      <a href="#formularios">Formulários</a>
+      <a href="#identidade">Pessoas e visibilidade</a>
+      <a href="#navegacao">Navegação</a>
+      <a href="#avisos">Avisos e estados</a>
+      <a href="#kanban">Kanban</a>
+      <a href="#tabelas">Tabelas e menus</a>
+      <a href="#janelas">Janelas</a>
+      <a href="#documento">Documento</a>
+      <a href="#reuniao">Reunião</a>
+      <a href="#notificacoes">Notificações</a>
+      <a href="#assistente">Assistente (V2)</a>
+      <h2>Em uso</h2>
+      <a href="#exemplo">Tela montada</a>
+      <a href="#codigo">Como usar no código</a>
+      <h2>Outros documentos</h2>
+      <a href="requisitos.html">📄 Requisitos</a>
+      <a href="wireframes.html">🖼 Wireframes</a>
+      <a href="modelo-de-dados.html">🗄 Modelo de dados</a>
+      <a href="arquitetura.html">🏗 Arquitetura</a>
+      <a href="plano.html">✅ Plano de construção</a>
+      <a href="guia.html">📘 Guia do desenvolvedor</a>
+      <a href="../landing/index.html">🌐 Landing page</a>
+    </nav>
+  </aside>
+
+  <main class="ds-main">
+
+    <!-- ========== A RODA ========== -->
+    <header class="ds-hero" id="roda">
+      <div>
+        <h1>Quem vê o quê, à primeira vista.</h1>
+        <p>O que diferencia o Hub é o acesso hierárquico, então a identidade visual nasce dele. Imagine o setor como uma roda: cada <b>fatia</b> é um grupo, cada <b>anel</b> é um cargo e, quanto mais perto do centro, mais a pessoa enxerga.</p>
+        <div class="ds-picker" id="wheelPicker" role="group" aria-label="Escolha uma visibilidade">
+          <button class="hub-btn hub-btn--sm" type="button" data-vis="workspace"><svg class="hub-icon"><use href="#vis-workspace"/></svg>Workspace</button>
+          <button class="hub-btn hub-btn--sm" type="button" data-vis="group"><svg class="hub-icon"><use href="#vis-group"/></svg>Grupo</button>
+          <button class="hub-btn hub-btn--sm" type="button" data-vis="role"><svg class="hub-icon"><use href="#vis-role"/></svg>Cargo</button>
+          <button class="hub-btn hub-btn--sm" type="button" data-vis="private"><svg class="hub-icon"><use href="#vis-private"/></svg>Privado</button>
+        </div>
+        <p class="ds-caption" id="wheelCaption" aria-live="polite"></p>
+        <div class="ds-legend">
+          <span><i style="background:var(--vis-group)" id="legendDirect"></i>Vê pela visibilidade do item</span>
+          <span><i style="background:var(--accent)"></i>Vê pela hierarquia</span>
+        </div>
+      </div>
+      <svg class="ds-wheel" id="wheel" viewBox="0 0 340 340" role="img" aria-label="Roda de acesso: do centro para fora, proprietário, administrador, líder, membro e convidado."></svg>
+    </header>
+
+    <!-- ========== CORES ========== -->
+    <section class="ds-section" id="cores">
+      <h2 class="t-title-lg">Cores</h2>
+      <p>Use sempre o nome do token, nunca o valor em hexadecimal. O número em cada amostra é o contraste calculado na hora para o tema atual: texto precisa de pelo menos 4,5:1. Troque o tema no menu e veja os valores mudarem.</p>
+      <div class="ds-why"><b>Por que tokens?</b> Com <code>var(--primary)</code> em vez de <code>#0b5d4e</code>, o tema escuro funciona sozinho e uma mudança de cor é feita em um lugar só, não em 300 arquivos.</div>
+      <div id="swatches"></div>
+    </section>
+
+    <!-- ========== TIPOGRAFIA ========== -->
+    <section class="ds-section" id="tipos">
+      <h2 class="t-title-lg">Tipografia</h2>
+      <p><b>Plus Jakarta Sans</b> é a voz da interface e da landing page: moderna e legível em tamanhos pequenos. <b>Source Serif 4</b> aparece só dentro dos documentos colaborativos, para deixar claro quando você saiu da ferramenta e está lendo um texto.</p>
+      <div class="ds-stage">
+        <div class="ds-type"><small><code>t-display</code>32/38, 700</small><div class="t-display">Setor de Pesquisa</div></div>
+        <div class="ds-type"><small><code>t-title-lg</code>24/30, 700</small><div class="t-title-lg">Quadro do Grupo A</div></div>
+        <div class="ds-type"><small><code>t-title</code>18/24, 600</small><div class="t-title">Coletar dados do experimento</div></div>
+        <div class="ds-type"><small><code>t-subtitle</code>15/20, 600</small><div class="t-subtitle">Convites pendentes</div></div>
+        <div class="ds-type"><small><code>t-body</code>14/20, 400</small><div class="t-body">Coletar os dados das sessões 1 a 5 e salvar na pasta do experimento.</div></div>
+        <div class="ds-type"><small><code>t-small</code>13/18, 400</small><div class="t-small">Criada por Ana em 28/10, editada por Fábio hoje.</div></div>
+        <div class="ds-type"><small><code>t-caption</code>12/16, 500</small><div class="t-caption">Máximo de 50 MB por arquivo</div></div>
+        <div class="ds-type"><small><code>t-doc-h1</code>28/36, 600</small><div class="t-doc-h1">Relatório parcial: sessões 1 a 5</div></div>
+        <div class="ds-type"><small><code>t-doc-h2</code>20/28, 600</small><div class="t-doc-h2">Metodologia</div></div>
+        <div class="ds-type"><small><code>t-doc-body</code>16/27, 400</small><div class="t-doc-body">Os participantes foram divididos em dois grupos, e cada sessão teve duração de 40 minutos.</div></div>
+      </div>
+      <ul class="ds-rules">
+        <li>Na interface, títulos e rótulos em peso 600 ou 700; texto corrido em 400. Na landing page, os títulos grandes usam peso 500.</li>
+        <li>Datas, tamanhos e contadores usam <code>t-num</code>, para os números se alinharem em colunas.</li>
+        <li>Sem texto todo em maiúsculas, nem em cabeçalhos de tabela.</li>
+      </ul>
+    </section>
+
+    <!-- ========== MEDIDAS ========== -->
+    <section class="ds-section" id="medidas">
+      <h2 class="t-title-lg">Espaços e bordas</h2>
+      <p>Todo espaçamento vem de uma escala de 4 em 4 pixels. O produto é denso e de uso diário, então o padrão é <code>space-2</code> dentro de componentes e <code>space-4</code> entre blocos.</p>
+      <div class="ds-grid2">
+        <div class="ds-stage" id="spaces"></div>
+        <div class="ds-stage">
+          <div class="ds-radius">
+            <div style="border-radius:var(--radius-sm)">radius-sm<br>etiquetas</div>
+            <div style="border-radius:var(--radius-md)">radius-md<br>botões, campos</div>
+            <div style="border-radius:var(--radius-lg)">radius-lg<br>colunas, janelas</div>
+            <div style="border-radius:var(--radius-full)">radius-full<br>avatares</div>
+          </div>
+          <h3 class="t-subtitle ds-sub">Elevação</h3>
+          <p class="t-small muted" style="margin:0 0 var(--space-3)">Sombra só para o que está de fato acima da página. Cards parados usam borda.</p>
+          <div class="ds-radius">
+            <div style="border:0;border-radius:var(--radius-md);box-shadow:var(--shadow-drag)">shadow-drag<br>card em movimento</div>
+            <div style="border:0;border-radius:var(--radius-md);box-shadow:var(--shadow-overlay)">shadow-overlay<br>janelas, menus</div>
+          </div>
+        </div>
+      </div>
+      <h3 class="t-subtitle ds-sub">Movimento</h3>
+      <p class="ds-measure">Movimento só responde a uma ação ou mostra uma mudança feita por outra pessoa. Use <code>motion-fast</code> (120 ms) em passar o mouse e <code>motion-base</code> (200 ms) para abrir janelas e mover cards. Quem pede movimento reduzido no sistema não vê animação.</p>
+      <p class="ds-measure">Exceção aprovada: as telas de entrada (entrar, criar conta e recuperar senha) são a vitrine da marca e seguem as regras de movimento da landing page, com animação de entrada e animação contínua decorativa (anéis, equipe em órbita, cartões de aviso de exemplo). Dentro do aplicativo a regra acima continua valendo. Toda animação dessas telas também é desligada para quem pede movimento reduzido no sistema.</p>
+    </section>
+
+    <!-- ========== ÍCONES ========== -->
+    <section class="ds-section" id="icones">
+      <h2 class="t-title-lg">Ícones</h2>
+      <p>Os wireframes usam emoji como rascunho. No produto, eles são trocados por estes ícones, que seguem a cor do texto e têm o mesmo desenho em qualquer sistema. Tamanho padrão: 16 px; 20 px em barras e botões só com ícone.</p>
+      <h3 class="t-subtitle ds-sub">Alcance: os símbolos de visibilidade</h3>
+      <div class="ds-stage">
+        <div class="ds-row">
+          <span class="hub-vis hub-vis--workspace"><svg class="hub-icon"><use href="#vis-workspace"/></svg>Workspace: a roda inteira</span>
+          <span class="hub-vis hub-vis--group"><svg class="hub-icon"><use href="#vis-group"/></svg>Grupo: uma fatia</span>
+          <span class="hub-vis hub-vis--role"><svg class="hub-icon"><use href="#vis-role"/></svg>Cargo: um anel</span>
+          <span class="hub-vis hub-vis--private"><svg class="hub-icon"><use href="#vis-private"/></svg>Privado: um ponto</span>
+        </div>
+      </div>
+      <h3 class="t-subtitle ds-sub">Interface</h3>
+      <div class="ds-stage"><div class="ds-icons" id="iconGrid"></div></div>
+    </section>
+
+    <!-- ========== ESCRITA ========== -->
+    <section class="ds-section" id="escrita">
+      <h2 class="t-title-lg">Como escrever</h2>
+      <p>O texto da interface é direto, em português do Brasil, e fala com "você". Só a primeira letra da frase vai em maiúscula, e o botão diz exatamente o que vai acontecer.</p>
+      <div class="ds-stage">
+        <table class="hub-table">
+          <thead><tr><th>Situação</th><th>Escreva</th><th>Evite</th></tr></thead>
+          <tbody>
+            <tr><td>Botão</td><td>Criar tarefa</td><td>Enviar, OK, Confirmar</td></tr>
+            <tr><td>Depois da ação</td><td>Tarefa criada</td><td>Operação realizada com sucesso!</td></tr>
+            <tr><td>Login inválido</td><td>E-mail ou senha inválidos.</td><td>Ops! Algo deu errado :(</td></tr>
+            <tr><td>Lista vazia</td><td>Nenhuma tarefa aqui. Crie a primeira para começar.</td><td>Nada para mostrar</td></tr>
+            <tr><td>Excluir</td><td>Excluir "protocolo.pdf"? O dono será avisado.</td><td>Tem certeza?</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========== AÇÕES ========== -->
+    <section class="ds-section" id="acoes">
+      <h2 class="t-title-lg">Ações</h2>
+      <p>Use no máximo um botão primário por área da tela: ele marca a ação mais importante ali. Use o de perigo só para ações que apagam algo, e sempre com confirmação.</p>
+      <div class="ds-stage ds-stack">
+        <div class="ds-row">
+          <button class="hub-btn hub-btn--primary" type="button"><svg class="hub-icon" style="fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round"><use href="#i-plus"/></svg>Nova tarefa</button>
+          <button class="hub-btn" type="button">Cancelar</button>
+          <button class="hub-btn hub-btn--ghost" type="button">Marcar como lidas</button>
+          <button class="hub-btn hub-btn--danger" type="button">Excluir tarefa</button>
+        </div>
+        <div class="ds-row">
+          <button class="hub-btn hub-btn--primary" type="button" disabled>Entrar</button>
+          <button class="hub-btn" type="button" disabled>Entrar com Google</button>
+          <button class="hub-btn hub-btn--primary" type="button" aria-busy="true"><svg class="hub-icon hub-spin" data-i="loader"></svg>Salvando</button>
+          <button class="hub-btn hub-btn--sm" type="button">Aceitar</button>
+          <button class="hub-btn hub-btn--icon" type="button" aria-label="Mais ações"><svg class="hub-icon" data-i="more"></svg></button>
+          <button class="hub-btn hub-btn--icon hub-btn--sm hub-btn--ghost" type="button" aria-label="Fechar"><svg class="hub-icon" data-i="x"></svg></button>
+        </div>
+      </div>
+      <p class="t-small muted">Botão só com ícone precisa de <code>aria-label</code>, senão o leitor de tela não sabe o que ele faz. Use Tab para ver o anel de foco.</p>
+    </section>
+
+    <!-- ========== FORMULÁRIOS ========== -->
+    <section class="ds-section" id="formularios">
+      <h2 class="t-title-lg">Formulários</h2>
+      <p>Todo campo tem um rótulo visível acima dele. O erro aparece abaixo, com ícone e texto dizendo como resolver, e não só com a borda vermelha.</p>
+      <div class="ds-stage ds-grid2">
+        <div class="hub-field"><label for="f1">Nome do workspace</label><input class="hub-input" id="f1" placeholder="Ex.: Setor de Pesquisa"><span class="hub-field__hint">Você pode mudar o nome depois.</span></div>
+        <div class="hub-field"><label for="f2">E-mail</label><input class="hub-input" id="f2" value="ana@empresa" aria-invalid="true" aria-describedby="f2e"><span class="hub-field__error" id="f2e"><svg class="hub-icon" data-i="error"></svg>Digite um e-mail completo, como ana@empresa.com.</span></div>
+        <div class="hub-field"><label for="f3">Prioridade</label><select class="hub-input" id="f3"><option>Alta</option><option>Média</option><option>Baixa</option></select></div>
+        <div class="hub-field"><label for="f4">Dono do item</label><input class="hub-input" id="f4" value="Ana" disabled></div>
+        <div class="hub-field" style="grid-column:1/-1"><label for="f5">Descrição</label><textarea class="hub-input" id="f5" placeholder="O que precisa ser feito?"></textarea></div>
+        <label class="hub-check"><input type="checkbox" checked> Manter conectado</label>
+      </div>
+    </section>
+
+    <!-- ========== PESSOAS E VISIBILIDADE ========== -->
+    <section class="ds-section" id="identidade">
+      <h2 class="t-title-lg">Pessoas e visibilidade</h2>
+      <p>A visibilidade aparece em todo item, em todas as telas (RNF22). A cor nunca trabalha sozinha: o símbolo e a palavra também mostram o tipo. A versão compacta, sem a palavra, serve só onde falta espaço, como no card do kanban, e precisa de <code>title</code> e <code>aria-label</code>.</p>
+      <div class="ds-stage ds-stack">
+        <div class="ds-row">
+          <span class="hub-vis hub-vis--workspace"><svg class="hub-icon"><use href="#vis-workspace"/></svg>Workspace</span>
+          <span class="hub-vis hub-vis--group"><svg class="hub-icon"><use href="#vis-group"/></svg>Grupo A</span>
+          <span class="hub-vis hub-vis--role"><svg class="hub-icon"><use href="#vis-role"/></svg>Líderes</span>
+          <span class="hub-vis hub-vis--private"><svg class="hub-icon"><use href="#vis-private"/></svg>Ana, Gabi</span>
+          <span class="hub-vis hub-vis--private hub-vis--compact" title="Privado" aria-label="Privado"><svg class="hub-icon"><use href="#vis-private"/></svg></span>
+        </div>
+        <div class="ds-row">
+          <span class="hub-avatar hub-avatar--sm c1">AN</span><span class="hub-avatar c2">FA</span><span class="hub-avatar hub-avatar--lg c3">LI</span><span class="hub-avatar hub-avatar--neutral">CA</span>
+          <span class="t-small muted">Vendo agora:</span>
+          <span class="hub-avatars" role="img" aria-label="Fábio, Ana e Lia estão vendo agora"><span class="hub-avatar c2">FA</span><span class="hub-avatar c1">AN</span><span class="hub-avatar c3">LI</span></span>
+        </div>
+        <div class="ds-row">
+          <span class="hub-tag"><svg class="hub-icon" data-i="crown"></svg>Proprietário</span>
+          <span class="hub-tag">Administradora</span>
+          <span class="hub-tag"><svg class="hub-icon" data-i="star"></svg>Líder do Grupo A</span>
+          <span class="hub-tag">Dados</span>
+          <span class="hub-tag">Lia <button type="button" aria-label="Remover Lia"><svg class="hub-icon" data-i="x" style="width:12px;height:12px"></svg></button></span>
+        </div>
+      </div>
+      <div class="ds-why"><b>Cores de presença:</b> cada colaborador recebe uma cor de <code>presence-1</code> a <code>presence-6</code>, usada no avatar, no cursor e no card que ele está movendo. Sem isso, seria difícil saber quem está fazendo o quê. A partir da sétima pessoa, as cores se repetem.</div>
+    </section>
+
+    <!-- ========== NAVEGAÇÃO ========== -->
+    <section class="ds-section" id="navegacao">
+      <h2 class="t-title-lg">Navegação</h2>
+      <div class="ds-stage ds-stack">
+        <div class="hub-tabs" role="tablist" id="demoTabs">
+          <button role="tab" type="button" aria-selected="true">Próximas</button>
+          <button role="tab" type="button" aria-selected="false">Passadas</button>
+        </div>
+        <nav class="hub-crumb" aria-label="Trilha"><a href="#navegacao">Arquivos</a><svg class="hub-icon" data-i="chevron-right"></svg><a href="#navegacao">Grupo A</a><svg class="hub-icon" data-i="chevron-right"></svg><span aria-current="page">Referências</span></nav>
+        <div class="hub-steps"><span class="on"><b>1</b>Workspace</span><i></i><span><b>2</b>Grupos</span><i></i><span><b>3</b>Convidar pessoas</span></div>
+      </div>
+      <p class="t-small muted">A barra lateral e a barra superior aparecem montadas na seção <a href="#exemplo">Tela montada</a>.</p>
+    </section>
+
+    <!-- ========== AVISOS ========== -->
+    <section class="ds-section" id="avisos">
+      <h2 class="t-title-lg">Avisos e estados</h2>
+      <p>A Definição de Pronto pede os estados de carregando, vazio e erro em todas as telas. Estes são os blocos para isso.</p>
+      <div class="ds-stage ds-stack">
+        <div class="hub-banner hub-banner--warning"><svg class="hub-icon" data-i="pencil"></svg><span>Você está editando uma tarefa criada por <b>Ana</b>. A alteração fica na auditoria e Ana será avisada.</span></div>
+        <div class="hub-banner hub-banner--danger"><svg class="hub-icon" data-i="error"></svg><span>E-mail ou senha inválidos.</span></div>
+        <div class="hub-banner hub-banner--info"><svg class="hub-icon" data-i="info"></svg><span>Dentro de uma pasta restrita, as opções mais abertas que a pasta-mãe ficam desativadas.</span></div>
+        <div class="hub-banner hub-banner--success"><svg class="hub-icon" data-i="success"></svg><span>Versão restaurada. A anterior continua no histórico.</span></div>
+        <div class="ds-row">
+          <span class="hub-status hub-status--success"><svg class="hub-icon" data-i="check"></svg>Concluída</span>
+          <span class="hub-status hub-status--danger"><svg class="hub-icon" data-i="calendar"></svg>Atrasada</span>
+          <span class="hub-status hub-status--warning">Alta</span>
+          <span class="hub-status hub-status--neutral">Baixa</span>
+          <span class="hub-status hub-status--v2">V2</span>
+          <span class="hub-conn"><i></i>Conectado</span>
+          <span class="hub-conn hub-conn--retry"><i></i>Reconectando…</span>
+          <span class="t-caption muted"><svg class="hub-icon" data-i="check"></svg> Salvo automaticamente</span>
+        </div>
+        <div class="ds-grid2">
+          <div class="hub-empty"><svg class="hub-icon hub-icon--lg" data-i="folder"></svg><b>Nenhum arquivo nesta pasta</b><span class="t-small muted">Arraste arquivos para cá ou envie do seu computador.</span><button class="hub-btn hub-btn--sm" type="button">Enviar arquivo</button></div>
+          <div class="ds-stack" aria-label="Carregando" role="status"><span class="hub-skeleton" style="width:60%"></span><span class="hub-skeleton"></span><span class="hub-skeleton" style="width:85%"></span><span class="hub-skeleton" style="width:40%"></span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== KANBAN ========== -->
+    <section class="ds-section" id="kanban">
+      <h2 class="t-title-lg">Kanban</h2>
+      <p>O card mostra só o que ajuda a decidir sem abri-lo. Prazo vencido leva a palavra "atrasada", além da cor. Quando outra pessoa move um card, ele ganha a cor de presença dela e o nome dela.</p>
+      <div class="ds-stage">
+        <div class="hub-board">
+          <div class="hub-col">
+            <div class="hub-col__head">A fazer <span>2</span></div>
+            <article class="hub-card">
+              <div class="hub-card__title">Coletar dados do experimento</div>
+              <div class="ds-row" style="gap:var(--space-1)"><span class="hub-status hub-status--warning">Alta</span><span class="hub-tag">Dados</span></div>
+              <div class="hub-card__foot"><span class="hub-card__meta"><span class="hub-card__late"><svg class="hub-icon" data-i="calendar"></svg>02/11, atrasada</span></span><span class="hub-avatars"><span class="hub-avatar hub-avatar--sm c1">AN</span><span class="hub-avatar hub-avatar--sm c3">LI</span></span></div>
+            </article>
+            <article class="hub-card">
+              <div class="hub-card__title">Avaliar orçamento</div>
+              <div class="hub-card__foot"><span class="hub-card__meta"><span><svg class="hub-icon" data-i="calendar"></svg>20/11</span><span class="hub-vis hub-vis--private hub-vis--compact" title="Privado" aria-label="Privado"><svg class="hub-icon"><use href="#vis-private"/></svg></span></span><span class="hub-avatar hub-avatar--sm c1">AN</span></div>
+            </article>
+            <button class="hub-add" type="button"><svg class="hub-icon" data-i="plus"></svg>Adicionar tarefa</button>
+          </div>
+          <div class="hub-col">
+            <div class="hub-col__head">Em andamento <span>2</span></div>
+            <article class="hub-card hub-card--remote">
+              <span class="hub-card__who">Lia está movendo</span>
+              <div class="hub-card__title">Revisar artigo base</div>
+              <div class="hub-card__foot"><span class="hub-card__meta"><span><svg class="hub-icon" data-i="calendar"></svg>08/11</span></span><span class="hub-avatar hub-avatar--sm c3">LI</span></div>
+            </article>
+            <article class="hub-card">
+              <div class="hub-card__title">Preparar slides da reunião</div>
+              <div class="hub-card__foot"><span class="hub-card__meta"><span><svg class="hub-icon" data-i="calendar"></svg>06/11</span><span><svg class="hub-icon" data-i="comment"></svg>5</span></span><span class="hub-avatar hub-avatar--sm c2">FA</span></div>
+            </article>
+            <button class="hub-add" type="button"><svg class="hub-icon" data-i="plus"></svg>Adicionar tarefa</button>
+          </div>
+          <div class="hub-col">
+            <div class="hub-col__head">Concluído <span>1</span></div>
+            <article class="hub-card">
+              <div class="hub-card__title">Definir metodologia</div>
+              <div class="hub-card__foot"><span class="hub-card__meta"><span><svg class="hub-icon" data-i="check"></svg>01/11</span></span><span class="hub-avatar hub-avatar--sm c2">FA</span></div>
+            </article>
+            <button class="hub-add" type="button"><svg class="hub-icon" data-i="plus"></svg>Adicionar tarefa</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== TABELAS ========== -->
+    <section class="ds-section" id="tabelas">
+      <h2 class="t-title-lg">Tabelas e menus</h2>
+      <p>Tabelas servem para arquivos, membros e auditoria. Texto fica alinhado à esquerda e números à direita.</p>
+      <div class="ds-stage">
+        <table class="hub-table">
+          <thead><tr><th>Nome</th><th>Visibilidade</th><th>Dono</th><th>Modificado</th><th class="num">Tamanho</th><th><span class="muted" style="position:absolute;clip-path:inset(50%)">Ações</span></th></tr></thead>
+          <tbody>
+            <tr><td><span class="name"><svg class="hub-icon" data-i="folder"></svg>Artigos lidos</span></td><td><span class="hub-vis hub-vis--group"><svg class="hub-icon"><use href="#vis-group"/></svg>Grupo A</span></td><td>Fábio</td><td class="t-num">01/11</td><td class="num muted">Sem tamanho</td><td><button class="hub-btn hub-btn--icon hub-btn--sm hub-btn--ghost" type="button" aria-label="Ações de Artigos lidos"><svg class="hub-icon" data-i="more"></svg></button></td></tr>
+            <tr><td><span class="name"><svg class="hub-icon" data-i="doc"></svg>Relatório do Grupo A</span></td><td><span class="hub-vis hub-vis--group"><svg class="hub-icon"><use href="#vis-group"/></svg>Grupo A</span></td><td>Ana</td><td>agora</td><td class="num muted">Sem tamanho</td><td><button class="hub-btn hub-btn--icon hub-btn--sm hub-btn--ghost" type="button" aria-label="Ações de Relatório do Grupo A"><svg class="hub-icon" data-i="more"></svg></button></td></tr>
+            <tr><td><span class="name"><svg class="hub-icon" data-i="file"></svg>rascunho_resultados.docx</span></td><td><span class="hub-vis hub-vis--private"><svg class="hub-icon"><use href="#vis-private"/></svg>Ana, Gabi</span></td><td>Ana</td><td class="t-num">30/10</td><td class="num">340 KB</td><td><button class="hub-btn hub-btn--icon hub-btn--sm hub-btn--ghost" type="button" aria-label="Ações de rascunho_resultados.docx"><svg class="hub-icon" data-i="more"></svg></button></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="ds-stage ds-stage--ground">
+        <div class="hub-menu" role="menu" aria-label="Ações do arquivo">
+          <button role="menuitem" type="button"><svg class="hub-icon" data-i="download"></svg>Baixar</button>
+          <button role="menuitem" type="button"><svg class="hub-icon" data-i="pencil"></svg>Renomear</button>
+          <button role="menuitem" type="button"><svg class="hub-icon" data-i="folder"></svg>Mover</button>
+          <button role="menuitem" type="button"><svg class="hub-icon"><use href="#vis-group"/></svg>Visibilidade</button>
+          <hr>
+          <button role="menuitem" type="button" class="danger"><svg class="hub-icon" data-i="trash"></svg>Excluir</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== JANELAS ========== -->
+    <section class="ds-section" id="janelas">
+      <h2 class="t-title-lg">Janelas e seletor de visibilidade</h2>
+      <p>A mesma janela serve para pastas, arquivos, documentos, quadros, tarefas e reuniões. O quadro "Também veem" evita que alguém ache que um item privado é invisível para os superiores.</p>
+      <div class="hub-scrim">
+        <div class="hub-modal" role="dialog" aria-modal="false" aria-labelledby="mTitle">
+          <div class="hub-modal__head">
+            <div><div class="t-title" id="mTitle">Quem pode ver "Avaliar orçamento"?</div><div class="t-small muted">Espaço: Grupo A</div></div>
+            <button class="hub-btn hub-btn--icon hub-btn--sm hub-btn--ghost" type="button" aria-label="Fechar"><svg class="hub-icon" data-i="x"></svg></button>
+          </div>
+          <label class="hub-opt"><input type="radio" name="vis"><div><div class="hub-opt__title"><svg class="hub-icon"><use href="#vis-workspace"/></svg>Workspace</div><p>Todos do Setor de Pesquisa</p></div></label>
+          <label class="hub-opt"><input type="radio" name="vis"><div><div class="hub-opt__title"><svg class="hub-icon"><use href="#vis-group"/></svg>Grupo</div><p>Todos os membros do Grupo A</p></div></label>
+          <label class="hub-opt"><input type="radio" name="vis"><div><div class="hub-opt__title"><svg class="hub-icon"><use href="#vis-role"/></svg>Cargo</div><p>Todos com o cargo de líder</p></div></label>
+          <label class="hub-opt"><input type="radio" name="vis" checked><div><div class="hub-opt__title"><svg class="hub-icon"><use href="#vis-private"/></svg>Privado ou pessoas específicas</div><p>Você e Ana</p></div></label>
+          <div class="hub-chain"><span class="hub-avatars"><span class="hub-avatar hub-avatar--sm c4">DI</span><span class="hub-avatar hub-avatar--sm c5">CA</span></span><span><b>Também veem, pela hierarquia:</b> Diana (administradora) e Carlos (proprietário)</span></div>
+          <div class="hub-modal__foot"><button class="hub-btn" type="button">Cancelar</button><button class="hub-btn hub-btn--primary" type="button">Salvar visibilidade</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== DOCUMENTO ========== -->
+    <section class="ds-section" id="documento">
+      <h2 class="t-title-lg">Documento colaborativo</h2>
+      <p>A página usa a fonte serifada e a interface em volta continua na fonte normal. Cada cursor leva o nome e a cor de presença da pessoa. Na comparação de versões, o texto novo é sublinhado e o removido é riscado, para a diferença não depender só de cor.</p>
+      <div class="ds-stage ds-stage--ground ds-stack">
+        <div style="text-align:center"><div class="hub-toolbar" role="toolbar" aria-label="Formatação">
+          <button type="button">T1</button><button type="button">T2</button><i></i><button type="button" aria-pressed="true" aria-label="Negrito"><b>N</b></button><button type="button" aria-pressed="false" aria-label="Itálico"><em>I</em></button><i></i><button type="button">Lista</button><button type="button" aria-label="Link"><svg class="hub-icon" data-i="link"></svg></button><button type="button">Tabela</button>
+        </div></div>
+        <div class="hub-doc">
+          <h3>Relatório parcial: sessões 1 a 5</h3>
+          <p>Este relatório apresenta os resultados preliminares das sessões de coleta realizadas em outubro<span class="hub-cursor c1"><span>Ana</span></span>.</p>
+          <p>Os participantes foram divididos em dois grupos, e <span class="hub-sel">cada sessão teve duração de 40 minutos</span><span class="hub-cursor c3"><span>Lia</span></span>, com intervalos curtos.</p>
+          <p>Cada sessão teve duração de <span class="hub-del-text">30</span> <span class="hub-add-text">40</span> minutos.</p>
+        </div>
+        <div class="ds-grid2">
+          <div class="hub-version" aria-current="true"><b>Hoje, 09:15</b><span class="t-small muted">Fábio (líder A), 3 trechos adicionados e 2 removidos</span><div class="ds-row" style="margin-top:var(--space-1)"><span class="hub-status hub-status--warning"><svg class="hub-icon" data-i="pencil"></svg>Editada por superior</span><button class="hub-btn hub-btn--sm" type="button"><svg class="hub-icon" data-i="restore"></svg>Restaurar esta versão</button></div></div>
+          <div class="hub-version"><b>Ontem, 16:40</b><span class="t-small muted">Ana, 12 trechos adicionados e 1 removido</span><div class="ds-row" style="margin-top:var(--space-1)"><span class="hub-tag">Enviado ao orientador</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== REUNIÃO ========== -->
+    <section class="ds-section" id="reuniao">
+      <h2 class="t-title-lg">Reunião</h2>
+      <div class="ds-stage ds-stage--ground ds-stack">
+        <div class="hub-meeting">
+          <div><b>Reunião semanal do Grupo A</b><div class="ds-row" style="gap:var(--space-2);margin-top:var(--space-1)"><span class="t-small muted t-num">Hoje, 14:00 às 15:00</span><span class="hub-vis hub-vis--group"><svg class="hub-icon"><use href="#vis-group"/></svg>Grupo A</span></div></div>
+          <div class="ds-row"><span class="hub-avatars"><span class="hub-avatar hub-avatar--sm c2">FA</span><span class="hub-avatar hub-avatar--sm c1">AN</span><span class="hub-avatar hub-avatar--sm c3">LI</span></span><button class="hub-btn hub-btn--primary hub-btn--sm" type="button">Entrar</button></div>
+        </div>
+        <div class="ds-grid2">
+          <div class="hub-tile hub-tile--speaking"><span class="hub-avatar hub-avatar--lg c2">FA</span>Fábio, falando</div>
+          <div class="hub-tile"><span class="hub-avatar hub-avatar--lg c1">AN</span><span><svg class="hub-icon" data-i="mic-off"></svg> Ana, sem áudio</span></div>
+        </div>
+        <div class="hub-call">
+          <button class="hub-btn hub-btn--icon" type="button" aria-label="Desligar microfone"><svg class="hub-icon" data-i="mic"></svg></button>
+          <button class="hub-btn hub-btn--icon" type="button" aria-label="Desligar câmera"><svg class="hub-icon" data-i="video"></svg></button>
+          <button class="hub-btn hub-btn--icon" type="button" aria-label="Compartilhar tela"><svg class="hub-icon" data-i="screen"></svg></button>
+          <button class="hub-btn hub-btn--danger" type="button"><svg class="hub-icon" data-i="leave"></svg>Sair da reunião</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== NOTIFICAÇÕES ========== -->
+    <section class="ds-section" id="notificacoes">
+      <h2 class="t-title-lg">Notificações</h2>
+      <div class="ds-stage" style="padding:0;max-width:460px">
+        <a class="hub-notif hub-notif--unread" href="#notificacoes"><span class="hub-notif__dot"></span><div><b>Fábio</b> editou sua tarefa <b>"Coletar dados do experimento"</b><time>há 5 min</time></div></a>
+        <a class="hub-notif hub-notif--unread" href="#notificacoes"><span class="hub-notif__dot"></span><div><b>Gabi</b> compartilhou <b>"rascunho_resultados.docx"</b> com você<time>há 1 h</time></div></a>
+        <a class="hub-notif" href="#notificacoes"><span class="hub-notif__dot"></span><div><b>Fábio</b> mencionou você em <b>"Coletar dados"</b><time>ontem</time></div></a>
+      </div>
+    </section>
+
+    <!-- ========== ASSISTENTE ========== -->
+    <section class="ds-section" id="assistente">
+      <h2 class="t-title-lg">Assistente <span class="hub-status hub-status--v2" style="vertical-align:4px">V2</span></h2>
+      <p>O laranja <code>v2</code> marca tudo que é do assistente. O painel sempre propõe e a pessoa confirma, por isso o botão diz o que será criado.</p>
+      <div class="ds-stage ds-stack" style="max-width:420px">
+        <div class="hub-msg hub-msg--me">Divida em tarefas: preparar o artigo para o congresso até 30/11</div>
+        <div class="hub-msg hub-msg--bot"><b><svg class="hub-icon" data-i="bot"></svg> Assistente</b><br>Sugiro estas tarefas:
+          <div class="hub-suggest">
+            <label class="hub-check"><input type="checkbox" checked>Revisar literatura, Gabi, 12/11</label>
+            <label class="hub-check"><input type="checkbox" checked>Analisar dados, Ana, 18/11</label>
+            <label class="hub-check"><input type="checkbox">Revisão final, Fábio, 28/11</label>
+          </div>
+          <div class="ds-row" style="gap:var(--space-2)"><button class="hub-btn hub-btn--primary hub-btn--sm" type="button">Criar 2 tarefas</button><button class="hub-btn hub-btn--sm" type="button">Editar</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== EXEMPLO ========== -->
+    <section class="ds-section" id="exemplo">
+      <h2 class="t-title-lg">Tela montada</h2>
+      <p>A tela 3 dos wireframes (Kanban), feita só com os componentes acima. É a prova de que as peças funcionam juntas.</p>
+      <div style="overflow-x:auto">
+        <div class="ds-app">
+          <div class="hub-side">
+            <div class="hub-side__ws"><span>Setor de Pesquisa</span><svg class="hub-icon" data-i="chevron-down"></svg></div>
+            <div class="hub-side__label">Espaços</div>
+            <a class="hub-side__item" href="#exemplo"><svg class="hub-icon"><use href="#vis-workspace"/></svg>Geral</a>
+            <a class="hub-side__item" href="#exemplo" style="font-weight:600"><svg class="hub-icon"><use href="#vis-group"/></svg>Grupo A</a>
+            <a class="hub-side__item" href="#exemplo"><svg class="hub-icon"><use href="#vis-group"/></svg>Grupo B</a>
+            <div class="hub-side__label">Navegar</div>
+            <a class="hub-side__item" href="#exemplo" aria-current="page"><svg class="hub-icon" data-i="board"></svg>Quadros</a>
+            <a class="hub-side__item" href="#exemplo"><svg class="hub-icon" data-i="folder"></svg>Arquivos</a>
+            <a class="hub-side__item" href="#exemplo"><svg class="hub-icon" data-i="video"></svg>Reuniões<small>1 hoje</small></a>
+            <div class="hub-side__label">Administração</div>
+            <a class="hub-side__item" href="#exemplo"><svg class="hub-icon" data-i="users"></svg>Membros e grupos</a>
+            <a class="hub-side__item" href="#exemplo"><svg class="hub-icon" data-i="audit"></svg>Auditoria</a>
+          </div>
+          <div class="ds-app__main">
+            <div class="hub-topbar">
+              <div class="hub-search"><svg class="hub-icon" data-i="search"></svg><input class="hub-input" aria-label="Buscar" placeholder="Buscar tarefas, arquivos, pessoas"></div>
+              <span style="flex:1"></span>
+              <button class="hub-btn hub-btn--icon hub-btn--ghost hub-bell" type="button" aria-label="Notificações, 3 não lidas"><svg class="hub-icon hub-icon--lg" data-i="bell"></svg><em>3</em></button>
+              <span class="hub-avatar c1">AN</span>
+            </div>
+            <div class="ds-app__content">
+              <div class="ds-row" style="justify-content:space-between">
+                <div>
+                  <nav class="hub-crumb" aria-label="Trilha"><a href="#exemplo">Grupo A</a><svg class="hub-icon" data-i="chevron-right"></svg><span aria-current="page">Quadro</span></nav>
+                  <div class="ds-row" style="gap:var(--space-2);margin-top:var(--space-1)"><span class="t-title-lg">Quadro do Grupo A</span><span class="hub-vis hub-vis--group"><svg class="hub-icon"><use href="#vis-group"/></svg>Grupo A</span></div>
+                </div>
+                <div class="ds-row"><span class="hub-avatars" role="img" aria-label="Fábio, Ana e Lia estão vendo agora"><span class="hub-avatar c2">FA</span><span class="hub-avatar c1">AN</span><span class="hub-avatar c3">LI</span></span><button class="hub-btn hub-btn--primary" type="button"><svg class="hub-icon" data-i="plus"></svg>Nova tarefa</button></div>
+              </div>
+              <div class="hub-board">
+                <div class="hub-col">
+                  <div class="hub-col__head">A fazer <span>1</span></div>
+                  <article class="hub-card"><div class="hub-card__title">Coletar dados do experimento</div><div class="hub-card__foot"><span class="hub-card__late"><svg class="hub-icon" data-i="calendar"></svg> 02/11, atrasada</span><span class="hub-avatar hub-avatar--sm c1">AN</span></div></article>
+                </div>
+                <div class="hub-col">
+                  <div class="hub-col__head">Em andamento <span>1</span></div>
+                  <article class="hub-card hub-card--remote"><span class="hub-card__who">Lia está movendo</span><div class="hub-card__title">Revisar artigo base</div><div class="hub-card__foot"><span><svg class="hub-icon" data-i="calendar"></svg> 08/11</span><span class="hub-avatar hub-avatar--sm c3">LI</span></div></article>
+                </div>
+                <div class="hub-col">
+                  <div class="hub-col__head">Concluído <span>1</span></div>
+                  <article class="hub-card"><div class="hub-card__title">Definir metodologia</div><div class="hub-card__foot"><span><svg class="hub-icon" data-i="check"></svg> 01/11</span><span class="hub-avatar hub-avatar--sm c2">FA</span></div></article>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== CÓDIGO ========== -->
+    <section class="ds-section" id="codigo">
+      <h2 class="t-title-lg">Como usar no código</h2>
+      <p>Quando o projeto começar, o bloco de tokens e os componentes do <code>&lt;style&gt;</code> desta página viram os arquivos CSS do app. No React, cada classe <code>hub-</code> vira um componente, para ninguém repetir a marcação.</p>
+<pre><code>/* Certo: usa o token, funciona nos dois temas */
+.painel { background: var(--surface); padding: var(--space-4); }
+
+/* Errado: valor fixo, quebra no tema escuro */
+.painel { background: #ffffff; padding: 15px; }</code></pre>
+<pre><code>// Exemplo de como um componente pode ficar no React
+function VisibilityBadge({ type, label }) {
+  return (
+    &lt;span className={`hub-vis hub-vis--${type}`}&gt;
+      &lt;svg className="hub-icon"&gt;&lt;use href={`#vis-${type}`} /&gt;&lt;/svg&gt;
+      {label}
+    &lt;/span&gt;
+  );
+}</code></pre>
+      <p>Os componentes do design system já existem em <code>frontend/src/design-system/</code>. A aparência é a mesma desta página; só que, no código, os nomes das classes ficaram em português (por exemplo, <code>hub-botao</code> no lugar de <code>hub-btn</code>).</p>
+      <table class="hub-table">
+        <thead><tr><th>Nesta página</th><th>No React</th><th>Onde</th></tr></thead>
+        <tbody>
+          <tr><td><code>hub-btn</code></td><td><code>Botao</code></td><td><code>frontend/src/design-system/</code></td></tr>
+          <tr><td><code>hub-field</code> + <code>hub-input</code></td><td><code>Campo</code></td><td><code>frontend/src/design-system/</code></td></tr>
+          <tr><td><code>hub-tabs</code></td><td><code>Abas</code></td><td><code>frontend/src/design-system/</code></td></tr>
+          <tr><td><code>hub-banner</code></td><td><code>Aviso</code></td><td><code>frontend/src/design-system/</code></td></tr>
+          <tr><td>logotipo</td><td><code>Marca</code> / <code>SimboloDaMarca</code></td><td><code>frontend/src/design-system/</code></td></tr>
+          <tr><td>anéis das telas de entrada</td><td><code>Orbitas</code></td><td><code>frontend/src/design-system/</code></td></tr>
+        </tbody>
+      </table>
+<pre><code>&lt;Campo rotulo="E-mail" type="email" erro={erros.email} /&gt;
+&lt;Botao type="submit" variante="primario" carregando={enviando}&gt;
+  Entrar
+&lt;/Botao&gt;</code></pre>
+      <h3 class="t-subtitle ds-sub">Regras para todo código novo</h3>
+      <ul class="ds-rules">
+        <li>Os tokens <code>--brand-*</code> e <code>--on-gema</code> valem igual nos dois temas, porque são as cores fixas do logotipo, que não muda no tema escuro (onde o <code>--primary</code> vira verde-claro).</li>
+        <li>Já existem em <code>frontend/src/design-system/</code> os componentes <code>Marca</code> (logotipo, com o <code>SimboloDaMarca</code>, só o desenho da roda) e <code>Orbitas</code> (anéis e equipe em órbita, decorativo, das telas de entrada), além de <code>Botao</code>, <code>Campo</code>, <code>Abas</code> e <code>Aviso</code>. Use-os em vez de refazer. Por enquanto os ícones ficam dentro de cada peça; um componente <code>Icone</code> único só virá quando houver mais ícones.</li>
+        <li>Nenhuma cor ou espaçamento fixo fora do bloco de tokens.</li>
+        <li>Precisou de um valor novo? Adicione um token aqui antes de usar.</li>
+        <li>Componente novo entra nesta página, com os estados de carregando, vazio e erro quando fizer sentido.</li>
+        <li>Cor nunca é o único sinal: junto dela vem ícone ou texto.</li>
+        <li>Tudo precisa funcionar só com teclado e ter foco visível.</li>
+      </ul>
+    </section>
+  </main>
+</div>
+
+<script>
+  // ----- Ícones: cada <svg data-i="nome"> recebe o desenho do sprite -----
+  function renderIcon(el, name) {
+    el.setAttribute('fill', 'none');
+    el.setAttribute('stroke', 'currentColor');
+    el.setAttribute('stroke-width', '1.75');
+    el.setAttribute('stroke-linecap', 'round');
+    el.setAttribute('stroke-linejoin', 'round');
+    el.setAttribute('aria-hidden', 'true');
+    el.innerHTML = '<use href="#i-' + name + '"/>';
+  }
+  document.querySelectorAll('svg[data-i]').forEach(function (el) { renderIcon(el, el.dataset.i); });
+
+  // ----- Grade de ícones -----
+  var iconNames = [...document.querySelectorAll('symbol[id^="i-"]')].map(function (s) { return s.id.slice(2); });
+  document.getElementById('iconGrid').innerHTML = iconNames.map(function (n) {
+    return '<div><svg class="hub-icon hub-icon--lg" data-i="' + n + '"></svg>' + n + '</div>';
+  }).join('');
+  document.querySelectorAll('#iconGrid svg').forEach(function (el) { renderIcon(el, el.dataset.i); });
+
+  // ----- Escala de espaços -----
+  document.getElementById('spaces').innerHTML = ['1', '2', '3', '4', '5', '6', '8', '12'].map(function (n) {
+    return '<div class="ds-scale"><code>space-' + n + '</code><i style="width:var(--space-' + n + ')"></i><span class="muted t-num">' + (n * 4) + ' px</span></div>';
+  }).join('');
+
+  // ----- Amostras de cor: [token, cor do texto sobre ela, onde usar] -----
+  var COLOR_GROUPS = [
+    ['Superfícies', [
+      ['ground', 'ink', 'Fundo da página e das áreas de trabalho.'],
+      ['surface', 'ink', 'Cards, tabelas, janelas e barras.'],
+      ['surface-sunken', 'ink', 'Colunas do kanban e áreas recuadas.'],
+      ['surface-hover', 'ink', 'Fundo ao passar o mouse.']
+    ]],
+    ['Texto e linhas', [
+      ['ink', 'surface', 'Texto principal.'],
+      ['ink-muted', 'surface', 'Texto secundário, datas e dicas.'],
+      ['line', 'ink', 'Divisórias e bordas de cards. Decorativa.'],
+      ['line-strong', 'surface', 'Bordas de campos e botões. Mínimo de 3:1.']
+    ]],
+    ['Marca', [
+      ['primary', 'on-primary', 'Ação principal e item selecionado.'],
+      ['primary-hover', 'on-primary', 'Botão primário ao passar o mouse.'],
+      ['primary-soft', 'on-primary-soft', 'Fundo de item selecionado.'],
+      ['accent', 'on-accent', 'Gema: contador do sino e acesso por hierarquia. Usar pouco.'],
+      ['focus', 'surface', 'Anel de foco do teclado. Mínimo de 3:1.']
+    ]],
+    ['Marca fixa (igual nos dois temas)', [
+      ['brand-pine', 'brand-white', 'Disco do logotipo da marca. Continua verde-pinho no tema escuro.'],
+      ['brand-pine-deep', 'brand-white', 'Verde mais escuro da marca. Reservado para superfícies da marca (hoje sem uso no app).'],
+      ['brand-gema', 'on-gema', 'Gema da marca, copiada da landing page.'],
+      ['brand-mist', 'brand-pine-deep', 'Verde bem claro da marca. Reservado para superfícies da marca (hoje sem uso no app).']
+    ]],
+    ['Visibilidade', [
+      ['vis-workspace-soft', 'vis-workspace', 'Workspace: todos do setor.'],
+      ['vis-group-soft', 'vis-group', 'Grupo: membros de um grupo.'],
+      ['vis-role-soft', 'vis-role', 'Cargo: todos de um cargo.'],
+      ['vis-private-soft', 'vis-private', 'Privado: pessoas escolhidas.']
+    ]],
+    ['Estados', [
+      ['success-soft', 'success', 'Concluído e salvo.'],
+      ['warning-soft', 'warning', 'Atenção: edição por superior, prioridade alta.'],
+      ['danger-soft', 'danger', 'Erro e prazo vencido.'],
+      ['danger', 'on-danger', 'Botão de excluir.'],
+      ['v2-soft', 'v2', 'Assistente e recursos da V2.']
+    ]],
+    ['Presença', [
+      ['presence-1', 'on-presence', 'Colaborador 1.'], ['presence-2', 'on-presence', 'Colaborador 2.'],
+      ['presence-3', 'on-presence', 'Colaborador 3.'], ['presence-4', 'on-presence', 'Colaborador 4.'],
+      ['presence-5', 'on-presence', 'Colaborador 5.'], ['presence-6', 'on-presence', 'Colaborador 6.']
+    ]]
+  ];
+
+  function tokenValue(name) { return getComputedStyle(document.documentElement).getPropertyValue('--' + name).trim(); }
+  function luminance(hex) {
+    var c = [1, 3, 5].map(function (i) { return parseInt(hex.substr(i, 2), 16) / 255; }).map(function (v) {
+      return v <= .03928 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4);
+    });
+    return .2126 * c[0] + .7152 * c[1] + .0722 * c[2];
+  }
+  function contrast(a, b) {
+    var x = luminance(a), y = luminance(b);
+    return (Math.max(x, y) + .05) / (Math.min(x, y) + .05);
+  }
+  function renderSwatches() {
+    document.getElementById('swatches').innerHTML = COLOR_GROUPS.map(function (group) {
+      return '<h3 class="t-subtitle ds-sub">' + group[0] + '</h3><div class="ds-swatches">' + group[1].map(function (t) {
+        var ratio = contrast(tokenValue(t[0]), tokenValue(t[1])).toFixed(1).replace('.', ',');
+        return '<div class="ds-swatch"><div class="ds-swatch__chip" style="background:var(--' + t[0] + ');color:var(--' + t[1] + ')">Aa<small>' + ratio + ':1</small></div>' +
+          '<div class="ds-swatch__body"><b>' + t[0] + '</b>' + tokenValue(t[0]) + '<br><span>' + t[2] + '</span></div></div>';
+      }).join('') + '</div>';
+    }).join('');
+  }
+
+  // ----- A Roda: desenhada por código, a partir de anéis e fatias -----
+  var C = 170, RINGS = [0, 34, 68, 102, 136, 168];  // proprietário, admin, líder, membro, convidado
+  function pt(r, deg) { var a = deg * Math.PI / 180; return (C + r * Math.cos(a)).toFixed(2) + ' ' + (C + r * Math.sin(a)).toFixed(2); }
+  function segment(r0, r1, a0, a1) {
+    var large = (a1 - a0) > 180 ? 1 : 0;
+    return 'M' + pt(r1, a0) + 'A' + r1 + ' ' + r1 + ' 0 ' + large + ' 1 ' + pt(r1, a1) + 'L' + pt(r0, a1) +
+      (r0 ? 'A' + r0 + ' ' + r0 + ' 0 ' + large + ' 0 ' + pt(r0, a0) : '') + 'Z';
+  }
+  function ring(index, color) {
+    var r0 = RINGS[index], r1 = RINGS[index + 1];
+    return '<path fill="' + color + '" d="' + segment(r0, r1, 0, 180) + segment(r0, r1, 180, 360) + '"/>';
+  }
+  var WEDGE = [-135, -45];       // o Grupo A é a fatia de cima
+  function wedge(index, color) { return '<path fill="' + color + '" d="' + segment(RINGS[index], RINGS[index + 1], WEDGE[0], WEDGE[1]) + '"/>'; }
+  function dot(r, deg, color) {
+    var p = pt(r, deg).split(' ');
+    return '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="8" fill="' + color + '"/>';
+  }
+  var HIER = 'var(--accent)';
+  var VIS = {
+    workspace: {
+      color: 'var(--vis-workspace)',
+      caption: '<b>Workspace:</b> a roda inteira. Todas as pessoas do setor veem o item.',
+      draw: function (c) { return [0, 1, 2, 3, 4].map(function (i) { return ring(i, c); }).join(''); }
+    },
+    group: {
+      color: 'var(--vis-group)',
+      caption: '<b>Grupo:</b> uma fatia. O Grupo A vê a tarefa, e o proprietário e os administradores veem pela hierarquia. O Grupo B não vê: os grupos são isolados.',
+      draw: function (c) { return ring(0, HIER) + ring(1, HIER) + wedge(2, c) + wedge(3, c) + wedge(4, c); }
+    },
+    role: {
+      color: 'var(--vis-role)',
+      caption: '<b>Cargo:</b> um anel. Todos os líderes veem a reunião, em qualquer grupo, e quem está acima deles vê pela hierarquia. Membros não veem.',
+      draw: function (c) { return ring(0, HIER) + ring(1, HIER) + ring(2, c); }
+    },
+    private: {
+      color: 'var(--vis-private)',
+      caption: '<b>Privado:</b> pontos. Ana e Gabi veem o arquivo. O líder do Grupo A, os administradores e o proprietário veem pela hierarquia. Lia, do mesmo grupo e cargo, não vê.',
+      draw: function (c) { return ring(0, HIER) + ring(1, HIER) + wedge(2, HIER) + dot(119, -112, c) + dot(119, -68, c); }
+    }
+  };
+  function drawGrid() {
+    var circles = RINGS.slice(1).map(function (r) { return '<circle class="grid" cx="' + C + '" cy="' + C + '" r="' + r + '"/>'; }).join('');
+    var spokes = [45, 135, 225, 315].map(function (d) { return '<line class="grid" x1="' + pt(RINGS[2], d).split(' ')[0] + '" y1="' + pt(RINGS[2], d).split(' ')[1] + '" x2="' + pt(RINGS[5], d).split(' ')[0] + '" y2="' + pt(RINGS[5], d).split(' ')[1] + '"/>'; }).join('');
+    return circles + spokes;
+  }
+  function selectVis(key) {
+    var v = VIS[key];
+    document.getElementById('wheel').innerHTML = v.draw(v.color) + drawGrid();
+    document.getElementById('wheelCaption').innerHTML = v.caption;
+    document.getElementById('legendDirect').style.background = v.color;
+    document.querySelectorAll('#wheelPicker button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.vis === key)); });
+  }
+  document.querySelectorAll('#wheelPicker button').forEach(function (b) {
+    b.addEventListener('click', function () { selectVis(b.dataset.vis); });
+  });
+  selectVis('group');
+
+  // ----- Tema claro e escuro -----
+  var themeBtn = document.getElementById('themeBtn');
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    themeBtn.textContent = theme === 'dark' ? 'Ver tema claro' : 'Ver tema escuro';
+    themeBtn.setAttribute('aria-pressed', String(theme === 'dark'));
+    renderSwatches();
+    try { localStorage.setItem('hub-theme', theme); } catch (e) {}
+  }
+  themeBtn.addEventListener('click', function () {
+    applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+  var savedTheme = null;
+  try { savedTheme = localStorage.getItem('hub-theme'); } catch (e) {}
+  applyTheme(savedTheme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+
+  // ----- Abas de exemplo -----
+  document.querySelectorAll('#demoTabs button').forEach(function (b, _, all) {
+    b.addEventListener('click', function () { all.forEach(function (x) { x.setAttribute('aria-selected', String(x === b)); }); });
+  });
+</script>
+</body>
+</html>

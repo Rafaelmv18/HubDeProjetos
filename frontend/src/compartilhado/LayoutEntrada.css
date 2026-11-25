@@ -1,0 +1,268 @@
+/* A tela inteira, dividida em duas metades (wireframe 1) */
+.hub-entrada {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  min-height: 100dvh;
+}
+
+/* ---------- Metade da marca ---------- */
+/* Fundo claro, como na abertura da landing: o logotipo aparece com as
+   cores originais. "overflow: hidden" corta os anéis que passam da borda. */
+.hub-entrada__painel {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  padding: var(--space-12);
+  background: var(--ground);
+  border-right: 1px solid var(--line);
+}
+
+/* O logotipo e o texto ficam na frente da cena (os anéis passam por trás) */
+.hub-entrada__painel > .hub-marca,
+.hub-entrada__apresentacao {
+  position: relative;
+  z-index: 2;
+}
+
+/* O logotipo fica acima de tudo, inclusive do véu descrito abaixo */
+.hub-entrada__painel > .hub-marca {
+  z-index: 3;
+}
+
+.hub-entrada__apresentacao {
+  max-width: 460px;
+}
+
+/* O véu: uma faixa da cor do fundo, por trás do texto e na frente da cena.
+   Ela cobre do topo do painel até o fim do texto e, nos últimos 72px, vai
+   ficando transparente. Assim os avatares em órbita somem aos poucos antes
+   de chegar ao texto, e a frase continua sempre legível.
+   Como a faixa está presa ao bloco do texto, ela acompanha o tamanho dele
+   (por exemplo, quando a frase quebra em três linhas). */
+.hub-entrada__apresentacao::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  /* Vai além das bordas do painel, que corta o que sobra */
+  left: -100vw;
+  right: -100vw;
+  top: -100vh;
+  bottom: -72px;
+  background: linear-gradient(
+    to bottom,
+    var(--ground) calc(100% - 72px),
+    transparent
+  );
+  pointer-events: none;
+}
+
+.hub-entrada__frase {
+  margin: 0;
+  font-size: 40px;
+  line-height: 46px;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+/* Cada palavra sobe e entra em foco na sua vez (60 ms depois da anterior) */
+.hub-entrada__palavra {
+  display: inline-block;
+  animation: hub-palavra-entra 850ms var(--ease-out) both;
+  animation-delay: calc(var(--i) * 60ms + 120ms);
+}
+
+@keyframes hub-palavra-entra {
+  from {
+    opacity: 0;
+    transform: translateY(0.55em) rotate(2deg);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+
+.hub-entrada__apoio {
+  margin: var(--space-4) 0 0;
+  max-width: 400px;
+  font-size: 16px;
+  line-height: 25px;
+  color: var(--ink-muted);
+  animation: hub-sobe 800ms var(--ease-out) 620ms both;
+}
+
+@keyframes hub-sobe {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------- A cena: anéis, órbitas e avisos flutuando ---------- */
+/* Ocupa o painel inteiro, por trás do texto */
+.hub-entrada__cena {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  /* Enfeite não pode atrapalhar o clique nem a seleção de texto */
+  pointer-events: none;
+  user-select: none;
+  /* A altura do centro dos anéis: 70% do painel, mas nunca acima de 580px,
+     para o símbolo não encostar no texto. Os avisos usam o mesmo valor
+     para ficar sempre um acima e outro abaixo do símbolo, sem cobri-lo. */
+  --centro: max(70%, 580px);
+}
+
+/* O centro dos anéis: no meio do painel, na parte de baixo */
+.hub-entrada__cena .hub-orbitas {
+  left: 50%;
+  top: var(--centro);
+}
+
+/* Os avisos de exemplo, como os da landing */
+.hub-entrada__flutuante {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 232px;
+  padding: var(--space-3);
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-float);
+  /* Duas animações: surge uma vez, depois fica balançando sem parar */
+  animation:
+    hub-surge 700ms var(--ease-out) both,
+    hub-balanca 5s ease-in-out infinite alternate;
+}
+.hub-entrada__flutuante--a {
+  left: var(--space-8);
+  /* Acima do símbolo, à esquerda */
+  top: calc(var(--centro) - 128px);
+  animation-delay: 1100ms, 1800ms;
+}
+.hub-entrada__flutuante--b {
+  right: var(--space-8);
+  /* Abaixo do símbolo, à direita */
+  top: calc(var(--centro) + 56px);
+  animation-delay: 1400ms, 2200ms;
+}
+
+@keyframes hub-surge {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes hub-balanca {
+  to {
+    transform: translateY(-12px);
+  }
+}
+
+/* O avatar de quem "fez" a ação do aviso */
+.hub-entrada__quem {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--on-presence);
+  border-radius: var(--radius-full);
+}
+.hub-entrada__quem--c2 {
+  background: var(--presence-2);
+}
+.hub-entrada__quem--c3 {
+  background: var(--presence-3);
+}
+
+/* ---------- Metade do conteúdo ---------- */
+.hub-entrada__conteudo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-12) var(--space-6);
+  background: var(--surface);
+}
+
+/* Coluna estreita: formulário fica mais fácil de ler e preencher */
+.hub-entrada__coluna {
+  width: 100%;
+  max-width: 320px;
+  animation: hub-sobe 700ms var(--ease-out) 200ms both;
+}
+
+/* As abas ficam acima do título, com um respiro entre os dois */
+.hub-entrada__coluna > .hub-abas {
+  margin-bottom: var(--space-6);
+}
+
+.hub-entrada__titulo {
+  margin: 0 0 var(--space-6);
+  font-size: 24px;
+  line-height: 30px;
+  font-weight: 700;
+}
+
+/* ---------- Janela baixa ---------- */
+/* O aviso de baixo ficaria cortado pela borda da janela: só ele sai */
+@media (max-height: 720px) {
+  .hub-entrada__flutuante--b {
+    display: none;
+  }
+}
+
+/* ---------- Telas estreitas (celular, janela pequena) ---------- */
+/* O painel vira uma faixa só com o logotipo, e o conteúdo ocupa a largura toda */
+@media (max-width: 860px) {
+  .hub-entrada {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+  }
+  .hub-entrada__painel {
+    padding: var(--space-4) var(--space-6);
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .hub-entrada__apresentacao,
+  .hub-entrada__cena {
+    display: none;
+  }
+  .hub-entrada__conteudo {
+    align-items: flex-start;
+    padding: var(--space-8) var(--space-6);
+  }
+}
+
+/* ---------- Movimento reduzido ---------- */
+/* Quem pede menos movimento no sistema vê tudo já no lugar, parado */
+@media (prefers-reduced-motion: reduce) {
+  .hub-entrada__palavra,
+  .hub-entrada__apoio,
+  .hub-entrada__flutuante,
+  .hub-entrada__coluna {
+    animation: none;
+  }
+}

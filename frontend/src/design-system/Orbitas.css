@@ -1,0 +1,120 @@
+/*
+  Os anéis e a equipe em órbita.
+  O .hub-orbitas é um ponto (largura e altura zero): quem usa posiciona esse
+  ponto, e tudo aqui dentro é desenhado em volta dele.
+*/
+.hub-orbitas {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+/* Um círculo centrado no ponto: a margem negativa puxa metade do tamanho */
+.hub-orbitas__anel,
+.hub-orbitas__orbita {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--tamanho);
+  height: var(--tamanho);
+  margin: calc(var(--tamanho) / -2) 0 0 calc(var(--tamanho) / -2);
+  border-radius: var(--radius-full);
+}
+
+/* ---------- Anéis: surgem crescendo, um depois do outro ---------- */
+.hub-orbitas__anel {
+  background: var(--ring-tint);
+  border: 1px solid var(--ring-line);
+  animation: hub-anel-surge 1300ms var(--ease-out) both;
+  animation-delay: var(--atraso);
+}
+
+@keyframes hub-anel-surge {
+  from {
+    opacity: 0;
+    transform: scale(0.55);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------- Órbitas: cada caixa gira e leva o avatar junto ---------- */
+.hub-orbitas__orbita {
+  animation: hub-gira var(--volta) linear infinite;
+  animation-delay: var(--inicio);
+}
+.hub-orbitas__orbita--ao-contrario {
+  animation-direction: reverse;
+}
+
+@keyframes hub-gira {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* O avatar fica no topo do círculo e gira no sentido oposto ao da caixa,
+   na mesma velocidade: assim as letras continuam em pé. */
+.hub-orbitas__avatar {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin: -18px 0 0 -18px;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 700;
+  color: var(--on-presence);
+  border-radius: var(--radius-full);
+  /* Um contorno da cor do fundo "corta" a linha do anel atrás do avatar */
+  box-shadow: 0 0 0 3px var(--ground);
+  animation: hub-gira var(--volta) linear infinite reverse;
+  animation-delay: var(--inicio);
+}
+.hub-orbitas__orbita--ao-contrario .hub-orbitas__avatar {
+  animation-direction: normal;
+}
+
+/* As cores de presença do design system */
+.hub-orbitas__avatar--c1 {
+  background: var(--presence-1);
+}
+.hub-orbitas__avatar--c2 {
+  background: var(--presence-2);
+}
+.hub-orbitas__avatar--c3 {
+  background: var(--presence-3);
+}
+.hub-orbitas__avatar--c4 {
+  background: var(--presence-4);
+}
+.hub-orbitas__avatar--c5 {
+  background: var(--presence-5);
+}
+
+/* ---------- O Hub, no centro de tudo ---------- */
+.hub-orbitas__centro {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 72px;
+  height: 72px;
+  margin: -36px 0 0 -36px;
+  animation: hub-anel-surge 900ms var(--ease-out) both;
+}
+
+/* Quem pede movimento reduzido no sistema vê o desenho parado */
+@media (prefers-reduced-motion: reduce) {
+  .hub-orbitas__anel,
+  .hub-orbitas__orbita,
+  .hub-orbitas__avatar,
+  .hub-orbitas__centro {
+    animation: none;
+  }
+}

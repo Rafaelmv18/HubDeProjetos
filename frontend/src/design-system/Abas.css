@@ -1,0 +1,37 @@
+/* Abas de navegação (docs/design-system.html, seção "Navegação") */
+.hub-abas {
+  display: flex;
+  gap: var(--space-4);
+  border-bottom: 1px solid var(--line);
+}
+
+.hub-abas__aba {
+  /* A margem negativa faz o traço da aba ficar em cima da linha das abas */
+  margin-bottom: -1px;
+  padding: var(--space-2) 0;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  color: var(--ink-muted);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition:
+    color var(--motion-fast),
+    border-color var(--motion-fast);
+}
+.hub-abas__aba:hover {
+  color: var(--ink);
+}
+
+/* A aba da tela aberta: o texto e o traço marcam, não só a cor */
+.hub-abas__aba[aria-current='page'] {
+  color: var(--ink);
+  font-weight: 700;
+  border-bottom-color: var(--primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hub-abas__aba {
+    transition: none;
+  }
+}

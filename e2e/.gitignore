@@ -1,0 +1,4 @@
+node_modules
+# Gravações e relatórios que o Playwright cria quando um teste falha
+test-results
+playwright-report

@@ -1,0 +1,41 @@
+/* Logotipo: a roda e o nome, lado a lado */
+.hub-marca {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--ink);
+}
+
+.hub-marca__simbolo {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  transition: transform 700ms var(--ease-out);
+}
+
+/* A roda dá meia-volta quando o mouse passa pelo logotipo (como na landing) */
+.hub-marca:hover .hub-marca__simbolo {
+  transform: rotate(180deg);
+}
+
+/* As cores da marca são fixas: não mudam com o tema nem com o fundo */
+.hub-marca__disco {
+  fill: var(--brand-pine);
+}
+.hub-marca__fatia {
+  fill: var(--brand-gema);
+}
+.hub-marca__centro {
+  fill: var(--brand-white);
+}
+
+/* Quem pede movimento reduzido no sistema não vê o giro */
+@media (prefers-reduced-motion: reduce) {
+  .hub-marca__simbolo {
+    transition: none;
+  }
+}

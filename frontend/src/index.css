@@ -1,0 +1,42 @@
+/*
+ * Estilos globais mínimos.
+ * As cores, fontes e espaçamentos vêm dos tokens do design system
+ * (src/design-system/tokens.css). Aqui só se usa var(--...).
+ */
+
+/* Fontes: arquivos do Fontsource, servidos pelo próprio app (D38) */
+@import '@fontsource-variable/plus-jakarta-sans/wght.css';
+@import '@fontsource-variable/source-serif-4/opsz.css';
+
+/* Tokens: a única fonte de valores do app */
+@import './design-system/tokens.css';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  line-height: 20px;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--primary);
+}
+
+/* Anel de foco do design system: aparece ao navegar pelo teclado (Tab),
+   para a pessoa sempre saber onde está. */
+:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--surface),
+    0 0 0 4px var(--focus);
+  border-radius: var(--radius-sm);
+}

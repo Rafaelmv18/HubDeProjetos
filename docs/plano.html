@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hub de Projetos — Plano de construção</title>
+<style>
+  :root {
+    --bg: #f7f7f5;
+    --surface: #ffffff;
+    --text: #1f2328;
+    --muted: #5d6470;
+    --border: #e3e3df;
+    --accent: #3b5bdb;
+    --accent-soft: #edf1ff;
+    --ok: #2b8a3e;
+    --ok-bg: #e6f4ea;
+    --warn-bg: #fff8e1;
+    --warn-border: #f0c14b;
+    --warn-text: #8a6100;
+    --code-bg: #f1f1ee;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; font-size: 15px; }
+  .layout { display: flex; min-height: 100vh; }
+  nav { width: 260px; flex-shrink: 0; position: sticky; top: 0; height: 100vh; overflow-y: auto; background: var(--surface); border-right: 1px solid var(--border); padding: 28px 20px; }
+  nav .brand { font-weight: 700; font-size: 17px; margin-bottom: 4px; }
+  nav .sub { color: var(--muted); font-size: 12px; margin-bottom: 24px; }
+  nav a { display: flex; justify-content: space-between; align-items: center; gap: 8px; color: var(--muted); text-decoration: none; padding: 6px 10px; border-radius: 6px; font-size: 14px; }
+  nav a:hover { background: var(--accent-soft); color: var(--accent); }
+  nav a .mini { font-size: 11px; font-variant-numeric: tabular-nums; color: #767c85; }
+  nav a.is-done .mini { color: var(--ok); font-weight: 700; }
+  nav .group { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: #767c85; margin: 18px 10px 6px; }
+  main { flex: 1; min-width: 0; max-width: 1000px; padding: 40px 48px 80px; }
+  header.hero { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 28px 32px; margin-bottom: 24px; }
+  header.hero h1 { margin: 0 0 6px; font-size: 28px; }
+  header.hero p { margin: 0; color: var(--muted); }
+  section { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 28px 32px; margin-bottom: 24px; scroll-margin-top: 20px; }
+  h2 { margin: 0 0 6px; font-size: 21px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  h2 .num { background: var(--accent-soft); color: var(--accent); font-size: 13px; font-weight: 700; width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  h3 { font-size: 15px; margin: 22px 0 6px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; font-size: 12px; }
+  .goal { color: var(--muted); margin: 0 0 4px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 8px 0; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 600; background: #fafaf8; }
+  td a { color: var(--text); text-decoration: none; }
+  td a:hover { color: var(--accent); }
+  code { font-family: ui-monospace, Consolas, monospace; background: var(--code-bg); padding: 1px 6px; border-radius: 4px; font-size: 13px; }
+  .note { background: var(--accent-soft); border-radius: 10px; padding: 14px 18px; margin: 12px 0; }
+  .callout { background: var(--warn-bg); border: 1px solid var(--warn-border); border-radius: 10px; padding: 14px 18px; margin: 12px 0; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 12px 0; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 12px 0; }
+  .card { border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; background: #fcfcfb; }
+  .card h4 { margin: 0 0 8px; font-size: 15px; }
+  .card ul, .card ol { margin: 0; padding-left: 18px; }
+
+  /* Progresso */
+  .progress { height: 8px; background: var(--code-bg); border-radius: 99px; overflow: hidden; }
+  .progress > span { display: block; height: 100%; width: 0; background: var(--accent); border-radius: 99px; transition: width .3s ease; }
+  .is-done .progress > span, .progress.full > span { background: var(--ok); }
+  .overall { display: grid; grid-template-columns: auto 1fr; gap: 6px 20px; align-items: center; margin-top: 18px; }
+  .overall .big { font-size: 30px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
+  .overall .big small { font-size: 14px; color: var(--muted); font-weight: 400; }
+  .overall .progress { height: 10px; }
+  .overall .meta { grid-column: 1 / -1; color: var(--muted); font-size: 13px; }
+  .stage-head { display: flex; align-items: center; gap: 14px; margin: 10px 0 4px; }
+  .stage-head .progress { flex: 1; }
+  .stage-head .count { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .cell-progress { display: flex; align-items: center; gap: 10px; min-width: 140px; }
+  .cell-progress .progress { flex: 1; }
+  .cell-progress .count { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; width: 44px; text-align: right; }
+
+  /* Status */
+  .status { font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 6px; white-space: nowrap; background: var(--code-bg); color: var(--muted); }
+  .status.doing { background: var(--warn-bg); color: var(--warn-text); }
+  .status.done { background: var(--ok-bg); color: var(--ok); }
+
+  /* Checklist */
+  ul.check { list-style: none; padding: 0; margin: 4px 0; }
+  ul.check li { border-bottom: 1px dashed var(--border); }
+  ul.check li:last-child { border-bottom: none; }
+  ul.check label { display: flex; gap: 12px; align-items: flex-start; padding: 8px 6px; border-radius: 6px; cursor: pointer; }
+  ul.check label:hover { background: #fafaf8; }
+  ul.check input { width: 18px; height: 18px; margin: 2px 0 0; flex-shrink: 0; accent-color: var(--ok); cursor: pointer; }
+  ul.check li.checked .txt { color: var(--muted); text-decoration: line-through; text-decoration-color: #b5b9bf; }
+  ul.check li.local label { background: var(--warn-bg); }
+  ul.check li.local .txt::after { content: "marcado só neste navegador"; margin-left: 8px; font-size: 11px; font-weight: 700; color: var(--warn-text); text-decoration: none; display: inline-block; }
+  ul.check li.final label { font-weight: 700; }
+  ul.check li.final { border-top: 1px solid var(--border); margin-top: 6px; }
+  .us { font-family: ui-monospace, Consolas, monospace; font-size: 12px; font-weight: 700; color: var(--accent); background: var(--accent-soft); padding: 1px 6px; border-radius: 4px; margin-right: 4px; }
+  .hint { color: var(--muted); font-size: 13px; }
+
+  .local-bar { display: none; position: sticky; top: 0; z-index: 5; margin-bottom: 16px; }
+  .local-bar.show { display: flex; }
+  .local-bar { gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+  .local-bar button { font: inherit; font-size: 13px; padding: 4px 12px; border-radius: 6px; border: 1px solid var(--warn-border); background: #fff; color: var(--warn-text); cursor: pointer; }
+  .local-bar button:hover { background: var(--warn-bg); }
+
+  @media (max-width: 900px) {
+    nav { display: none; }
+    main { padding: 16px; }
+    section, header.hero { padding: 20px; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .hide-sm { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+
+<nav>
+  <div class="brand">Hub de Projetos</div>
+  <div class="sub">Plano de construção</div>
+  <div class="group">Visão geral</div>
+  <a href="#como">Como usar</a>
+  <a href="#qualidade">TDD e QA</a>
+  <a href="#resumo">Resumo</a>
+  <div class="group">Etapas</div>
+  <a href="#e0" data-nav="e0">0. Esqueleto <span class="mini"></span></a>
+  <a href="#e1" data-nav="e1">1. Conta <span class="mini"></span></a>
+  <a href="#e2" data-nav="e2">2. Estrutura <span class="mini"></span></a>
+  <a href="#e3" data-nav="e3">3. Kanban + acesso <span class="mini"></span></a>
+  <a href="#e4" data-nav="e4">4. Arquivos <span class="mini"></span></a>
+  <a href="#e5" data-nav="e5">5. Superior + auditoria <span class="mini"></span></a>
+  <a href="#e6" data-nav="e6">6. Reuniões <span class="mini"></span></a>
+  <a href="#e7" data-nav="e7">7. Notificações <span class="mini"></span></a>
+  <a href="#e8" data-nav="e8">8. Tempo real <span class="mini"></span></a>
+  <a href="#e9" data-nav="e9">9. Polimento <span class="mini"></span></a>
+  <a href="#diario">Diário</a>
+  <div class="group">Outros documentos</div>
+  <a href="requisitos.html">📄 Requisitos</a>
+  <a href="wireframes.html">🖼 Wireframes</a>
+  <a href="modelo-de-dados.html">🗄 Modelo de dados</a>
+  <a href="design-system.html">🎨 Design system</a>
+  <a href="arquitetura.html">🏗 Arquitetura</a>
+  <a href="guia.html">📘 Guia do desenvolvedor</a>
+  <a href="../landing/index.html">🌐 Landing page</a>
+</nav>
+
+<main>
+
+<div class="callout local-bar" id="localBar">
+  <span><b id="localCount">0</b> item(ns) marcado(s) só neste navegador. Avise o Claude para registrar no arquivo.</span>
+  <button type="button" id="localClear">Desfazer marcações locais</button>
+</div>
+
+<header class="hero">
+  <h1>Plano de construção</h1>
+  <p>O checklist do projeto, do repositório até o MVP. Aqui fica o <b>andamento</b>. O que construir e por quê ficam nos outros documentos.</p>
+  <div class="overall">
+    <div class="big" id="overallPct">0%</div>
+    <div class="progress" id="overallBar"><span></span></div>
+    <div class="meta" id="overallMeta"></div>
+  </div>
+</header>
+
+<section id="como">
+  <h2><span class="num">?</span> Como usar</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h4>Regras do plano</h4>
+      <ul>
+        <li>Um item só é marcado <b>depois de verificado</b>: rodou, testou, viu funcionar. Escrever o código não basta.</li>
+        <li>Cada etapa termina com a caixa <b>"Etapa concluída"</b>, marcada depois de todos os outros itens.</li>
+        <li>Antes de instalar qualquer pacote, o Claude mostra o que vai entrar e espera o seu ok.</li>
+        <li>O que mudar no caminho vai para o <a href="#diario">Diário</a> e para o documento em <code>docs/</code>.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Definição de Pronto (toda história)</h4>
+      <ol>
+        <li><b>Testes escritos antes do código</b>, a partir dos critérios de aceite dos <a href="requisitos.html">requisitos</a></li>
+        <li>Permissões validadas no back-end, com teste de quem pode e de quem é recusado</li>
+        <li>Estados de carregando, vazio e erro na tela, cada um com teste</li>
+        <li>Mensagens em português claro</li>
+        <li><code>check</code> todo verde: testes, padrão de código e análise estática</li>
+        <li>Documento em <code>docs/</code> atualizado, se algo mudou</li>
+        <li>Comando novo? Ele entra no <a href="guia.html">guia do desenvolvedor</a></li>
+      </ol>
+    </div>
+  </div>
+  <div class="note"><b>Onde a marcação fica salva:</b> o que vale é o que está gravado neste arquivo. Quando vocês verificarem um item juntos, o Claude marca no arquivo. Se você clicar em uma caixa aqui no navegador, ela fica amarela ("marcado só neste navegador") até ser registrada.</div>
+</section>
+
+<section id="qualidade">
+  <h2><span class="num">✓</span> TDD e QA: como cada coisa é construída</h2>
+  <p class="goal">O teste vem <b>antes</b> do código. Ele descreve o que o sistema deve fazer e só depois o código é escrito para cumprir isso. A qualidade é verificada o tempo todo, e não apenas no fim.</p>
+
+  <h3>O ciclo do TDD</h3>
+  <div class="grid-3">
+    <div class="card" style="border-color:#e03131"><h4>🔴 1. Vermelho</h4>Escreva um teste pequeno para o próximo comportamento. Rode e <b>veja falhar</b>. Se ele passar sem código novo, o teste está errado.</div>
+    <div class="card" style="border-color:var(--ok)"><h4>🟢 2. Verde</h4>Escreva o <b>mínimo</b> de código para o teste passar, mesmo que fique feio por enquanto.</div>
+    <div class="card" style="border-color:var(--accent)"><h4>🔵 3. Refatorar</h4>Melhore o código (nomes, repetição, Services) com os testes ainda verdes. Depois volte ao 1.</div>
+  </div>
+  <div class="note"><b>De onde vêm os testes?</b> Dos <b>critérios de aceite</b> de cada história. Cada critério vira pelo menos um teste. Exemplo da US18: "o card volta se o servidor recusar" vira o teste <code>it('devolve o card à coluna original quando a API recusa')</code>.</div>
+
+  <h3>A pirâmide de testes</h3>
+  <table>
+    <tr><th>Camada</th><th>O que verifica</th><th>Ferramenta</th><th>Quantidade</th></tr>
+    <tr><td><b>Unidade</b></td><td>Uma classe ou função isolada: Services, regras de cálculo, hooks</td><td>Pest · Vitest</td><td>Muitos, e rápidos</td></tr>
+    <tr><td><b>Integração</b></td><td>Uma rota da API de ponta a ponta com o banco real: permissão, validação e resposta. Também os 9 cenários de acesso</td><td>Pest + PostgreSQL</td><td>Um por regra e por recusa</td></tr>
+    <tr><td><b>Componente</b></td><td>Uma tela ou componente como o usuário vê: clicar, digitar e ver o resultado</td><td>Vitest + Testing Library</td><td>Um por comportamento da tela</td></tr>
+    <tr><td><b>Ponta a ponta (E2E)</b></td><td>O sistema inteiro no navegador, com todos os serviços no ar</td><td>Playwright</td><td>Poucos, só os fluxos principais</td></tr>
+  </table>
+
+  <h3>Qualidade automática (o comando <code>check</code>)</h3>
+  <table>
+    <tr><th>O que</th><th>Back-end</th><th>Front-end</th></tr>
+    <tr><td>Testes</td><td>Pest</td><td>Vitest</td></tr>
+    <tr><td>Análise estática (pega erros sem rodar)</td><td>Larastan (PHPStan)</td><td>TypeScript no modo <code>strict</code></td></tr>
+    <tr><td>Padrão de código</td><td>Laravel Pint</td><td>oxlint + Prettier</td></tr>
+    <tr><td>Cobertura mínima</td><td colspan="2">80% no geral e <b>100% na regra de acesso e nas Policies</b>, que são a parte crítica</td></tr>
+  </table>
+  <p>Um único comando roda tudo isso nos dois lados. Ele roda antes de marcar qualquer item do plano. Quando o repositório existir (Etapa 9), também vai rodar no GitHub Actions a cada push.</p>
+
+  <div class="grid-2">
+    <div class="card"><h4>🐞 Regra para bugs</h4>Encontrou um bug? <b>Primeiro escreva um teste que o reproduza</b> e falhe. Só então corrija. Assim, ele nunca volta sem ninguém perceber.</div>
+    <div class="card"><h4>🔍 Teste exploratório</h4>No fim de cada etapa, use o sistema de verdade com os usuários do seeder (Carlos, Diana, Fábio, Ana...), procurando quebrar as coisas: campos vazios, cliques duplos, acesso pela URL direta.</div>
+  </div>
+</section>
+
+<section id="resumo">
+  <h2><span class="num">∑</span> Resumo</h2>
+  <table>
+    <tr><th>Etapa</th><th class="hide-sm">Entrega</th><th>Progresso</th><th>Status</th></tr>
+    <tr data-row="e0"><td><a href="#e0"><b>0</b> Esqueleto</a></td><td class="hide-sm">Docker sobe tudo e o React mostra uma resposta da API</td><td></td><td></td></tr>
+    <tr data-row="e1"><td><a href="#e1"><b>1</b> Conta</a></td><td class="hide-sm">Cadastro, login, senha e perfil</td><td></td><td></td></tr>
+    <tr data-row="e2"><td><a href="#e2"><b>2</b> Estrutura</a></td><td class="hide-sm">Workspace, membros, grupos e líderes</td><td></td><td></td></tr>
+    <tr data-row="e3"><td><a href="#e3"><b>3</b> Kanban + acesso</a></td><td class="hide-sm">Regra de acesso com os 9 cenários e o kanban</td><td></td><td></td></tr>
+    <tr data-row="e4"><td><a href="#e4"><b>4</b> Arquivos</a></td><td class="hide-sm">Pastas, envio e compartilhamento</td><td></td><td></td></tr>
+    <tr data-row="e5"><td><a href="#e5"><b>5</b> Superior + auditoria</a></td><td class="hide-sm">Editar e excluir como superior, com registro</td><td></td><td></td></tr>
+    <tr data-row="e6"><td><a href="#e6"><b>6</b> Reuniões</a></td><td class="hide-sm">Agendamento e sala de vídeo</td><td></td><td></td></tr>
+    <tr data-row="e7"><td><a href="#e7"><b>7</b> Notificações</a></td><td class="hide-sm">Sino e avisos no sistema</td><td></td><td></td></tr>
+    <tr data-row="e8"><td><a href="#e8"><b>8</b> Tempo real</a></td><td class="hide-sm">Presença, kanban ao vivo e documentos</td><td></td><td></td></tr>
+    <tr data-row="e9"><td><a href="#e9"><b>9</b> Polimento</a></td><td class="hide-sm">Revisão final e portfólio</td><td></td><td></td></tr>
+  </table>
+</section>
+
+<!-- ============ ETAPA 0 ============ -->
+<section id="e0" data-stage>
+  <h2><span class="num">0</span> Esqueleto <span class="status"></span></h2>
+  <p class="goal">Com <code>docker compose up</code>, abrir <code>http://localhost:5173</code> e ver o React mostrando uma resposta do Laravel, que por sua vez consultou o PostgreSQL.</p>
+
+  <h3>0.1 Preparar a máquina</h3>
+  <ul class="check">
+    <li><label><input type="checkbox" checked><span class="txt">Conferir se o Git está instalado <span class="hint">· 2.53</span></span></label></li>
+    <li><label><input type="checkbox" checked><span class="txt">Conferir se o Docker Desktop está instalado e rodando <span class="hint">· 29.8, Compose 5.5, com 8 CPUs e cerca de 7,7 GB de RAM para o Docker</span></span></label></li>
+    <li><label><input type="checkbox" checked><span class="txt">Conferir se o WSL 2 está ativo <span class="hint">· Ubuntu no WSL 2</span></span></label></li>
+    <li><label><input type="checkbox" checked><span class="txt">Decidir onde o código vai ficar <span class="hint">· <code>C:\TesteClaude</code></span></span></label></li>
+  </ul>
+
+  <h3>0.2 Pasta do projeto</h3>
+  <div class="note">O repositório Git fica para depois. Essas tarefas estão na <a href="#e9">Etapa 9</a>. Por enquanto, os arquivos ficam só nesta máquina.</div>
+  <ul class="check">
+    <li><label><input type="checkbox" checked><span class="txt">Estrutura base: <code>backend/</code>, <code>frontend/</code> e <code>collab/</code> ao lado de <code>docs/</code> e <code>landing/</code> (D31) <span class="hint">· <code>collab/</code> só com um README até a Etapa 8</span></span></label></li>
+    <li><label><input type="checkbox" checked><span class="txt"><code>README.md</code> inicial: o que é o projeto, a stack e como rodar</span></label></li>
+    <li><label><input type="checkbox" checked><span class="txt"><code>.env.example</code> sem segredos reais</span></label></li>
+  </ul>
+
+  <h3>0.3 Banco de dados</h3>
+  <ul class="check">
+    <li><label><input type="checkbox" checked><span class="txt"><code>docker-compose.yml</code> com o serviço <code>db</code> (PostgreSQL, com a versão fixada) <span class="hint">· <code>postgres:18.6-alpine</code>, com healthcheck</span></span></label></li>
+    <li><label><input type="checkbox" checked><span class="txt">Volume para os dados não sumirem ao desligar <span class="hint">· <code>hub_dados_postgres</code>, testado com um reinício</span></span></label></li>
+    <li><label><input type="checkbox" checked><span class="txt">Banco de testes <code>hub_testes</code> criado sozinho na primeira subida, separado do banco <code>hub</code></span></label></li>
+    <li><label><input type="checkbox" checked><span class="txt">Testar a conexão com o banco pelo terminal do contêiner</span></label></li>
+  </ul>
+
+  <h3>0.4 Back-end (Laravel)</h3>
+  <ul class="check">
+    <li><label><input type="checkbox" checked><span class="txt">Criar o projeto Laravel em <code>backend/</code>, pelo Docker, sem instalar PHP na máquina <span class="hint">· Laravel 13.40 com PHP 8.5</span></span></label></li>
+    <li><label><input type="checkbox" checked><span class="txt">Serviço <code>api</code> no <code>docker-compose.yml</code> <span class="hint">· <code>backend/Dockerfile</code>, porta 8000 interna</span></span></label></li>
+    <li><label><input type="checkbox" checked><span class="txt">Conectar o Laravel ao PostgreSQL pelo <code>.env</code></span></label></li>
+    <li><label><input type="checkbox" checked><span class="txt">Rodar as migrations padrão do Laravel com sucesso</span></label></li>
+    <li><label><input type="checkbox" checked><span class="txt">Criar a pasta <code>app/Modulos/</code> (D36) <span class="hint">· primeiro módulo: <code>Sistema</code></span></span></label></li>
+    <li><label><input type="checkbox" checked><span class="txt">Instalar o Pest, com um banco de testes separado do banco de desenvolvimento <span class="hint">· Pest 5.3, no banco <code>hub_testes</code></span></span></label></li>
+    <li><label><input type="checkbox" checked><span class="txt">🔴 Primeiro ciclo de TDD: escrever o teste de <code>GET /api/saude</code> e vê-lo falhar <span class="hint">· 2 testes, que falharam com 404</span></span></label></li>
+    <li><label><input type="checkbox" checked><span class="txt">🟢 Criar a rota até o teste passar: ela consulta o banco e responde <code>{"status":"ok","banco":"ok"}</code> <span class="hint">· e 503 se o banco cair</span></span></label></li>
+    <li><label><input type="checkbox" checked><span class="txt">Larastan (análise estática) e Pint (padrão de código) instalados, sem nenhum erro <span class="hint">· Larastan no nível 6; os testes usam as funções do Pest (<code>getJson()</code>) em vez de <code>$this</code></span></span></label></li>
+    <li><label><input type="checkbox" checked><span class="txt">Na primeira execução, o serviço instala as dependências, roda as migrations e os seeders sozinho (RNF15) <span class="hint">· testado do zero, levou cerca de 8 min; os seeders entram na Etapa 2</span></span></label></li>
+  </ul>
+
+  <h3>0.5 Front-end (React + TypeScript + Vite)</h3>
+  <ul class="check">
+    <li><label><input type="checkbox" checked><span class="txt">Criar o projeto em <code>frontend/</code> <span class="hint">· Vite 8.3, React 19.3, TypeScript 7.0, Node 26.13 LTS (no contêiner)</span></span></label></li>
+    <li><label><input type="checkbox" checked><span class="txt">Serviço <code>web</code> no <code>docker-compose.yml</code>, na porta 5173 <span class="hint">· instala o npm sozinho na primeira vez; a página atualiza ao salvar (polling)</span></span></label></li>
+    <li><label><input type="checkbox" checked><span class="txt">Proxy do Vite: <code>/api</code> aponta para o Laravel (D30) <span class="hint">· <code>localhost:5173/api/saude</code> responde ok</span></span></label></li>
+    <li><label><input type="checkbox" checked><span class="txt">Fechar a porta 8000 temporária do serviço <code>api</code> no <code>docker-compose.yml</code>, porque agora tudo passa pelo Vite</span></label></li>
+    <li><label><input type="checkbox" checked><span class="txt">Pastas <code>modulos/</code>, <code>compartilhado/</code>, <code>design-system/</code> e <code>lib/</code> (D37) <span class="hint">· cada uma com um README explicando; exemplo do Vite removido</span></span></label></li>
+    <li><label><input type="checkbox" checked><span class="txt">Levar os tokens do design system (cores, fontes, espaçamentos) para <code>design-system/</code> <span class="hint">· <code>tokens.css</code> com 106 variáveis; fontes pelo Fontsource (D38)</span></span></label></li>
+    <li><label><input type="checkbox" checked><span class="txt">TypeScript no modo <code>strict</code>, com oxlint e Prettier configurados <span class="hint">· lint, format e build passando</span></span></label></li>
+    <li><label><input type="checkbox" checked><span class="txt">Instalar o Vitest e a Testing Library <span class="hint">· com jsdom; <code>npm run test</code> e <code>test:watch</code></span></span></label></li>
+    <li><label><input type="checkbox" checked><span class="txt">🔴 Teste da página inicial antes dela: mostra "carregando", depois o resultado da API, e uma mensagem se a API falhar <span class="hint">· 4 testes em <code>modulos/sistema/SaudePage.test.tsx</code></span></span></label></li>
+    <li><label><input type="checkbox" checked><span class="txt">🟢 Página inicial que chama <code>/api/saude</code>, até o teste passar <span class="hint">· <code>localhost:5173</code> mostra "banco: ok"</span></span></label></li>
+  </ul>
+
+  <h3>0.6 Qualidade automatizada</h3>
+  <ul class="check">
+    <li><label><input type="checkbox" checked><span class="txt">Comando único <code>check</code>, que roda testes, padrão de código e análise estática nos dois lados <span class="hint">· <code>.\check.ps1</code> na raiz, 7 etapas</span></span></label></li>
+    <li><label><input type="checkbox" checked><span class="txt">Relatório de cobertura dos testes funcionando (Pest e Vitest) <span class="hint">· <code>composer coverage</code> (PCOV) e <code>npm run test:coverage</code>; mínimo de 80% ainda não obrigatório</span></span></label></li>
+    <li><label><input type="checkbox" checked><span class="txt">Playwright instalado, com o primeiro teste E2E: abrir <code>localhost:5173</code> e ver "banco: ok" <span class="hint">· <code>docker compose run --rm e2e</code>; pasta <code>e2e/</code> na raiz (D40)</span></span></label></li>
+  </ul>
+
+  <h3>0.7 Fechamento</h3>
+  <ul class="check">
+    <li><label><input type="checkbox" checked><span class="txt">Apagar tudo (<code>docker compose down -v</code>), subir do zero e funcionar sem nenhum comando a mais <span class="hint">· cerca de 6 min e meio até a página responder</span></span></label></li>
+    <li><label><input type="checkbox" checked><span class="txt"><code>check</code> todo verde e o E2E passando <span class="hint">· no ambiente recriado do zero</span></span></label></li>
+    <li><label><input type="checkbox" checked><span class="txt">Fixar as versões das bibliotecas (arquivos de lock guardados no projeto) <span class="hint">· <code>composer.lock</code> e dois <code>package-lock.json</code> (front-end e e2e)</span></span></label></li>
+    <li><label><input type="checkbox" checked><span class="txt">Atualizar o README com o passo a passo real <span class="hint">· tempos medidos, serviços, <code>check</code> e E2E</span></span></label></li>
+    <li><label><input type="checkbox" checked><span class="txt">Diário atualizado com o que foi feito e o que mudou na etapa</span></label></li>
+    <li class="final"><label><input type="checkbox" checked><span class="txt">Etapa 0 concluída</span></label></li>
+  </ul>
+</section>
+
+<!-- ============ ETAPA 1 ============ -->
+<section id="e1" data-stage>
+  <h2><span class="num">1</span> Conta <span class="status"></span></h2>
+  <p class="goal">Criar conta, entrar, sair, recuperar a senha e editar o perfil.</p>
+
+  <h3>Preparação</h3>
+  <ul class="check">
+    <li><label><input type="checkbox" checked><span class="txt">Laravel Sanctum com login por cookie (D33) <span class="hint">· v4.4, <code>statefulApi()</code>; cookie de CSRF em <code>/api/sanctum/csrf-cookie</code></span></span></label></li>
+    <li><label><input type="checkbox" checked><span class="txt">Mailpit no Docker, para ver os e-mails de teste <span class="hint">· v1.33.1, caixa de entrada em <code>localhost:8025</code>; SMTP <code>mailpit:1025</code> só interno</span></span></label></li>
+    <li><label><input type="checkbox" checked><span class="txt">Módulo <code>Conta</code> no back-end e <code>modulos/conta/</code> no front-end <span class="hint">· rotas por módulo (D42); as pastas nascem com o primeiro arquivo, na US01</span></span></label></li>
+    <li><label><input type="checkbox" checked><span class="txt">Cliente HTTP em <code>lib/</code>, configurado para cookie e CSRF <span class="hint">· <code>lib/api.ts</code> com <code>fetch</code>, sem pacote novo; erros viram <code>ErroApi</code></span></span></label></li>
+    <li><label><input type="checkbox" checked><span class="txt">Layout base das telas de entrada, seguindo os wireframes e o design system <span class="hint">· React Router (D43), <code>LayoutEntrada</code> com anéis e órbitas, e as peças <code>Botao</code>, <code>Campo</code>, <code>Abas</code> e <code>Aviso</code></span></span></label></li>
+  </ul>
+
+  <h3>Histórias</h3>
+  <ul class="check">
+    <li><label><input type="checkbox"><span class="txt"><span class="us">US01</span>Criar conta</span></label></li>
+    <li><label><input type="checkbox"><span class="txt"><span class="us">US02</span>Entrar e sair, com limite de tentativas no login (RNF05)</span></label></li>
+    <li><label><input type="checkbox"><span class="txt"><span class="us">US03</span>Recuperar senha, com o e-mail chegando no Mailpit</span></label></li>
+    <li><label><input type="checkbox"><span class="txt"><span class="us">US04</span>Editar perfil</span></label></li>
+  </ul>
+
+  <h3>QA da etapa</h3>
+  <ul class="check">
+    <li><label><input type="checkbox"><span class="txt">Testes de recusa: senha errada, e-mail repetido, limite de tentativas e link de senha vencido</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">Rotas protegidas: sem login, a API responde 401 e a tela volta para a entrada (com teste nos dois lados)</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">E2E: criar conta → sair → entrar → recuperar a senha pelo Mailpit</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">Teste exploratório manual (campos vazios, clique duplo em "Entrar", voltar do navegador)</span></label></li>
+    <li><label><input type="checkbox"><span class="txt"><code>check</code> verde e cobertura de pelo menos 80%</span></label></li>
+  </ul>
+
+  <h3>Fechamento</h3>
+  <ul class="check">
+    <li><label><input type="checkbox"><span class="txt">Diário atualizado com o que foi feito e o que mudou na etapa</span></label></li>
+    <li class="final"><label><input type="checkbox"><span class="txt">Etapa 1 concluída</span></label></li>
+  </ul>
+</section>
+
+<!-- ============ ETAPA 2 ============ -->
+<section id="e2" data-stage>
+  <h2><span class="num">2</span> Estrutura <span class="status"></span></h2>
+  <p class="goal">Montar o setor, com membros, cargos, grupos e líderes.</p>
+
+  <h3>Preparação</h3>
+  <ul class="check">
+    <li><label><input type="checkbox"><span class="txt">Migrations de workspace, membros, cargos e grupos (conforme o <a href="modelo-de-dados.html">modelo de dados</a>)</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">Seeders do "Setor de Pesquisa" (Carlos, Diana, Fábio, Ana...), usados nos testes e na demonstração</span></label></li>
+  </ul>
+
+  <h3>Histórias</h3>
+  <ul class="check">
+    <li><label><input type="checkbox"><span class="txt"><span class="us">US05</span>Criar o workspace do setor</span></label></li>
+    <li><label><input type="checkbox"><span class="txt"><span class="us">US06</span>Convidar pessoas</span></label></li>
+    <li><label><input type="checkbox"><span class="txt"><span class="us">US07</span>Gerenciar membros (só cargos menores, D14)</span></label></li>
+    <li><label><input type="checkbox"><span class="txt"><span class="us">US08</span>Criar grupo</span></label></li>
+    <li><label><input type="checkbox"><span class="txt"><span class="us">US09</span>Gerenciar membros do grupo</span></label></li>
+    <li><label><input type="checkbox"><span class="txt"><span class="us">US10</span>Definir o líder do grupo (um por grupo, D16)</span></label></li>
+  </ul>
+
+  <h3>QA da etapa</h3>
+  <ul class="check">
+    <li><label><input type="checkbox"><span class="txt">Testes de recusa: membro tentando gerenciar um cargo igual ou acima, e um segundo líder no mesmo grupo</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">E2E: administrador cria o grupo, convida uma pessoa e a define como líder</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">Teste exploratório manual com os usuários do seeder</span></label></li>
+    <li><label><input type="checkbox"><span class="txt"><code>check</code> verde e cobertura de pelo menos 80%</span></label></li>
+  </ul>
+
+  <h3>Fechamento</h3>
+  <ul class="check">
+    <li><label><input type="checkbox"><span class="txt">Diário atualizado com o que foi feito e o que mudou na etapa</span></label></li>
+    <li class="final"><label><input type="checkbox"><span class="txt">Etapa 2 concluída</span></label></li>
+  </ul>
+</section>
+
+<!-- ============ ETAPA 3 ============ -->
+<section id="e3" data-stage>
+  <h2><span class="num">3</span> Kanban + regra de acesso <span class="status"></span></h2>
+  <p class="goal">O coração do sistema: a regra de acesso fica pronta e testada, e o kanban é o primeiro módulo que a usa.</p>
+
+  <h3>Regra de acesso em TDD (primeiro e com mais cuidado)</h3>
+  <div class="note">Este é o melhor exemplo de TDD do projeto: os 9 cenários dos requisitos viram testes <b>antes</b> de existir a regra. Todos começam vermelhos, e a regra está pronta quando os 9 ficarem verdes.</div>
+  <ul class="check">
+    <li><label><input type="checkbox"><span class="txt">Migrations de <code>itens</code> (supertipo), com os índices do modelo de dados</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">🔴 <b>Cenário 1</b> como teste: membro cria arquivo privado para uma colega</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">🔴 <b>Cenário 2</b> como teste: líder cria arquivo privado para outro líder</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">🔴 <b>Cenário 3</b> como teste: reunião de líderes</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">🔴 <b>Cenário 4</b> como teste: tarefa do grupo no kanban</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">🔴 <b>Cenário 5</b> como teste: membro em dois grupos</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">🔴 <b>Cenário 6</b> como teste: superior edita item privado de subordinado</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">🔴 <b>Cenário 7</b> como teste: administradores entre si</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">🔴 <b>Cenário 8</b> como teste: item privado no espaço geral</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">🔴 <b>Cenário 9</b> como teste: membro promovida a líder</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">Ver os 9 testes falhando pelo motivo certo (a regra ainda não existe)</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">🟢 <code>Item::visivelPara($eu)</code>, o único lugar da regra (RNF21), até os 9 ficarem verdes</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">🟢 Policies de ver, editar e excluir usando a regra, com testes de quem pode e de quem é recusado</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">🔵 Refatorar a regra com os testes verdes e chegar a 100% de cobertura nela e nas Policies</span></label></li>
+  </ul>
+
+  <h3>Kanban</h3>
+  <ul class="check">
+    <li><label><input type="checkbox"><span class="txt">Instalar TanStack Query e dnd-kit</span></label></li>
+    <li><label><input type="checkbox"><span class="txt"><span class="us">US11</span>Escolher a visibilidade de um item</span></label></li>
+    <li><label><input type="checkbox"><span class="txt"><span class="us">US13</span>Superior vê o conteúdo da sua cadeia</span></label></li>
+    <li><label><input type="checkbox"><span class="txt"><span class="us">US16</span>Criar e organizar quadros</span></label></li>
+    <li><label><input type="checkbox"><span class="txt"><span class="us">US17</span>Criar e editar tarefas</span></label></li>
+    <li><label><input type="checkbox"><span class="txt"><span class="us">US18</span>Mover tarefas entre colunas (o card muda na hora e volta se o servidor recusar)</span></label></li>
+    <li><label><input type="checkbox"><span class="txt"><span class="us">US19</span>Tarefa para um grupo</span></label></li>
+    <li><label><input type="checkbox"><span class="txt"><span class="us">US20</span>Tarefa privada para uma pessoa</span></label></li>
+    <li><label><input type="checkbox"><span class="txt"><span class="us">US21</span>Filtrar o quadro por grupo</span></label></li>
+    <li><label><input type="checkbox"><span class="txt"><span class="us">US22</span>Comentar nas tarefas</span></label></li>
+  </ul>
+
+  <h3>QA da etapa</h3>
+  <ul class="check">
+    <li><label><input type="checkbox"><span class="txt">Os 9 cenários passando com o PostgreSQL de verdade</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">Teste de vazamento: a listagem, a busca e a URL direta de uma tarefa privada nunca devolvem o item a quem não tem acesso</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">Medir a consulta de acesso com dados de exemplo em volume (RNF07)</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">E2E: mover uma tarefa no kanban; um membro de outro grupo não vê a tarefa do grupo</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">Teste exploratório manual entrando como Carlos, Diana, Fábio e Ana e comparando o que cada um vê</span></label></li>
+    <li><label><input type="checkbox"><span class="txt"><code>check</code> verde, com cobertura de 100% na regra e nas Policies e de pelo menos 80% no resto</span></label></li>
+  </ul>
+
+  <h3>Fechamento</h3>
+  <ul class="check">
+    <li><label><input type="checkbox"><span class="txt">Diário atualizado com o que foi feito e o que mudou na etapa</span></label></li>
+    <li class="final"><label><input type="checkbox"><span class="txt">Etapa 3 concluída</span></label></li>
+  </ul>
+</section>
+
+<!-- ============ ETAPA 4 ============ -->
+<section id="e4" data-stage>
+  <h2><span class="num">4</span> Arquivos <span class="status"></span></h2>
+  <p class="goal">Pastas e arquivos usando a mesma regra de acesso.</p>
+  <ul class="check">
+    <li><label><input type="checkbox"><span class="txt">Volume de arquivos no Docker e o <code>Storage</code> do Laravel (RNF18)</span></label></li>
+    <li><label><input type="checkbox"><span class="txt"><span class="us">US23</span>Navegar e organizar pastas</span></label></li>
+    <li><label><input type="checkbox"><span class="txt"><span class="us">US24</span>Enviar e baixar arquivos (até 50 MB, com o tipo validado e o download só pelo Laravel, RNF04)</span></label></li>
+    <li><label><input type="checkbox"><span class="txt"><span class="us">US25</span>Visibilidade de pastas e arquivos</span></label></li>
+    <li><label><input type="checkbox"><span class="txt"><span class="us">US12</span>Compartilhar com pessoas específicas (leitura ou edição, D24)</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">QA: download negado para quem não tem acesso, arquivo acima de 50 MB e tipo não permitido recusados</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">QA · E2E: enviar e baixar um arquivo; outra pessoa recebe a recusa pela URL direta</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">QA: teste exploratório manual, <code>check</code> verde e cobertura de pelo menos 80%</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">Diário atualizado com o que foi feito e o que mudou na etapa</span></label></li>
+    <li class="final"><label><input type="checkbox"><span class="txt">Etapa 4 concluída</span></label></li>
+  </ul>
+</section>
+
+<!-- ============ ETAPA 5 ============ -->
+<section id="e5" data-stage>
+  <h2><span class="num">5</span> Superior + auditoria <span class="status"></span></h2>
+  <p class="goal">Permitir que um superior edite e exclua itens de subordinados, sempre deixando registro.</p>
+  <ul class="check">
+    <li><label><input type="checkbox"><span class="txt">Tabela de auditoria com o trigger que recusa UPDATE e DELETE, e o usuário do banco só com INSERT e SELECT</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">Registro automático quando a Policy libera a ação por hierarquia, na mesma transação</span></label></li>
+    <li><label><input type="checkbox"><span class="txt"><span class="us">US14</span>Superior edita ou exclui item de subordinado (o dono é notificado)</span></label></li>
+    <li><label><input type="checkbox"><span class="txt"><span class="us">US15</span>Consultar a auditoria</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">🔴 Antes do trigger: teste que tenta alterar e apagar um registro de auditoria e espera a recusa do banco</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">QA: registro criado e dono notificado quando o superior edita, e nenhum registro quando o próprio dono edita</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">QA · E2E: o superior edita a tarefa de um subordinado e a ação aparece na auditoria</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">QA: teste exploratório manual, <code>check</code> verde e cobertura de pelo menos 80%</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">Diário atualizado com o que foi feito e o que mudou na etapa</span></label></li>
+    <li class="final"><label><input type="checkbox"><span class="txt">Etapa 5 concluída</span></label></li>
+  </ul>
+</section>
+
+<!-- ============ ETAPA 6 ============ -->
+<section id="e6" data-stage>
+  <h2><span class="num">6</span> Reuniões <span class="status"></span></h2>
+  <p class="goal">Agendar reuniões e entrar na sala de vídeo.</p>
+  <ul class="check">
+    <li><label><input type="checkbox"><span class="txt"><b>Primeiro:</b> testar o LiveKit no Docker com uma chamada entre duas abas (risco do Windows)</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">Token do LiveKit gerado pelo Laravel só para quem pode ver a reunião</span></label></li>
+    <li><label><input type="checkbox"><span class="txt"><span class="us">US26</span>Agendar reunião</span></label></li>
+    <li><label><input type="checkbox"><span class="txt"><span class="us">US27</span>Entrar na sala de vídeo</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">QA: o token do LiveKit é recusado a quem não pode ver a reunião (teste de integração)</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">QA · E2E: agendar uma reunião e entrar na sala, com câmera e microfone simulados pelo navegador</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">QA: teste exploratório manual, <code>check</code> verde e cobertura de pelo menos 80%</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">Diário atualizado com o que foi feito e o que mudou na etapa</span></label></li>
+    <li class="final"><label><input type="checkbox"><span class="txt">Etapa 6 concluída</span></label></li>
+  </ul>
+</section>
+
+<!-- ============ ETAPA 7 ============ -->
+<section id="e7" data-stage>
+  <h2><span class="num">7</span> Notificações <span class="status"></span></h2>
+  <p class="goal">Mostrar os avisos no sino do sistema.</p>
+  <ul class="check">
+    <li><label><input type="checkbox"><span class="txt">Serviço <code>queue</code> no Docker (fila no PostgreSQL, D34)</span></label></li>
+    <li><label><input type="checkbox"><span class="txt"><span class="us">US28</span>Receber notificações no sistema</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">QA: os jobs da fila testados isoladamente, e a notificação não chega a quem não pode ver o item</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">QA · E2E: uma ação de outra pessoa faz aparecer o aviso no sino</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">QA: teste exploratório manual, <code>check</code> verde e cobertura de pelo menos 80%</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">Diário atualizado com o que foi feito e o que mudou na etapa</span></label></li>
+    <li class="final"><label><input type="checkbox"><span class="txt">Etapa 7 concluída</span></label></li>
+  </ul>
+</section>
+
+<!-- ============ ETAPA 8 ============ -->
+<section id="e8" data-stage>
+  <h2><span class="num">8</span> Tempo real <span class="status"></span></h2>
+  <p class="goal">Presença, kanban ao vivo e edição de documentos em conjunto.</p>
+  <div class="callout">Se o prazo apertar, esta etapa vai para a V2 sem quebrar nada (D19).</div>
+  <ul class="check">
+    <li><label><input type="checkbox"><span class="txt">Reverb no Docker, com os canais autorizados pela regra de acesso</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">Avisos levando só o id do item (D32)</span></label></li>
+    <li><label><input type="checkbox"><span class="txt"><span class="us">US31</span>Ver quem está presente</span></label></li>
+    <li><label><input type="checkbox"><span class="txt"><span class="us">US32</span>Kanban em tempo real</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">Serviço <code>collab</code> (Hocuspocus) consultando o Laravel antes de conectar</span></label></li>
+    <li><label><input type="checkbox"><span class="txt"><span class="us">US29</span>Criar documento nativo (TipTap)</span></label></li>
+    <li><label><input type="checkbox"><span class="txt"><span class="us">US30</span>Editar um documento junto com outras pessoas (Yjs)</span></label></li>
+    <li><label><input type="checkbox"><span class="txt"><span class="us">US33</span>Ver e restaurar versões do documento</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">QA: testar a perda de acesso no meio da edição (RNF28) e a queda de conexão (RNF27)</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">QA: canal do Reverb e conexão do Hocuspocus recusados a quem não tem acesso (teste de integração)</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">QA · E2E: duas abas editando o mesmo documento ao mesmo tempo, sem perder texto, e kanban atualizado na outra aba</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">QA: teste exploratório manual, <code>check</code> verde e cobertura de pelo menos 80%</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">Diário atualizado com o que foi feito e o que mudou na etapa</span></label></li>
+    <li class="final"><label><input type="checkbox"><span class="txt">Etapa 8 concluída</span></label></li>
+  </ul>
+</section>
+
+<!-- ============ ETAPA 9 ============ -->
+<section id="e9" data-stage>
+  <h2><span class="num">9</span> Polimento e portfólio <span class="status"></span></h2>
+  <p class="goal">Deixar tudo pronto para mostrar.</p>
+  <ul class="check">
+    <li><label><input type="checkbox"><span class="txt">Revisar todas as telas com o design system (carregando, vazio e erro)</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">Revisão de acessibilidade, com verificação automática (axe) nos testes E2E</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">Rodada final de QA: a suíte E2E inteira e um teste exploratório de todos os fluxos, do zero</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">Revisão de segurança (RNF05): injeção, XSS, CSRF e acesso pela URL direta</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">Selo de testes e de cobertura no README</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">Medir a memória dos contêineres e documentar o mínimo no README</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">README final, com prints, a stack, as decisões e como testar</span></label></li>
+  </ul>
+
+  <h3>Repositório e publicação (adiado de propósito)</h3>
+  <ul class="check">
+    <li><label><input type="checkbox"><span class="txt"><code>git init</code> e definir o nome e o e-mail do Git neste projeto</span></label></li>
+    <li><label><input type="checkbox"><span class="txt"><code>.gitignore</code> (<code>vendor/</code>, <code>node_modules/</code>, <code>.env</code>, arquivos do sistema)</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">Primeiro commit com o projeto inteiro</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">GitHub Actions rodando o <code>check</code> e o E2E a cada push</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">Publicar no GitHub (pela outra máquina)</span></label></li>
+    <li><label><input type="checkbox"><span class="txt">Preencher <code>APP_URL</code> na landing page, se o sistema for publicado</span></label></li>
+    <li class="final"><label><input type="checkbox"><span class="txt">MVP concluído 🎉</span></label></li>
+  </ul>
+</section>
+
+<!-- ============ DIÁRIO ============ -->
+<section id="diario">
+  <h2><span class="num">✎</span> Diário</h2>
+  <p class="goal">O que mudou, os problemas encontrados e as decisões tomadas no caminho.</p>
+  <table>
+    <tr><th>Data</th><th>Anotação</th></tr>
+    <tr><td>09/11/2026</td><td>Plano criado. Fase de desenho fechada (D01–D37). Paradigma: POO no back-end e funcional no front-end. Git e WSL 2 conferidos; o Docker Desktop está instalado, mas fechado.</td></tr>
+    <tr><td>09/11/2026</td><td>Plano passou para HTML (substitui o <code>PLANO.md</code>). Entraram o TDD e o QA: ciclo vermelho → verde → refatorar, pirâmide de testes, comando <code>check</code>, Playwright para E2E, Larastan, Pint, ESLint e Prettier, cobertura de 80% (100% na regra de acesso) e um bloco de QA em cada etapa.</td></tr>
+    <tr><td>09/11/2026</td><td>Repositório Git adiado: as tarefas de Git e GitHub foram para a Etapa 9. Os itens "Commit da etapa" viraram "Diário atualizado".</td></tr>
+    <tr><td>09/11/2026</td><td>0.1 concluída (Docker: 8 CPUs e cerca de 7,7 GB de RAM). README e <code>.env.example</code> criados. 0.3 concluída: PostgreSQL 18.6 no Docker (projeto <code>hub</code>, contêiner <code>hub-db</code>, porta 5432), com os bancos <code>hub</code> e <code>hub_testes</code> e o volume testado com um reinício. Script de init em <code>docker/postgres/init/</code>, que precisa ter quebras de linha LF.</td></tr>
+    <tr><td>09/11/2026</td><td>Laravel 13.40 (PHP 8.5) no contêiner <code>hub-api</code>. Os comandos de PHP rodam com <code>docker compose exec api ...</code>, porque não há PHP no Windows. O <code>routes/api.php</code> foi criado à mão para não instalar o Sanctum antes da Etapa 1. Pest 5.3, Larastan 3.14 e Pint 1.32 instalados. Primeiro ciclo de TDD: <code>/api/saude</code>, do vermelho (404) ao verde. O <code>backend/CLAUDE.md</code> que veio com o Laravel manda instalar o PHP no Windows e o Laravel Boost; essas instruções foram ignoradas por irem contra as decisões do projeto.</td></tr>
+    <tr><td>09/11/2026</td><td>Larastan (nível 6) e Pint sem erros. Porta 8000 aberta de forma temporária. Criado o <a href="guia.html">guia do desenvolvedor</a>, com todos os comandos explicados e os problemas comuns, e o README passou a ter os comandos essenciais. Nova regra na Definição de Pronto: todo comando novo entra no guia.</td></tr>
+    <tr><td>09/11/2026</td><td>0.4 concluída. Primeiro uso testado do zero (sem <code>vendor/</code>, sem <code>backend/.env</code> e com o banco zerado): tudo foi criado sozinho e os testes passaram. A primeira subida levou cerca de 8 minutos, por causa da instalação do Composer em uma pasta do Windows compartilhada com o Docker, que é lenta. As subidas seguintes são rápidas.</td></tr>
+    <tr><td>09/11/2026</td><td>Front-end criado com Vite 8.3, React 19.3, TypeScript 7.0 e Node 26.13 LTS. O template do Vite agora usa o <b>oxlint</b> em vez do ESLint; a escolha fica para o item de lint. Serviço <code>web</code> no ar na porta 5173, com o proxy <code>/api</code> funcionando e a porta 8000 fechada. Nos primeiros segundos depois de subir, o proxy pode dar <code>ECONNREFUSED</code> enquanto a API roda as migrations.</td></tr>
+    <tr><td>09/11/2026</td><td>Pastas da D37 criadas, cada uma com um README, e o exemplo do Vite removido (página em <code>pt-BR</code>, com o título "Hub de Projetos"). A API ganhou um healthcheck (pela <code>/api/saude</code>), e o <code>web</code> só sobe quando ela está pronta, o que acabou com o <code>ECONNREFUSED</code>. Agora o <code>docker compose up -d</code> leva cerca de 30 s para terminar, porque espera cada serviço ficar pronto.</td></tr>
+    <tr><td>10/11/2026</td><td>Duas decisões novas, registradas na arquitetura como D38 e D39. As fontes do design system serão carregadas com o <b>Fontsource</b> (pacotes npm, que ficam dentro do projeto e funcionam sem internet), e não pelo Google Fonts. Lint e formatação do front-end: <b>ESLint + Prettier</b> (o ESLint aponta erros e más práticas, e o Prettier só formata, como Larastan e Pint no back-end). O <b>oxlint</b>, que veio no template do Vite, será removido quando o item de lint for feito; por enquanto ele continua no projeto.</td></tr>
+    <tr><td>10/11/2026</td><td>Tokens do design system no front-end. Instalados os pacotes <code>@fontsource-variable/plus-jakarta-sans</code> e <code>@fontsource-variable/source-serif-4</code>. Criado o <code>frontend/src/design-system/tokens.css</code>, cópia fiel das 106 variáveis do <code>design-system.html</code> (43 de cada tema e 20 gerais); a única mudança é o nome das duas fontes, que no Fontsource termina em "Variable". O <code>index.css</code> importa as fontes e os tokens, e o <code>body</code> passou a usar só <code>var(--...)</code>. Conferido no navegador: a página usa a Plus Jakarta Sans, carregada de dentro do projeto, sem chamar o Google. O tema escuro ainda não foi testado, porque nada no app troca o <code>data-theme</code>.</td></tr>
+    <tr><td>10/11/2026</td><td>Lint e formatação do front-end, com a <b>D39 revisada</b>: ao instalar o ESLint, descobriu-se que a <code>typescript-eslint</code> (a peça que faz o ESLint entender TypeScript) só aceita TypeScript até a 6.0, e o projeto usa o 7.0. Decisão: <b>oxlint + Prettier</b>, mantendo o TypeScript 7 (baixar para o 6.0 só para usar o ESLint foi descartado). O oxlint aponta erros e más práticas, com regras de React, hooks e TypeScript; o Prettier só formata. Feito: <code>frontend/.oxlintrc.json</code> (<code>react/rules-of-hooks</code> como erro e <code>react/only-export-components</code> como aviso), Prettier 3.9 com <code>.prettierrc.json</code> (aspas simples, sem ponto e vírgula, largura 80) e <code>.prettierignore</code>, scripts <code>lint</code>, <code>format</code> e <code>format:check</code> no <code>package.json</code> e <code>"strict": true</code> explícito nos dois <code>tsconfig</code>. Verificado: <code>npm run lint</code> com 0 erros e 0 avisos, <code>npm run format:check</code> com tudo formatado e <code>npm run build</code> (tsc + vite) sem erros de tipo. O Prettier só reformatou o <code>tokens.css</code> (aspas e zeros à esquerda; os valores continuam iguais).</td></tr>
+    <tr><td>10/11/2026</td><td>Infraestrutura de testes do front-end. Instalados o Vitest 5.1, o jsdom 31 e a Testing Library (<code>react</code>, <code>dom</code>, <code>jest-dom</code> e <code>user-event</code>), depois de conferir que todos aceitam o Vite 8, o React 19 e o Node 26. O <code>vite.config.ts</code> ganhou o bloco <code>test</code> (ambiente <code>jsdom</code>), e o <code>src/test/setup.ts</code> liga os matchers do jest-dom e limpa a tela depois de cada teste. Sem <code>globals</code>: cada teste importa <code>describe</code>, <code>it</code> e <code>expect</code> do <code>vitest</code>. Scripts <code>test</code> e <code>test:watch</code> no <code>package.json</code> e no guia. Verificado com um teste temporário (renderizar um botão, clicar e conferir), que passou e foi apagado; lint, formatação e build continuam passando. Ainda não há nenhum teste de verdade: o primeiro é o próximo item.</td></tr>
+    <tr><td>10/11/2026</td><td>Primeiro ciclo de TDD no front-end, fechando a 0.5. 🔴 O teste <code>frontend/src/modulos/sistema/SaudePage.test.tsx</code> foi escrito antes da página e falhou ("Failed to resolve import ./SaudePage"). São 4 testes: "Carregando…", "banco: ok", "banco: fora do ar" (API responde 503) e "Não foi possível falar com a API." (a chamada nem chega). O plano falava em três comportamentos; a falha virou dois testes porque são situações diferentes. O teste troca o <code>fetch</code> por um falso (<code>vi.stubGlobal</code>), então não depende do Docker. 🟢 A página <code>SaudePage.tsx</code> chama <code>/api/saude</code> uma vez e mostra o resultado; o <code>App.tsx</code> passou a mostrá-la no lugar do "Front-end no ar". Verificado: 4 testes passando, lint com 0 erros, formatação ok, build ok, e <code>localhost:5173</code> mostra "banco: ok" com a API de verdade. No modo de desenvolvimento a página chama a API duas vezes; é o <code>StrictMode</code> do React, que repete os efeitos de propósito para achar erros, e não acontece na versão final.</td></tr>
+    <tr><td>10/11/2026</td><td>Limpeza de pendências achadas na revisão do projeto. Apagados o <code>backend/CLAUDE.md</code> e o <code>backend/AGENTS.md</code>, que vieram do template do Laravel e mandavam instalar o PHP no Windows e o Laravel Boost (o contrário do que o projeto decidiu). No <code>backend/composer.json</code>: nome <code>hub-de-projetos/api</code> e descrição do Hub no lugar dos do template, PHP exigido subiu de <code>^8.3</code> para <code>^8.5</code>, e saíram os scripts <code>setup</code> e <code>dev</code>, que chamavam o npm dentro do back-end. O script <code>test</code> ficou. O <code>composer.lock</code> foi atualizado só no hash (<code>composer update --lock</code>), sem mudar nenhuma versão. Verificado: Pest com 2 testes passando, Pint ok e Larastan sem erros. <b>Achado:</b> na primeira rodada depois de mexer no lock, o Larastan parou por falta de memória (limite de 128M do PHP); com <code>--memory-limit=512M</code> passou, e depois disso voltou a passar sem a opção, porque usa o cache. <b>Anotado para depois</b> (o dono ainda vai decidir): as sobras do template do Laravel no <code>backend/</code> (<code>welcome.blade.php</code>, <code>resources/js</code>, <code>resources/css</code>, <code>vite.config.js</code>, <code>package.json</code>, <code>.npmrc</code> e a rota <code>/</code> do <code>web.php</code>). O item 0.2 da pasta <code>collab/</code> fica como está.</td></tr>
+    <tr><td>10/11/2026</td><td>Correção do achado do Larastan: novo script <code>analyse</code> no <code>backend/composer.json</code>, que roda <code>phpstan analyse --memory-limit=512M</code>. O guia passou a usar <code>docker compose exec api composer analyse</code>. Verificado limpando o cache do Larastan (<code>phpstan clear-result-cache</code>) e rodando o script do zero: <code>[OK] No errors</code>.</td></tr>
+    <tr><td>10/11/2026</td><td>Criada a pasta <code>collab/</code>, só com um <code>README.md</code> que explica o que vai morar ali (o serviço de edição em conjunto, com Hocuspocus, na Etapa 8). Com isso a estrutura base da D31 está completa e o item da 0.2 foi marcado. É o mesmo padrão das pastas do front-end, que também nasceram só com README.</td></tr>
+    <tr><td>10/11/2026</td><td>Comando único <code>check</code>: o arquivo <code>check.ps1</code>, na raiz, roda 7 etapas em sequência. No back-end: Pint (<code>--test</code>), Larastan (<code>composer analyse</code>) e Pest. No front-end: Prettier (<code>format:check</code>), oxlint, TypeScript (novo script <code>typecheck</code>, que é o <code>tsc -b</code> sem montar o <code>dist</code>) e Vitest. Ele só confere, não conserta; roda todas as etapas mesmo se uma falhar; mostra um resumo e termina com erro se algo falhou. Fica na raiz porque precisa chamar os contêineres <code>api</code> e <code>web</code>, e é em PowerShell porque é o terminal usado no projeto (só roda no Windows; um <code>check.sh</code> gêmeo pode vir depois). Verificado: as 7 etapas passaram, com código de saída 0; com um arquivo quebrado de propósito, o resumo mostrou <code>FALHOU</code> em Prettier e TypeScript e o código de saída foi 1 (o arquivo de teste foi apagado). O Playwright fica fora do <code>check</code>.</td></tr>
+    <tr><td>10/11/2026</td><td>Relatório de cobertura nos dois lados. <b>Back-end:</b> o <code>backend/Dockerfile</code> passou a instalar o PCOV 1.0.12 (extensão do PHP que mede quais linhas os testes executam; escolhido no lugar do Xdebug por ser leve e só fazer isso), depois de conferir num contêiner descartável que ele instala no PHP 8.5. A imagem da API foi reconstruída. Novo script <code>composer coverage</code> (<code>pest --coverage</code>). Resultado: 75% no total, com <code>SaudeController</code> em 100% e <code>Models/User</code> em 0% (é do template e só ganha testes na Etapa 1). <b>Front-end:</b> pacote <code>@vitest/coverage-v8</code> 5.1.0, bloco <code>coverage</code> no <code>vite.config.ts</code> (mede todo o <code>src/</code>, menos os testes, o <code>setup.ts</code> e o <code>main.tsx</code>) e script <code>test:coverage</code>. A pasta <code>coverage/</code> entrou no <code>.gitignore</code> e no <code>.prettierignore</code>. Resultado: 84,6% das linhas, com <code>SaudePage.tsx</code> em 91,7% (falta a linha 24, a resposta sem o campo <code>banco</code>) e <code>App.tsx</code> em 0%. <b>Decisão:</b> o mínimo de 80% ainda não é obrigatório e a cobertura fica fora do <code>check</code>; liga-se no fechamento da Etapa 1, que é onde o plano o exige pela primeira vez. O <code>check</code> continua todo verde depois das mudanças.</td></tr>
+    <tr><td>10/11/2026</td><td>Quinto teste na <code>SaudePage.test.tsx</code>, para o caminho que o relatório de cobertura mostrou sem teste: a API responde, mas sem o campo <code>banco</code>, e a página mostra "Não foi possível falar com a API.". Com isso a <code>SaudePage.tsx</code> foi a 100% das linhas, e o front-end a 92,3%. Nos desvios (branches) ela está em 83%: falta o caso em que a página sai da tela antes de a resposta chegar (o <code>if (ativo)</code>), que ficou sem teste por enquanto.</td></tr>
+    <tr><td>10/11/2026</td><td>Playwright e o primeiro teste de ponta a ponta, fechando a 0.6. <b>Decisão D40:</b> os testes E2E ficam na pasta <code>e2e/</code>, na raiz, e rodam num serviço <code>e2e</code> do Docker com a imagem oficial do Playwright (1.65.0), que já traz o Chromium. Motivo: o Node não é instalado no Windows, e o contêiner <code>web</code> usa o Alpine, onde os navegadores do Playwright não são suportados. O serviço tem um <code>profile</code>, então não sobe com o <code>docker compose up -d</code>; roda com <code>docker compose run --rm e2e</code>. Criados: <code>e2e/package.json</code> (mesma versão da imagem), <code>playwright.config.ts</code>, <code>tests/saude.spec.ts</code>, <code>docker/entrypoint.sh</code> (instala as dependências e espera o front-end responder) e um README. O <code>frontend/vite.config.ts</code> ganhou <code>allowedHosts: ['web']</code>, porque dentro do Docker o teste acessa o front-end por <code>http://web:5173</code> e o Vite recusa endereços que não conhece. Verificado: o teste passou em duas rodadas (a página mostra "Hub de Projetos" e "banco: ok", com a API e o banco de verdade), e o <code>check</code> continua todo verde. A imagem ocupa 3,6 GB no disco e o primeiro download foi demorado. O E2E fica fora do <code>check</code>.</td></tr>
+    <tr><td>10/11/2026</td><td>Fechamento da Etapa 0: a subida do zero. Para simular quem acabou de baixar o projeto, foram apagados os contêineres e o volume do banco (<code>docker compose down -v</code>), as pastas <code>backend/vendor</code>, <code>frontend/node_modules</code> e <code>e2e/node_modules</code> e o <code>backend/.env</code>. Depois, um único <code>docker compose up -d</code>: o banco foi recriado, a API instalou o Composer, recriou o <code>.env</code> com a chave e rodou as migrations (saudável em cerca de 5 min e meio), e o front-end instalou o npm e respondeu perto de 1 min depois. Nenhum comando a mais foi necessário. Nesse ambiente novo, o <code>check</code> passou nas 7 etapas (o Larastan rodou sem cache, graças ao <code>composer analyse</code>) e o E2E passou. As versões estão fixadas em três arquivos de lock: <code>backend/composer.lock</code>, <code>frontend/package-lock.json</code> e <code>e2e/package-lock.json</code>. <b>Achado:</b> o <code>docker compose up -d --wait</code> terminou antes de o front-end estar pronto, porque o serviço <code>web</code> não tem verificação de saúde; o Docker o considera pronto assim que o contêiner liga, mesmo com o npm ainda instalando.</td></tr>
+    <tr><td>10/11/2026</td><td>Correção do achado da subida do zero: o serviço <code>web</code> ganhou uma verificação de saúde no <code>docker-compose.yml</code> (a página responde em <code>127.0.0.1:5173</code>?), no mesmo formato da API, e o <code>e2e</code> passou a esperar o <code>web</code> ficar saudável. Verificado: <code>docker compose up -d --wait</code> agora mostra <code>web ... (healthy)</code>, e o E2E passou. O <code>README.md</code> foi atualizado com o passo a passo real: tempos medidos (de 6 a 10 minutos na primeira vez), o <code>--wait</code>, a tabela de serviços, o <code>check</code>, os testes dos dois lados e o E2E. <b>O que mudou na Etapa 0 em relação ao planejado:</b> lint do front-end com oxlint no lugar do ESLint (D39 revisada, por causa do TypeScript 7); fontes pelo Fontsource (D38); testes E2E numa pasta <code>e2e/</code> própria, com serviço no Docker (D40); a pasta <code>collab/</code> nasceu só com um README; o Larastan passou a rodar pelo <code>composer analyse</code>, com mais memória; e o mínimo de 80% de cobertura ainda não é obrigatório (liga-se no fechamento da Etapa 1). <b>Ficou em aberto, por decisão do dono:</b> as sobras do template do Laravel no <code>backend/</code>. <b>Etapa 0 concluída.</b></td></tr>
+    <tr><td>11/11/2026</td><td><b>Decisão D41:</b> o model <code>User</code> saiu de <code>backend/app/Models/User.php</code> e foi para <code>backend/app/Modulos/Conta/Models/User.php</code> (namespace <code>App\Modulos\Conta\Models</code>). Motivo: manutenibilidade, com uma regra só e sem exceção (tudo de um assunto mora na pasta do módulo, como diz a D36). A pasta <code>app/Models/</code> deixou de existir. Ajustados: <code>config/auth.php</code>, <code>database/factories/UserFactory.php</code> (ganhou <code>protected $model = User::class</code>), <code>database/seeders/DatabaseSeeder.php</code>, e o model ganhou o método <code>newFactory()</code>. Feito com TDD: o teste <code>tests/Feature/Conta/UserTest.php</code> (3 testes) foi escrito antes da mudança; o <code>php artisan test</code> passou com 5 testes. O <code>check</code> acusou um erro do Larastan no próprio teste (<code>$this-&gt;assertDatabaseHas</code> não é conhecido pelo Pest); corrigido trocando por <code>assertDatabaseHas</code> de <code>Pest\Laravel</code>, e o <code>check</code> voltou a passar. Ponto contra aceito: pacotes do Laravel assumem <code>App\Models\User</code>, então às vezes será preciso informar o caminho na configuração. Documentação: D41 na arquitetura (v0.4), nos requisitos (v0.23) e no guia. Nenhum item do checklist da Etapa 1 foi marcado.</td></tr>
+    <tr><td>11/11/2026</td><td>Primeiro item da Preparação da Etapa 1: <b>Laravel Sanctum</b> com login por cookie (D33). Instalado o <code>laravel/sanctum</code> 4.4.0 (<code>composer.json</code> e <code>composer.lock</code> atualizados) e publicado o <code>backend/config/sanctum.php</code>. No <code>backend/bootstrap/app.php</code>, <code>$middleware-&gt;statefulApi()</code> liga o modo SPA (sessão e CSRF nas rotas <code>/api</code> chamadas pelo front-end). <b>Ajuste:</b> no <code>config/sanctum.php</code> entrou <code>'prefix' =&gt; 'api/sanctum'</code>, para a rota do cookie de CSRF ficar em <code>/api/sanctum/csrf-cookie</code>; o padrão, <code>/sanctum/csrf-cookie</code>, não é alcançado pelo proxy do Vite, que só repassa <code>/api</code>. Feito com TDD: <code>tests/Feature/Conta/SanctumTest.php</code> (2 testes: o cookie de CSRF em <code>/api/sanctum/csrf-cookie</code> e a rota fora do endereço padrão) foi escrito antes; o <code>php artisan test</code> passou com 7 testes. Verificado na prática: <code>GET localhost:5173/api/sanctum/csrf-cookie</code> responde 204 com os cookies <code>XSRF-TOKEN</code> e <code>hub-de-projetos-session</code>; os domínios "stateful" já incluem <code>localhost:5173</code> (vêm do <code>APP_URL</code>), então não foi preciso variável nova no <code>.env</code>. A tabela <code>personal_access_tokens</code> não foi criada, porque ela serve ao login por token e a D33 escolheu cookie. O <code>check</code> passou nas 7 etapas. Nenhuma decisão nova.</td></tr>
+    <tr><td>11/11/2026</td><td>Segundo item da Preparação da Etapa 1: <b>Mailpit</b> no Docker. Novo serviço <code>mailpit</code> no <code>docker-compose.yml</code> (imagem <code>axllent/mailpit:v1.33.1</code>, contêiner <code>hub-mailpit</code>), com a caixa de entrada em <code>http://localhost:8025</code>, o SMTP na 1025 só entre os contêineres, verificação de saúde (<code>/mailpit readyz</code>) e e-mails só na memória (somem quando o contêiner reinicia). O serviço <code>api</code> ganhou <code>MAIL_MAILER=smtp</code>, <code>MAIL_HOST=mailpit</code>, <code>MAIL_PORT=1025</code>, <code>MAIL_FROM_ADDRESS=nao-responda@hub.local</code> e <code>MAIL_FROM_NAME=Hub de Projetos</code>. Os testes do Pest não usam o Mailpit (o <code>phpunit.xml</code> tem <code>MAIL_MAILER=array</code>). Verificado: <code>docker compose up -d --wait</code> deixou os 4 serviços saudáveis, e um e-mail de teste enviado pelo Laravel (<code>Mail::raw</code> no Tinker) apareceu no Mailpit, de "Hub de Projetos" para <code>ana@exemplo.com</code>. O <code>check</code> passou nas 7 etapas. Nenhuma decisão nova.</td></tr>
+    <tr><td>11/11/2026</td><td>Terceiro item da Preparação da Etapa 1: <b>módulo <code>Conta</code> no back-end e <code>modulos/conta/</code> no front-end.</b> <b>Decisão D42:</b> um arquivo de rotas por módulo. Cada módulo guarda as próprias rotas em <code>backend/app/Modulos/&lt;Modulo&gt;/rotas.php</code>, e o <code>backend/routes/api.php</code> virou só um índice que carrega esses arquivos com <code>require app_path('Modulos/&lt;Modulo&gt;/rotas.php');</code> (por isso todas as rotas continuam começando com <code>/api</code>). Motivo: mesma ideia da D36; com 8 módulos, um <code>api.php</code> único ficaria longo e com as rotas longe do código. Alternativa descartada: todas as rotas no <code>routes/api.php</code> (padrão do Laravel). A rota <code>/saude</code> foi movida para <code>backend/app/Modulos/Sistema/rotas.php</code>; o <code>php artisan route:list --except-vendor</code> mostra as mesmas 2 rotas de antes. No back-end, <code>app/Modulos/Conta/</code> já tinha o <code>Models/User.php</code> (D41); as pastas <code>Controllers/</code>, <code>Requests/</code>, <code>Resources/</code>, <code>Services/</code> e o <code>rotas.php</code> do Conta não foram criados vazios, e nascem com o primeiro arquivo de cada uma, na US01. No front-end, <code>frontend/src/modulos/conta/README.md</code> diz o que o módulo vai conter (o <code>useAuth</code> fica em <code>compartilhado/</code>). Verificado: <code>php artisan test</code> com 7 testes passando e <code>localhost:5173/api/saude</code> respondendo 200. O <code>check</code> passou nas 7 etapas. Documentação: D42 na arquitetura (v0.5), nos requisitos (v0.24) e no guia.</td></tr>
+    <tr><td>11/11/2026</td><td>Quarto item da Preparação da Etapa 1: <b>cliente HTTP</b> em <code>frontend/src/lib/api.ts</code>, com TDD (<code>api.test.ts</code>, 16 testes com o <code>fetch</code> simulado). Usa o <code>fetch</code> do navegador, sem pacote novo. Coloca <code>/api</code> na frente do caminho, manda o cookie de sessão e conversa em JSON. Antes de POST, PUT, PATCH e DELETE busca o cookie em <code>/api/sanctum/csrf-cookie</code> (se faltar) e envia o cabeçalho <code>X-XSRF-TOKEN</code>; no 419 renova o cookie e repete uma vez. Todo erro vira um <code>ErroApi</code>, com o <code>status</code> (0 quando a rede falha) e os erros de validação por campo do 422. Verificado: 21 testes no Vitest, 100% de cobertura do <code>api.ts</code> e <code>check</code> nas 7 etapas (a etapa do TypeScript falhou na primeira rodada e foi corrigida: campos do <code>ErroApi</code> declarados de forma explícita e o tipo do <code>fetch</code> simulado). Ainda sem teste contra o Laravel de verdade, porque a API não tem rota POST; isso vem na US01 e no E2E. O TanStack Query entra na US01, e a <code>SaudePage</code> segue com o <code>fetch</code> direto por ser provisória. Nenhuma decisão nova.</td></tr>
+    <tr><td>11/11/2026</td><td>Quinto item da Preparação da Etapa 1, parte A: <b>layout base das telas de entrada</b>. <b>Decisão D43:</b> as rotas do front-end usam o <b>React Router</b> (pacote <code>react-router</code> 8.5.1): cada tela tem endereço próprio (<code>/entrar</code>, <code>/criar-conta</code>), como no wireframe 1, e o botão voltar do navegador funciona. O <code>BrowserRouter</code> fica no <code>frontend/src/main.tsx</code> e a tabela de rotas no <code>frontend/src/App.tsx</code>. Motivo: é o padrão do mercado para React e é compatível com React 19, Node 26 e o TypeScript 7 (o <code>check</code> passou). Alternativa descartada: trocar de tela com estado do React, sem endereços. Rotas atuais: <code>/entrar</code>, <code>/criar-conta</code> e <code>/saude</code> (a página "banco: ok", que antes era a raiz); a raiz <code>/</code> e qualquer endereço desconhecido redirecionam para <code>/entrar</code>. Novos: <code>design-system/Marca</code> (logotipo, com <code>tom</code> <code>padrao</code> e <code>sobre-pinho</code>), <code>design-system/RodaDeAcesso</code> (ilustração estática e decorativa), <code>compartilhado/LayoutEntrada</code> (painel verde da marca à esquerda e conteúdo em coluna de 320px à direita; abaixo de 860px o painel vira uma faixa só com o logotipo) e <code>modulos/conta/EntrarPage</code> e <code>CriarContaPage</code> (por enquanto só moldura, título e um link entre as duas; os formulários chegam na US02 e na US01), cada um com seu teste, mais o <code>App.test.tsx</code>. Tokens novos no <code>tokens.css</code>, iguais nos dois temas e copiados da landing page: <code>--brand-pine</code>, <code>--brand-pine-deep</code>, <code>--brand-gema</code>, <code>--brand-mist</code>, <code>--brand-white</code> e <code>--on-gema</code> (no tema escuro o <code>--primary</code> vira verde-claro, e o painel da marca precisa continuar verde-pinho). No <code>index.css</code>, a cor dos links e o anel de foco global; no <code>favicon.svg</code>, a roda do Hub no lugar do ícone do Vite. E2E: o <code>saude.spec.ts</code> passou a abrir <code>/saude</code> e o novo <code>entrada.spec.ts</code> testa a raiz levando a <code>/entrar</code> e ir para criar conta e voltar com o botão do navegador. Verificado: Vitest com 35 testes, <code>check</code> verde nas 7 etapas e E2E com 3 testes passando. Observação: na primeira rodada do E2E, logo depois do <code>check</code>, o teste da página de saúde falhou esperando a API (ficou em "Carregando…" além dos 5 s do Playwright); nas duas rodadas seguintes passou em 3,4 s. A margem é curta; fica anotado avaliar um tempo de espera maior nesse teste. <b>Falta a parte B</b> (componentes <code>Botao</code>, <code>Campo</code>, <code>Abas</code> e <code>Aviso</code>), por isso o item do plano continua sem marcar.</td></tr>
+    <tr><td>11/11/2026</td><td>Parte A revista a pedido do usuário (o item <b>layout base das telas de entrada</b> continua sem marcar: <b>falta a parte B</b>, com <code>Botao</code>, <code>Campo</code>, <code>Abas</code> e <code>Aviso</code>). O logotipo não muda mais de cor: saiu a versão <code>sobre-pinho</code> do <code>Marca</code>, que agora exporta também o <code>SimboloDaMarca</code> (só o desenho da roda), e o símbolo dá meia-volta quando o mouse passa pelo logotipo. O painel passou a ter fundo claro (<code>--ground</code>), separado do conteúdo (<code>--surface</code>) por uma linha (<code>--line</code>). O componente <code>RodaDeAcesso</code> foi removido (os três arquivos) e entrou o <code>Orbitas</code> (<code>.tsx</code>, <code>.css</code> e teste): cinco anéis concêntricos, um por cargo, que surgem crescendo, cinco avatares da equipe (AN, FA, LI, GA, DI) em órbita e o símbolo do Hub no centro, tudo decorativo (<code>aria-hidden</code>). No <code>LayoutEntrada</code>, a frase de destaque entra palavra por palavra, o texto de apoio sobe em seguida, dois cartões de aviso de exemplo flutuam sobre os anéis (somem em janela com menos de 640px de altura) e a coluna do conteúdo surge com um movimento curto; abaixo de 860px de largura o painel segue sendo só a faixa com o logotipo. Tokens novos: <code>--ring-tint</code>, <code>--ring-line</code>, <code>--shadow-float</code> e <code>--ease-out</code>. <b>Exceção de movimento aprovada pelo dono do projeto:</b> as telas de entrada são vitrine da marca e seguem as regras de movimento da landing page; dentro do aplicativo a regra continua a mesma, e toda animação é desligada com <code>prefers-reduced-motion</code>. O teste E2E <code>saude.spec.ts</code> agora espera até 15 s pelo texto "banco: ok" (o padrão é 5 s; a API pode demorar logo depois dos testes do back-end, e na última rodada levou 6,0 s). Verificado: Vitest com 37 testes, cobertura de 100% das linhas do front-end, <code>check</code> verde nas 7 etapas e E2E com 3 testes passando.</td></tr>
+    <tr><td>11/11/2026</td><td>Ajuste na tela de entrada, a pedido do usuário: os avatares em órbita passavam por trás da frase e atrapalhavam a leitura. Entrou um "véu" no <code>LayoutEntrada.css</code>: uma faixa da cor do fundo (<code>--ground</code>), presa ao bloco do texto, que cobre a cena até o fim do texto e fica transparente nos últimos 72px. Os avatares e os anéis somem aos poucos antes de chegar à frase. O centro dos anéis nunca sobe além de 580px, e os dois cartões flutuantes se posicionam a partir dele (um acima e à esquerda, outro abaixo e à direita), para nunca cobrir o símbolo nem o texto; em janelas com menos de 720px de altura só o cartão de baixo some, porque ficaria cortado. Só CSS, sem mudança no comportamento: Vitest com 37 testes e E2E com 3 testes passando.</td></tr>
+    <tr><td>11/11/2026</td><td>Quinto item da Preparação da Etapa 1, parte B: as peças do formulário, em <code>frontend/src/design-system/</code>, cada uma com <code>.tsx</code>, <code>.css</code> e <code>.test.tsx</code> (testes escritos antes). <code>Botao</code> (variantes padrão, primário, fantasma e perigo; <code>carregando</code> desabilita e evita o envio duplo; o tipo padrão é <code>button</code>), <code>Campo</code> (rótulo, caixa, dica e erro ligados por <code>useId</code>, com <code>aria-invalid</code> e <code>aria-describedby</code>), <code>Abas</code> (links do React Router; a aba aberta recebe <code>aria-current="page"</code>) e <code>Aviso</code> (info, atenção, perigo e sucesso, cada um com ícone; perigo usa <code>role="alert"</code>). O <code>LayoutEntrada</code> ganhou a opção <code>comAbas</code>, que mostra "Entrar | Criar conta" acima do título, no lugar do link provisório. Os títulos das telas passaram a ser "Entrar na sua conta" e "Criar sua conta", e cada tela mostra um <code>Aviso</code> de que o formulário ainda está em construção (US02 e US01). Os ícones estão desenhados dentro de cada peça; um componente <code>Icone</code> único fica para quando houver mais ícones. Verificado: Vitest com 68 testes e 100% das linhas cobertas, <code>check</code> verde nas 7 etapas e E2E com 3 testes passando. Item marcado: <b>Preparação da Etapa 1 completa</b>. As quatro peças foram registradas no <code>guia.html</code> e no <code>design-system.html</code>.</td></tr>
+  </table>
+</section>
+
+</main>
+</div>
+
+<script>
+(function () {
+  var KEY = 'hub-plano-local';
+  var local = {};
+  try { local = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { local = {}; }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(local)); } catch (e) {} }
+
+  // Cada item é identificado pela etapa + texto, para continuar certo quando novos itens entrarem
+  var items = [];
+  document.querySelectorAll('section[data-stage]').forEach(function (sec) {
+    sec.querySelectorAll('ul.check li').forEach(function (li) {
+      var input = li.querySelector('input');
+      var id = sec.id + '|' + li.querySelector('.txt').textContent.replace(/\s+/g, ' ').trim();
+      var fromFile = input.hasAttribute('checked');
+      items.push({ li: li, input: input, id: id, fromFile: fromFile, stage: sec.id });
+      if (!fromFile && local[id]) input.checked = true;
+      if (fromFile && local[id]) { delete local[id]; } // já registrado no arquivo
+      input.addEventListener('change', function () {
+        if (!fromFile) { if (input.checked) local[id] = 1; else delete local[id]; save(); }
+        render();
+      });
+    });
+  });
+  save();
+
+  function bar(pct, full) {
+    return '<div class="progress' + (full ? ' full' : '') + '"><span style="width:' + pct + '%"></span></div>';
+  }
+
+  function render() {
+    var total = 0, done = 0, localCount = 0, stagesDone = 0, current = null;
+    var stages = {};
+    items.forEach(function (it) {
+      var s = stages[it.stage] || (stages[it.stage] = { total: 0, done: 0, final: false });
+      s.total++; total++;
+      if (it.input.checked) { s.done++; done++; }
+      if (it.li.classList.contains('final') && it.input.checked) s.final = true;
+      it.li.classList.toggle('checked', it.input.checked);
+      var isLocal = it.input.checked && !it.fromFile;
+      it.li.classList.toggle('local', isLocal);
+      if (isLocal) localCount++;
+    });
+
+    Object.keys(stages).forEach(function (id) {
+      var s = stages[id];
+      var pct = Math.round(s.done / s.total * 100);
+      var state = s.final ? 'done' : (s.done > 0 ? 'doing' : 'todo');
+      var label = { done: '✅ Concluída', doing: '🟡 Em andamento', todo: '⬜ Não começou' }[state];
+      if (s.final) stagesDone++;
+      else if (!current) current = id;
+
+      var sec = document.getElementById(id);
+      var st = sec.querySelector('h2 .status');
+      st.className = 'status ' + state; st.textContent = label;
+      sec.classList.toggle('is-done', s.final);
+      var head = sec.querySelector('.stage-head');
+      if (!head) { head = document.createElement('div'); head.className = 'stage-head'; sec.querySelector('.goal').after(head); }
+      head.innerHTML = bar(pct, s.final) + '<span class="count">' + s.done + ' de ' + s.total + '</span>';
+
+      var row = document.querySelector('tr[data-row="' + id + '"]');
+      row.cells[2].innerHTML = '<div class="cell-progress">' + bar(pct, s.final) + '<span class="count">' + s.done + '/' + s.total + '</span></div>';
+      row.cells[3].innerHTML = '<span class="status ' + state + '">' + label + '</span>';
+
+      var nav = document.querySelector('nav a[data-nav="' + id + '"]');
+      nav.classList.toggle('is-done', s.final);
+      nav.querySelector('.mini').textContent = s.final ? '✓' : (s.done ? pct + '%' : '');
+    });
+
+    var pct = Math.round(done / total * 100);
+    document.getElementById('overallPct').innerHTML = pct + '%';
+    document.querySelector('#overallBar span').style.width = pct + '%';
+    document.getElementById('overallMeta').textContent =
+      done + ' de ' + total + ' itens · ' + stagesDone + ' de ' + Object.keys(stages).length + ' etapas concluídas' +
+      (current ? ' · agora: Etapa ' + current.slice(1) : '');
+
+    document.getElementById('localCount').textContent = localCount;
+    document.getElementById('localBar').classList.toggle('show', localCount > 0);
+  }
+
+  document.getElementById('localClear').addEventListener('click', function () {
+    items.forEach(function (it) { if (!it.fromFile) it.input.checked = false; });
+    local = {}; save(); render();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

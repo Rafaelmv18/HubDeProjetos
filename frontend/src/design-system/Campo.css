@@ -1,0 +1,69 @@
+/* Campo de formulário (docs/design-system.html, seção "Formulários") */
+.hub-campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.hub-campo > label {
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 600;
+}
+
+.hub-campo__caixa {
+  width: 100%;
+  height: var(--control-md);
+  padding: 0 var(--space-3);
+  font: inherit;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  transition: border-color var(--motion-fast);
+}
+.hub-campo__caixa::placeholder {
+  color: var(--ink-muted);
+}
+.hub-campo__caixa:focus-visible {
+  border-radius: var(--radius-md);
+  border-color: var(--focus);
+}
+.hub-campo__caixa:disabled {
+  background: var(--surface-sunken);
+  color: var(--ink-muted);
+  cursor: not-allowed;
+}
+/* Erro: a borda engrossa além de mudar de cor, para quem não distingue cores */
+.hub-campo__caixa[aria-invalid='true'] {
+  border-color: var(--danger);
+  border-width: 2px;
+}
+
+.hub-campo__dica {
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--ink-muted);
+}
+
+.hub-campo__erro {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-1);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+  color: var(--danger);
+}
+.hub-campo__erro svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hub-campo__caixa {
+    transition: none;
+  }
+}
