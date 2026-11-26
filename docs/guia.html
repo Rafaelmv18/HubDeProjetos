@@ -490,7 +490,7 @@ it('responde que a API e o banco estão funcionando', function () {
   <table>
     <tr><th>Campo</th><th>Valor</th></tr>
     <tr><td>Host</td><td><code>localhost</code></td></tr>
-    <tr><td>Porta</td><td><code>5432</code></td></tr>
+    <tr><td>Porta</td><td><code>5433</code> (fora do Docker; veja a seção 7)</td></tr>
     <tr><td>Banco</td><td><code>hub</code> (desenvolvimento) ou <code>hub_testes</code> (testes)</td></tr>
     <tr><td>Usuário / senha</td><td><code>hub</code> / <code>hub_local_123</code> (valores do <code>.env</code>, só para uso local)</td></tr>
   </table>
@@ -507,7 +507,7 @@ docker compose up -d</div>
   <h2><span class="num">7</span> Endereços e portas</h2>
   <table>
     <tr><th>Serviço</th><th>No seu computador</th><th>Entre os contêineres</th><th>Observação</th></tr>
-    <tr><td>Banco (<code>db</code>)</td><td><code>localhost:5432</code></td><td><code>db:5432</code></td><td>Aberto para os programas de banco</td></tr>
+    <tr><td>Banco (<code>db</code>)</td><td><code>localhost:5433</code></td><td><code>db:5432</code></td><td>Aberto para os programas de banco. Fora do Docker é a 5433, para não conflitar com um PostgreSQL instalado no Windows, que costuma usar a 5432</td></tr>
     <tr><td>Front-end (<code>web</code>)</td><td><a href="http://localhost:5173"><code>localhost:5173</code></a></td><td><code>web:5173</code></td><td><b>O endereço que você usa.</b> O que começa com <code>/api</code> é repassado ao Laravel</td></tr>
     <tr><td>Caixa de e-mails (<code>mailpit</code>)</td><td><a href="http://localhost:8025"><code>localhost:8025</code></a></td><td><code>mailpit:1025</code> (SMTP)</td><td>Mostra os e-mails que o Laravel envia em desenvolvimento; nenhum sai da máquina. Ficam só na memória: somem quando o contêiner reinicia</td></tr>
     <tr><td>API (<code>api</code>)</td><td>—</td><td><code>api:8000</code></td><td>Fechada para fora, de propósito (D30). Acesse pelo Vite: <a href="http://localhost:5173/api/saude"><code>localhost:5173/api/saude</code></a></td></tr>
@@ -545,9 +545,15 @@ docker compose up -d</div>
   </div></details>
 
   <details class="faq"><summary>"port is already allocated" (porta já em uso)</summary><div>
-    <p>Outro programa está usando a porta (por exemplo, um PostgreSQL instalado no Windows na 5432). Para descobrir qual:</p>
-    <div class="term">Get-NetTCPConnection -LocalPort 5432 -State Listen</div>
+    <p>Outro programa está usando a porta. Para descobrir qual (troque o número pela porta do erro):</p>
+    <div class="term">Get-NetTCPConnection -LocalPort 5433 -State Listen</div>
     <p>Feche o programa ou combine a troca da porta no <code>docker-compose.yml</code>.</p>
+  </div></details>
+
+  <details class="faq"><summary>O programa de banco diz "autenticação do tipo senha falhou" para o usuário <code>hub</code></summary><div>
+    <p>Se a mensagem vier em português, quem respondeu não foi o banco do Docker (ele responde em inglês), e sim um PostgreSQL instalado no Windows. Confira a porta da conexão: o banco do projeto fica em <code>localhost:5433</code>, e a <code>5432</code> costuma ser do PostgreSQL do Windows. Para ver quem escuta numa porta:</p>
+    <div class="term">Get-NetTCPConnection -LocalPort 5432 -State Listen</div>
+    <p>Se der <i>timeout</i> na 5433, o banco do Docker não está publicado nela: confira com <code>docker port hub-db</code>, que deve mostrar <code>0.0.0.0:5433</code>.</p>
   </div></details>
 
   <details class="faq"><summary>Mudei o <code>.env</code> e nada mudou</summary><div>

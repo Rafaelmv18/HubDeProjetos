@@ -41,7 +41,7 @@ Depois, abra `http://localhost:5173` (a tela de entrar) e, para conferir a saúd
 |---|---|---|
 | `web` | Front-end (React + Vite) | `http://localhost:5173` |
 | `api` | Back-end (Laravel) | pelo front-end, em `http://localhost:5173/api` |
-| `db` | PostgreSQL | `localhost:5432` |
+| `db` | PostgreSQL | `localhost:5433` (a 5433, e não a 5432, para não conflitar com um PostgreSQL instalado no Windows) |
 | `mailpit` | Caixa de e-mails de teste (nenhum e-mail sai da máquina) | `http://localhost:8025` |
 | `e2e` | Testes de ponta a ponta (Playwright) | só roda quando é chamado |
 
